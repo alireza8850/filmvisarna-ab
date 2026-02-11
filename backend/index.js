@@ -1,3 +1,7 @@
+// A Node.js based start up for the C#-based backend
+// (integrates with React Rapide that starts the index.js file in backend)
+// Allows the backend to start running as we start the Vite dev server!
+
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
