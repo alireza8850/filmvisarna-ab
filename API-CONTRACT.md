@@ -1,13 +1,5 @@
 # Filmvisarna API Contract
-
-Base URL: `/api`\
-Content-Type: `application/json; charset=utf-8`\
-Time format: ISO 8601 (e.g. `"2026-03-01T18:00:00"`)\
-Currency: SEK, decimal with 2 digits (e.g. `140.00`)\
-Auth: Session cookie (HTTP-only), created via `POST /api/login`
-
-------------------------------------------------------------------------
-
+Ska överväga lägga till lite extra detaljer här
 ## Global Response Conventions
 
 ### Error format (standard)
