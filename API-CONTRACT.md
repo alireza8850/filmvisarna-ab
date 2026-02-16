@@ -1,5 +1,5 @@
 # Filmvisarna API Contract
-Ska överväga lägga till lite extra detaljer här
+Ska överväga lägga til lite extra detaljer här
 ## Global Response Conventions
 
 ### Error format (standard)
@@ -23,17 +23,25 @@ All error responses SHOULD use:
 
 ## Authentication & Authorization
 
-### Roles
+### Roles (from ACL)
 
--   `customer`\
--   `admin` 
+-   `visitor` ==> Not logged in
+-   `user` ==> Logged-in user
+-   `staff` ==> filmvisarna's employee
+-   `admin` ==> full system access
 
 ------------------------------------------------------------------------
+
+### Note: 
+. Registeration always creates user.
+. staff and admin are created manually in DB.
+. ACL controls access to all routes.
 
 ## POST /api/register
 
 Create a new user account.\
 Auth: Not required
+ACL: visitor ==> allow
 
 ### Request body
 
@@ -73,6 +81,7 @@ Auth: Not required
 
 Login registered user and create session cookie.\
 Auth: Not required
+ACL: visitor ==> allow
 
 ### Request body
 
@@ -89,10 +98,10 @@ Auth: Not required
 
 ``` json
 {
-  "userId": 3,
+  "id": 3,
   "firstName": "Fatima",
   "lastName": "Al-Murtadha",
-  "role": "customer"
+  "role": "user"
 }
 ```
 
@@ -108,6 +117,7 @@ Auth: Not required
 
 Logout and destroy current session.\
 Auth: Required
+ACL: user,staff,admin ==> allow
 
 **200 OK**
 
@@ -121,16 +131,17 @@ Auth: Required
 
 Get current authenticated user.\
 Auth: Required
+ACL: user,staff,admin ==> allow
 
 **200 OK**
 
 ``` json
 {
-  "userId": 3,
+  "id": 3,
   "email": "fatima@example.com",
   "firstName": "Fatima",
   "lastName": "Al-Murtadha",
-  "role": "customer"
+  "role": "user"
 }
 ```
 
@@ -150,19 +161,22 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 # Films
 
 ## GET /api/films
+List all films.
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
 
 **200 OK**
 
 ``` json
 [
   {
-    "filmId": 1,
+    "id": 1,
     "title": "Avatar 3",
     "genre": "Science fiction",
-    "releaseYear": 2025,
-    "ageLimit": 12,
-    "durationMinutes": 192,
-    "posterUrl": "avatar3.jpg"
+    "release_year": 2025,
+    "age_limit": 12,
+    "duration_minutes": 192,
+    "poster_url": "avatar3.jpg"
   }
 ]
 ```
@@ -170,18 +184,24 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 ------------------------------------------------------------------------
 
 ## GET /api/films/{filmId}
-
+Get full film details.
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
 **200 OK**
 
 ``` json
 {
-  "filmId": 1,
+  "id": 1,
   "title": "Avatar 3",
   "genre": "Science fiction",
-  "releaseYear": 2025,
-  "ageLimit": 12,
-  "durationMinutes": 192,
-  "posterUrl": "avatar3.jpg"
+  "release_year": 2025,
+  "age_limit": 12,
+  "duration_minutes": 192,
+  "description": "..." ,
+  "language": "Svenska",
+  "poster_url": "avatar3.jpg",
+  "trailer_url": "avatar3_trailer.mp4" ,
+  "actors": ["Actor 1","Actor 2"]
 }
 ```
 
@@ -190,6 +210,10 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 # Showings
 
 ## GET /api/showings
+
+List all showings
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
 
 **200 OK**
 
