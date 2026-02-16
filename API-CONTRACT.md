@@ -1,333 +1,303 @@
-Filmvisarna API-Contract
-## 1. Authentication & Authorization
+# Filmvisarna API Contract
 
-Create a new user account / No authentication required
+Base URL: `/api`\
+Content-Type: `application/json; charset=utf-8`\
+Time format: ISO 8601 (e.g. `"2026-03-01T18:00:00"`)\
+Currency: SEK, decimal with 2 digits (e.g. `140.00`)\
+Auth: Session cookie (HTTP-only), created via `POST /api/login`
+
+------------------------------------------------------------------------
+
+## Global Response Conventions
+
+### Error format (standard)
+
+All error responses SHOULD use:
+
+``` json
+{ "error": "Human readable message." }
+```
+
+### Status Codes
+
+-   **200 OK** -- Successful request\
+-   **201 Created** -- Resource created\
+-   **400 Bad Request** -- Invalid input\
+-   **401 Unauthorized** -- Not logged in / invalid session\
+-   **403 Forbidden** -- Not allowed (wrong role)\
+-   **404 Not Found** -- Resource missing\
+
+------------------------------------------------------------------------
+
+## Authentication & Authorization
+
+### Roles
+
+-   `customer`\
+-   `admin` 
+
+------------------------------------------------------------------------
+
 ## POST /api/register
+
+Create a new user account.\
+Auth: Not required
+
+### Request body
+
+``` json
+{
+  "email": "fatima@unesco.org",
+  "firstName": "Fatima",
+  "lastName": "Al-Murtadha",
+  "phoneNumber": "4765774921",
+  "password": "123456"
+}
+```
+
+### Responses
+
+**201 Created**
+
+``` json
+{ "message": "Ditt konto har registrerats." }
+```
+
+**400 Bad Request**
+
+``` json
+{ "error": "Invalid registration data." }
+```
+
+**409 Conflict**
+
+``` json
+{ "error": "Email already registered." }
+```
+
+------------------------------------------------------------------------
+
+## POST /api/login
+
+Login registered user and create session cookie.\
+Auth: Not required
+
+### Request body
+
+``` json
+{
+  "email": "fatima@unesco.org",
+  "password": "123456"
+}
+```
+
+### Responses
+
+**200 OK**
+
+``` json
+{
+  "userId": 3,
+  "firstName": "Fatima",
+  "lastName": "Al-Murtadha",
+  "role": "customer"
+}
+```
+
+**401 Unauthorized**
+
+``` json
+{ "error": "Fel användarnamn eller lösenord." }
+```
+
+------------------------------------------------------------------------
+
+## DELETE /api/login
+
+Logout and destroy current session.\
+Auth: Required
+
+**200 OK**
+
+``` json
+{ "message": "Du är nu utloggad." }
+```
+
+------------------------------------------------------------------------
+
+## GET /api/me
+
+Get current authenticated user.\
+Auth: Required
+
+**200 OK**
+
+``` json
+{
+  "userId": 3,
+  "email": "fatima@example.com",
+  "firstName": "Fatima",
+  "lastName": "Al-Murtadha",
+  "role": "customer"
+}
+```
+
+------------------------------------------------------------------------
+
+# Booking Flow (Frontend Navigation Support) For DEMO 2!
+
+1.  Frontend loads film cards:\
+    `GET /api/films`
+
+2.  User clicks a movie card → navigates to `/films/{filmId}`
+
+Fortsätter med detta flödet när vi kommer lite längre fram igenom start sidan denna veckan /oskar
+
+------------------------------------------------------------------------
+
+# Films
+
+## GET /api/films
+
+**200 OK**
+
+``` json
+[
+  {
+    "filmId": 1,
+    "title": "Avatar 3",
+    "genre": "Science fiction",
+    "releaseYear": 2025,
+    "ageLimit": 12,
+    "durationMinutes": 192,
+    "posterUrl": "avatar3.jpg"
+  }
+]
+```
+
+------------------------------------------------------------------------
+
+## GET /api/films/{filmId}
+
+**200 OK**
+
+``` json
+{
+  "filmId": 1,
+  "title": "Avatar 3",
+  "genre": "Science fiction",
+  "releaseYear": 2025,
+  "ageLimit": 12,
+  "durationMinutes": 192,
+  "posterUrl": "avatar3.jpg"
+}
+```
+
+------------------------------------------------------------------------
+
+# Showings
+
+## GET /api/showings
+
+**200 OK**
+
+``` json
+[
+  {
+    "showingId": 1,
+    "filmId": 1,
+    "filmTitle": "Avatar 3",
+    "hallId": 1,
+    "hallName": "Stora salongen",
+    "startTime": "2026-03-01T18:00:00"
+  }
+]
+```
+
+------------------------------------------------------------------------
+
+# Seat Map & Availability
+
+## GET /api/showings/{showingId}/seats
+
+**200 OK**
+
+``` json
+{
+  "hall": {
+    "hallId": 1,
+    "hallName": "Stora salongen",
+    "totalRows": 10,
+    "seatsPerRow": 8
+  },
+  "seats": [
     {
-    "email": "fatima@unesco.org",
-    "firstName": "fatima",
-    "lastName": "al-murtadha",
-    "phoneNumber": "4765774921",
-    "password": "123"
+      "seatId": 1,
+      "rowNumber": 1,
+      "seatNumber": 1,
+      "status": "booked"
     }
-
-201 Created
-{
-"message": "Ditt konto har registrerats."
+  ]
 }
-400 (Invalid data)
-{
-"error": "Invalid registration data."
-}
-409 (Email exists)
-{
-"error": "Email already registered."
-}
-Login registered user / Creates session cookie
-POST /api/login
-{
-"email": "string",
-"password": "string"
-}
-200 OK
-{
-"userId": 3,
-"firstName": "fatima",
-"lastName": "al-murtadha",
-"role": "customer"
-}
-401
-{
-"error": "Fel användarnamn eller lösenord."
-}
-Logout/ Requires active session
-DELETE /api/login
+```
 
+------------------------------------------------------------------------
 
-{ "message": "Du är nu utloggad" }
+# Ticket Types & Pricing
 
+## GET /api/tickets/prices
 
-GET /api/me
+**200 OK**
 
-
-200
-{
-"userId": 3,
-"email": "fatima@example.com",
-"firstName": "fatima",
-"lastName": "al-murtadha",
-"role": "customer"
-}
-401
-{ "error": "Något gick fel." }
-
-POST
-
-2)  Films
-
-Description
-Method
-JSON
-Response
-
-
-GET /api/films
-
-
-200
+``` json
 [
-{
-"filmId": 1,
-"title": "Avatar 3",
-"genre": "Science fiction",
-"releaseYear": 2025,
-"ageLimit": 12,
-"posterURL": "avatar3.jpg"
-}
+  { "ticketType": "adult", "price": 140.00 },
+  { "ticketType": "senior", "price": 120.00 },
+  { "ticketType": "child", "price": 80.00 }
 ]
-404 (no results)
-{ "message": "Inga resultat hittades." }
+```
 
+------------------------------------------------------------------------
 
-GET /api/films/{filmId}
+# Booking System
 
+## POST /api/bookings
 
-200
+**201 Created**
+
+``` json
+{
+  "bookingId": 10,
+  "bookingNumber": "BK-2026-0123",
+  "bookingStatus": "confirmed",
+  "filmTitle": "Avatar 3",
+  "hallName": "Stora salongen",
+  "startTime": "2026-03-01T18:00:00",
+  "totalPrice": 220.00
+}
+```
+
+------------------------------------------------------------------------
+
+# User Dashboard
+
+## GET /api/bookings/my
+
+Auth:  Required
+
+**200 OK**
+
+``` json
 [
-{
-"filmId": 1,
-"title": "Avatar 3",
-"genre": "Science fiction",
-"releaseYear": 2025,
-"ageLimit": 12,
-"posterURL": "avatar3.jpg"
-}
+  {
+    "bookingId": 1,
+    "bookingNumber": "BK-2026-0001",
+    "filmTitle": "Avatar 3",
+    "startTime": "2026-03-01T18:00:00",
+    "bookingStatus": "confirmed",
+    "totalPrice": 320.00
+  }
 ]
-404 (no results)
-{ "error": "Filmen finns inte." }
+```
 
-
-GET /api/films/{filmId}/showings
-
-
-200
-[
-{
-"showingId": 1,
-"hallId": 1,
-"hallName": "Stora salongen",
-"startTime": "2026-03-01T18:00:00"
-}
-]
-
-
-
-3)  Showings
-
-- GET /api/showings
-
-1/ 200:
-
-[
-{
-"showingId": 1,
-"filmId": 1,
-"filmTitle": "Avatar 3",
-"genre": "Science fiction",
-"durationMinutes": 192,
-"hallId": 1,
-"hallName": "Stora salongen",
-"startTime": "2026-03-01T18:00:00"
-}
-]
-
-2/ 400
-{ "error": "Filmen finns inte." }
-
-
-- GET /api/showings/{showingId}
-
-1/ 200:
-
-{
-"showingId": 1,
-"filmId": 1,
-"filmTitle": "Avatar 3",
-"hallId": 1,
-"hallName": "Stora salongen",
-"startTime": "2026-03-01T18:00:00"
-}
-
-
-
-
-4) Seat Map & Availability
-
-- GET /api/showings/{showingId}/seats
-
-1/ 200:
-
-{
-"hall": {
-"hallId": 1,
-"hallName": "Stora salongen",
-"totalRows": 10,
-"seatsPerRow": 10
-},
-"seats": [
-{
-"seatId": 1,
-"rowNumber": 1,
-"seatLetter": "J",
-"status": "Booked"
-},
-{
-"seatId": 2,
-"rowNumber": 1,
-"seatLetter": "B",
-"status": "Available"
-}
-]
-}
-
-
-5) Ticket Types & Pricing
-
-GET /api/tickets/prices
-
-1/ 200
-
-[
-{ "ticketType": "adult", "price": 160.00 },
-{ "ticketType": "child", "price": 95.00 },
-{ "ticketType": "senior", "price": 120.00 }
-]
-
-
-6)  Booking System
-
-POST /api/bookings
-
-Request:
-
-{
-"showingId": 1,
-"email": "user@example.com",
-"tickets": [
-{ "seatId": 1, "ticketType": "adult" },
-{ "seatId": 2, "ticketType": "child" }
-]
-}
-
-1/  201:
-
-{
-"bookingId": 10,
-"bookingNumber": "BK-2026-0123",
-"filmTitle": "Avatar 3",
-"hallName": "Stora salongen",
-"startTime": "2026-03-01T18:00:00",
-"tickets": [
-{
-"seatId": 1,
-"rowNumber": 1,
-"seatLetter": "J",
-"ticketType": "adult",
-"price": 160.00
-}
-],
-"totalPrice": 255.00
-}
-
-
-2/ 409 (seat already booked):
-
-{ "error": "En eller flera valda platser är redan bokade." }
-
-
-7) Booking Cancellation
-
-DELETE /api/bookings/{bookingId}
-
-1/ 200:
-
-{
-"message": "Bokningen har avbokats.",
-"bookingStatus": "cancelled"
-}
-
-
-8) User Dashboard
-
-GET /api/bookings/my
-
-Auth: Requires login.
-
-1/ 200:
-
-[
-{
-"bookingId": 1,
-"bookingNumber": "BK-2026-0001",
-"filmTitle": "Avatar 3",
-"startTime": "2026-03-01T18:00:00",
-"bookingStatus": "confirmed",
-"totalPrice": 320.00
-}
-]
-
-
-9) AI Assistant
-
-POST /api/chat
-
-Request:
-
-{
-"messages": [
-{ "role": "customer", "content": "Vilka filmer visas idag?" }
-]
-}
-
-
-Response:
-
-{
-"messages": [
-{ "role": "assistant", "content": "Idag visas Avatar 3 kl 18:00..." }
-]
-}
-
-
-
-Authentication & ACL Rules
-
-Public endpoints:
-
-- /api/films
-- /api/showings
-- /api/showings/{id}/seats
-- /api/tickets/prices
-- /api/register
-- /api/login
-- /api/chat
-
-Requires login:
-
-- /api/me
-- /api/bookings/my
-- /api/bookings (if userId is used)
-- /api/bookings/{id} (cancel)
-
-Requires admin:
-
--  admin endpoints - Nice to have
-
-
-Status Code Conventions:
--200 OK Successful request
--201 Created - Resource created
--400 Bad Request - Invalid input
--401 Unauthorized - Not logged in
--403 Forbidden - Not allowed
--404 Not Found - Resource missing
+------------------------------------------------------------------------
