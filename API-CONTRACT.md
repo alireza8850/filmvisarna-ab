@@ -152,7 +152,7 @@ ACL: user,staff,admin ==> allow
 1.  Frontend loads film cards:\
     `GET /api/films`
 
-2.  User clicks a movie card → navigates to `/films/{filmId}`
+2.  User clicks a movie card → navigates to `/films/{id}`
 
 Fortsätter med detta flödet när vi kommer lite längre fram igenom start sidan denna veckan /oskar
 
@@ -183,7 +183,7 @@ ACL: visitor,user,staff,admin ==> allow
 
 ------------------------------------------------------------------------
 
-## GET /api/films/{filmId}
+## GET /api/films/{id}
 Get full film details.
 Auth: Not Required
 ACL: visitor,user,staff,admin ==> allow
@@ -220,12 +220,12 @@ ACL: visitor,user,staff,admin ==> allow
 ``` json
 [
   {
-    "showingId": 1,
-    "filmId": 1,
-    "filmTitle": "Avatar 3",
-    "hallId": 1,
-    "hallName": "Stora salongen",
-    "startTime": "2026-03-01T18:00:00"
+    "id": 1,
+    "film_id": 1,
+    "film_title": "Avatar 3",
+    "hall_id": 1,
+    "hall_name": "Stora salongen",
+    "start_time": "2026-03-01T18:00:00"
   }
 ]
 ```
@@ -240,17 +240,17 @@ ACL: visitor,user,staff,admin ==> allow
 
 ``` json
 {
-  "hall": {
-    "hallId": 1,
-    "hallName": "Stora salongen",
-    "totalRows": 10,
-    "seatsPerRow": 8
+    "hall": {
+    "hall_id": 1,
+    "hall_name": "Stora salongen",
+    "total_rows": 10,
+    "seats_per_row": 8
   },
   "seats": [
     {
-      "seatId": 1,
-      "rowNumber": 1,
-      "seatNumber": 1,
+      "seat_id": 1,
+      "row_index": 1,
+      "seat_number": 1,
       "status": "booked"
     }
   ]
@@ -278,18 +278,21 @@ ACL: visitor,user,staff,admin ==> allow
 # Booking System
 
 ## POST /api/bookings
+Create a booking.
+Auth: user, staff, admin.
+ACL: allow.
 
 **201 Created**
 
 ``` json
 {
-  "bookingId": 10,
-  "bookingNumber": "BK-2026-0123",
-  "bookingStatus": "confirmed",
-  "filmTitle": "Avatar 3",
-  "hallName": "Stora salongen",
-  "startTime": "2026-03-01T18:00:00",
-  "totalPrice": 220.00
+  "id": 10,
+  "booking_number": "BK-2026-0123",
+  "booking_status": "confirmed",
+  "film_title": "Avatar 3",
+  "hall_name": "Stora salongen",
+  "start_time": "2026-03-01T18:00:00",
+  "total_price": 220.00
 }
 ```
 
@@ -299,19 +302,20 @@ ACL: visitor,user,staff,admin ==> allow
 
 ## GET /api/bookings/my
 
-Auth:  Required
+Auth:  Required (user,staff, admin).
+ACL: allow.
 
 **200 OK**
 
 ``` json
 [
   {
-    "bookingId": 1,
-    "bookingNumber": "BK-2026-0001",
-    "filmTitle": "Avatar 3",
-    "startTime": "2026-03-01T18:00:00",
-    "bookingStatus": "confirmed",
-    "totalPrice": 320.00
+    "id": 1,
+    "booking_number": "BK-2026-0001",
+    "film_title": "Avatar 3",
+    "start_time": "2026-03-01T18:00:00",
+    "booking_status": "confirmed",
+    "total_price": 320.00
   }
 ]
 ```
