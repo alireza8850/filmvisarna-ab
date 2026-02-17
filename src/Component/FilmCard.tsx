@@ -1,40 +1,37 @@
 import { Link } from "react-router-dom";
 import "./FilmCard.css";
 
-export interface Film {
+type FilmCardProps = {
     id: number;
     title: string;
-    posterUrl: string;
-    ageLimit: number;
-}
-
-type FilmCardProps = {
-    film: Film;
+    image: string;
+    categories?: string[];
+    price?: number;
 };
 
-export default function FilmCard({ film }: FilmCardProps) {
+export default function FilmCard({
+    id,
+    title,
+    image,
+}: FilmCardProps) {
     return (
         <div className="film-card">
 
-            <Link to={`/filmer/${film.id}`}>
+            <Link to={`/filmer/${id}`}>
                 <img
                     className="film-card__image"
-                    src={film.posterUrl}
-                    alt={film.title}
+                    src={image}
+                    alt={title}
                 />
             </Link>
 
-            <h2 className="film-card__title">
-                {film.title}
-            </h2>
-
-            <p className="film-card__age">
-                Åldersgräns: {film.ageLimit}
-            </p>
+            <h3 className="film-card__title">
+                {title}
+            </h3>
 
             <Link
                 className="film-card__button"
-                to={`/bokning/${film.id}`}
+                to={`/bokning/${id}`}
             >
                 Boka
             </Link>
