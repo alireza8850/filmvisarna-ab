@@ -29,12 +29,15 @@ public static class DbQuery
     if (config.createTablesIfNotExist == true)
     {
       CreateTablesIfNotExist(db);
+      // To create filmvisarna's tables 
+      FilmvisarnaTables.CreateTablesIfNotExist(db); 
     }
 
     // Seed data if tables are empty
     if (config.seedDataIfEmpty == true)
     {
       SeedDataIfEmpty(db);
+      FilmvisarnaTables.SeedFilmvisarnaData(db);
     }
 
     db.Close();
@@ -114,7 +117,10 @@ public static class DbQuery
                 ('admin', '*', 'allow', '/api/users', 'true', 'Allow admins to see and edit users'),
                 ('admin', '*', 'allow', '/api/sessions', 'true', 'Allow admins to see and edit sessions'),
                 ('admin', '*', 'allow', '/api/acl', 'true', 'Allow admins to see and edit acl rules'),
-                ('visitor,user,admin', 'GET', 'allow', '/api/products', 'true', 'Allow all user roles to read products');
+                ('visitor,user,admin', 'GET', 'allow', '/api/products', 'true', 'Allow all user roles to read products'),
+                -- Films 
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/films', 'true', 'Allow all user roles to read films')
+                ;
             ";
       command.CommandText = aclData;
       command.ExecuteNonQuery();
@@ -167,6 +173,7 @@ public static class DbQuery
         command.ExecuteNonQuery();
       }
     }
+
   }
 
   // Helper to create an object from the DataReader
