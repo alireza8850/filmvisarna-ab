@@ -3,46 +3,33 @@ import { useLoaderData } from "react-router-dom";
 import { Row, Col, Form } from "react-bootstrap";
 import { useStateContext } from "../utils/useStateObject";
 import Select from "../parts/Select";
-import ProductCard from "../parts/ProductCard";
+import FilmCard from "../Component/FilmCard";
 import productsLoader from "../utils/productsLoader";
 import { getHelpers } from "../utils/productPageHelpers";
 
-ProductsPage.route = {
-  path: "/",
-  menuLabel: "Products",
-  index: 1,
-  parent: "/",
-  loader: productsLoader,
-};
+export default function FilmPage() {
+  const { products } = useLoaderData() as { products: unknown; };
 
-export default function ProductsPage() {
-  let { products, categories, sortOptions, sortDescriptions } = getHelpers(
-    useLoaderData().products,
-  );
+  let { products: films, categories, sortOptions, sortDescriptions } =
+    getHelpers(products as any);
 
-  // get state object and setter from the outlet context
-  const [{ categoryChoice, sortChoice, bwImages }, setState] =
-    useStateContext();
+  const [{ categoryChoice, sortChoice, bwImages }, setState] = useStateContext();
 
-  // get the chosen category without the product count part
   const category = categoryChoice.split(" (")[0];
-  // get the key and order to from the chosen sort option
+
   const { key: sortKey, order: sortOrder } = sortOptions.find(
-    (x) => x.description === sortChoice,
+    (x) => x.description === sortChoice
   ) as SortOption;
 
   return (
     <>
       <Row>
         <Col>
-          <h2 className="text-primary">Our products</h2>
-          <p>
-            Our products are fantastic, organic and fresh. They are also very
-            reasonably priced, considering they are all harvested with the
-            greatest care.
-          </p>
+          <h2 className="text-primary">Filmer</h2>
+          <p>Här kan du se våra filmer och boka biljetter.</p>
         </Col>
       </Row>
+
       <Row>
         <Col className="px-4 pt-1 pb-4">
           <Row className="bg-primary-subtle pt-3 rounded">
@@ -59,6 +46,7 @@ export default function ProductsPage() {
                   B/W Images
                   <span className="float-end">Color Images</span>
                 </div>
+
                 <Form.Switch
                   className="mt-2 mb-4 mb-md-2"
                   defaultChecked={!bwImages}
@@ -66,6 +54,7 @@ export default function ProductsPage() {
                 />
               </label>
             </Col>
+
             <Col md="4">
               <Select
                 label="Category"
@@ -74,6 +63,7 @@ export default function ProductsPage() {
                 options={categories}
               />
             </Col>
+
             <Col md="4">
               <Select
                 label="Sort by"
@@ -85,19 +75,26 @@ export default function ProductsPage() {
           </Row>
         </Col>
       </Row>
+
       <Row className="mt-1 mb-n3">
-        {products
-          // filter by the chosen category
-          .filter((x) => category === "All" || x.categories.includes(category))
-          // sort by the chosen choice for sorting
-          .sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : -1) * sortOrder)
-          // map to product cards
-          .map((product) => (
-            <Col xs={12} lg={6} key={product.id}>
-              <ProductCard {...product} />
+        {films
+          .filter((x: any) => category === "All" || x.categories.includes(category))
+          .sort((a: any, b: any) => (a[sortKey] > b[sortKey] ? 1 : -1) * sortOrder)
+          .map((film: any) => (
+            <Col xs={12} lg={6} key={film.id}>
+              <FilmCard {...film} />
             </Col>
           ))}
       </Row>
     </>
   );
 }
+
+// ✅ Put route AFTER the component
+FilmPage.route = {
+  path: "/",
+  menuLabel: "Products",
+  index: 1,
+  parent: "/",
+  loader: productsLoader,
+};
