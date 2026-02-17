@@ -30,7 +30,7 @@ public static class DbQuery
     {
       CreateTablesIfNotExist(db);
       // To create filmvisarna's tables 
-      FilmvisarnaTables.CreateTableeIfNotExist(db); 
+      FilmvisarnaTables.CreateTablesIfNotExist(db); 
     }
 
     // Seed data if tables are empty

@@ -4,7 +4,7 @@ public static class FilmvisarnaTables
 {
   // Create tables
 
-  private static void CreateTablesIfNotExist(MySqlConnection db)
+  public static void CreateTablesIfNotExist(MySqlConnection db)
   {
     var createTablesSql = @"
 
