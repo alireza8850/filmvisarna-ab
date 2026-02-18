@@ -1,4 +1,4 @@
-export default interface film{
+export default interface Film{
   id: number;
   title: string;
   duration_minutes: number;
