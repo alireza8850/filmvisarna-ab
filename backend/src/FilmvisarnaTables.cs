@@ -20,7 +20,7 @@ public static class FilmvisarnaTables
                 language VARCHAR(100), 
                 poster_url VARCHAR(500), 
                 trailer_url VARCHAR(500), 
-                created_at DATE DEFAULT (CURDATE()) NOT NULL
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP() NOT NULL
             );
 
 
