@@ -46,6 +46,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    margin-left: auto;
     gap: 20px;
 
 }
@@ -61,7 +62,7 @@ body{
     color: var(--primary-text);
     text-decoration: none;   /* tar bort understrykning */
     font-size: 14px;
-    transition: color 0.3;
+    transition: color 0.3 ease;
     white-space: nowrap;      /* ingen radbrytning tex "kommande filmer" halva texten hamnar inte i nästa rad */
 
 }
@@ -72,20 +73,19 @@ body{
 
 .nav-buttons{
     display: flex;
-    padding: 10px 5px;
-    gap: 20px;
+    gap: 10px;
     font-size: 20px;
-    border: none;
-    border-radius: 10px;
-    transition: all 0.3;
+    transition: all 0.3 ease;
     white-space: nowrap;
 
 }
 .sign-button{
     background-color: #ffffff;
-    color: balck;
-    padding: 10px 5px;
+    color: black;
+    padding: 10px 10px;
     white-space: nowrap;
+    border: none;
+    border-radius: 5px; 
 }
 
 .sign-button:hover{
@@ -108,7 +108,7 @@ body{
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
     width: 40px;
     height: 40px;
     display: flex;
@@ -117,20 +117,20 @@ body{
 }
 
 .user-icon:hover, .hamburger-icon:hover{
-    background-color: rgba(199, 199, 199, 0.200);
+    background-color: rgba(199, 199, 199, 0.2);
 }
 
 .mobile-menu{
     position: fixed;
     top: 0;
-    r/*right: -100%;*/  /*tillfällig kommenterad*/
+    right: -100%;
     width: 80%;
     max-width: 400px;
     height: 100vh;
     background-color: black;
-    transition: right 0.3 ease-in-out;
+    transition: right 0.3s ease-in-out;
     overflow-y: auto;
-    box-shadow: -5px 0 10px rgb(0, 0, 0, 0.5);
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1000;
 
 }
@@ -159,7 +159,7 @@ body{
     font-size: 24px;
     cursor: pointer;
     padding: 5px;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
     width: 40px;
     height: 40px;
     display: flex;
@@ -205,4 +205,74 @@ body{
     width: 100%;
     padding: 10px;
     font-size: 16px;
+}
+
+@media (max-width: 767px) {
+    .logo {
+        font-size: 16px;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    .mobile-menu {
+        width: 90%;
+    }
+
+    .desktop-nav {              /* dölj desktop-nav */
+        display: none;
+    }
+}
+
+
+
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .logo {
+        font-size: 19px;
+    }
+    
+    .header-content {
+        gap: 25px;
+    }
+    
+    .mobile-menu {
+        width: 60%;
+        max-width: 350px;
+    }
+
+    .desktop-nav {              /* dölj desktop-nav */
+        display: none;
+    }
+}
+
+
+
+
+@media (min-width: 1024px) {
+
+    /* Dölj mobil-element */
+
+    .hamburger-icon, .user-icon{
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: none;
+    }
+    
+    /* Visa desktop-element */
+
+    .desktop-nav-inline {
+        display: flex;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .header {
+        padding: 18px 0;
+    }
 }
