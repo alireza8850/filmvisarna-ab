@@ -1,5 +1,5 @@
 # Filmvisarna API Contract
-Ska överväga lägga till lite extra detaljer här
+Ska överväga lägga til lite extra detaljer här
 ## Global Response Conventions
 
 ### Error format (standard)
@@ -23,17 +23,25 @@ All error responses SHOULD use:
 
 ## Authentication & Authorization
 
-### Roles
+### Roles (from ACL)
 
--   `customer`\
--   `admin` 
+-   `visitor` ==> Not logged in
+-   `user` ==> Logged-in user
+-   `staff` ==> filmvisarna's employee
+-   `admin` ==> full system access
 
 ------------------------------------------------------------------------
+
+### Note: 
+. Registeration always creates user.
+. staff and admin are created manually in DB.
+. ACL controls access to all routes.
 
 ## POST /api/register
 
 Create a new user account.\
 Auth: Not required
+ACL: visitor ==> allow
 
 ### Request body
 
@@ -73,6 +81,7 @@ Auth: Not required
 
 Login registered user and create session cookie.\
 Auth: Not required
+ACL: visitor ==> allow
 
 ### Request body
 
@@ -89,10 +98,10 @@ Auth: Not required
 
 ``` json
 {
-  "userId": 3,
+  "id": 3,
   "firstName": "Fatima",
   "lastName": "Al-Murtadha",
-  "role": "customer"
+  "role": "user"
 }
 ```
 
@@ -108,6 +117,7 @@ Auth: Not required
 
 Logout and destroy current session.\
 Auth: Required
+ACL: user,staff,admin ==> allow
 
 **200 OK**
 
@@ -121,16 +131,17 @@ Auth: Required
 
 Get current authenticated user.\
 Auth: Required
+ACL: user,staff,admin ==> allow
 
 **200 OK**
 
 ``` json
 {
-  "userId": 3,
+  "id": 3,
   "email": "fatima@example.com",
   "firstName": "Fatima",
   "lastName": "Al-Murtadha",
-  "role": "customer"
+  "role": "user"
 }
 ```
 
@@ -141,7 +152,7 @@ Auth: Required
 1.  Frontend loads film cards:\
     `GET /api/films`
 
-2.  User clicks a movie card → navigates to `/films/{filmId}`
+2.  User clicks a movie card → navigates to `/films/{id}`
 
 Fortsätter med detta flödet när vi kommer lite längre fram igenom start sidan denna veckan /oskar
 
@@ -150,38 +161,47 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 # Films
 
 ## GET /api/films
+List all films.
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
 
 **200 OK**
 
 ``` json
 [
   {
-    "filmId": 1,
+    "id": 1,
     "title": "Avatar 3",
     "genre": "Science fiction",
-    "releaseYear": 2025,
-    "ageLimit": 12,
-    "durationMinutes": 192,
-    "posterUrl": "avatar3.jpg"
+    "release_year": 2025,
+    "age_limit": 12,
+    "duration_minutes": 192,
+    "poster_url": "avatar3.jpg"
   }
 ]
 ```
 
 ------------------------------------------------------------------------
 
-## GET /api/films/{filmId}
-
+## GET /api/films/{id}
+Get full film details.
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
 **200 OK**
 
 ``` json
 {
-  "filmId": 1,
+  "id": 1,
   "title": "Avatar 3",
   "genre": "Science fiction",
-  "releaseYear": 2025,
-  "ageLimit": 12,
-  "durationMinutes": 192,
-  "posterUrl": "avatar3.jpg"
+  "release_year": 2025,
+  "age_limit": 12,
+  "duration_minutes": 192,
+  "description": "..." ,
+  "language": "Svenska",
+  "poster_url": "avatar3.jpg",
+  "trailer_url": "avatar3_trailer.mp4" ,
+  "actors": ["Actor 1","Actor 2"]
 }
 ```
 
@@ -191,17 +211,21 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 
 ## GET /api/showings
 
+List all showings
+Auth: Not Required
+ACL: visitor,user,staff,admin ==> allow
+
 **200 OK**
 
 ``` json
 [
   {
-    "showingId": 1,
-    "filmId": 1,
-    "filmTitle": "Avatar 3",
-    "hallId": 1,
-    "hallName": "Stora salongen",
-    "startTime": "2026-03-01T18:00:00"
+    "id": 1,
+    "film_id": 1,
+    "film_title": "Avatar 3",
+    "hall_id": 1,
+    "hall_name": "Stora salongen",
+    "start_time": "2026-03-01T18:00:00"
   }
 ]
 ```
@@ -216,17 +240,17 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 
 ``` json
 {
-  "hall": {
-    "hallId": 1,
-    "hallName": "Stora salongen",
-    "totalRows": 10,
-    "seatsPerRow": 8
+    "hall": {
+    "hall_id": 1,
+    "hall_name": "Stora salongen",
+    "total_rows": 10,
+    "seats_per_row": 8
   },
   "seats": [
     {
-      "seatId": 1,
-      "rowNumber": 1,
-      "seatNumber": 1,
+      "seat_id": 1,
+      "row_index": 1,
+      "seat_number": 1,
       "status": "booked"
     }
   ]
@@ -254,18 +278,21 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 # Booking System
 
 ## POST /api/bookings
+Create a booking.
+Auth: user, staff, admin.
+ACL: allow.
 
 **201 Created**
 
 ``` json
 {
-  "bookingId": 10,
-  "bookingNumber": "BK-2026-0123",
-  "bookingStatus": "confirmed",
-  "filmTitle": "Avatar 3",
-  "hallName": "Stora salongen",
-  "startTime": "2026-03-01T18:00:00",
-  "totalPrice": 220.00
+  "id": 10,
+  "booking_number": "BK-2026-0123",
+  "booking_status": "confirmed",
+  "film_title": "Avatar 3",
+  "hall_name": "Stora salongen",
+  "start_time": "2026-03-01T18:00:00",
+  "total_price": 220.00
 }
 ```
 
@@ -275,19 +302,20 @@ Fortsätter med detta flödet när vi kommer lite längre fram igenom start sida
 
 ## GET /api/bookings/my
 
-Auth:  Required
+Auth:  Required (user,staff, admin).
+ACL: allow.
 
 **200 OK**
 
 ``` json
 [
   {
-    "bookingId": 1,
-    "bookingNumber": "BK-2026-0001",
-    "filmTitle": "Avatar 3",
-    "startTime": "2026-03-01T18:00:00",
-    "bookingStatus": "confirmed",
-    "totalPrice": 320.00
+    "id": 1,
+    "booking_number": "BK-2026-0001",
+    "film_title": "Avatar 3",
+    "start_time": "2026-03-01T18:00:00",
+    "booking_status": "confirmed",
+    "total_price": 320.00
   }
 ]
 ```
