@@ -93,3 +93,116 @@ body{
     color: #ffffff;
     cursor: pointer;
 }
+
+.header-icon{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-icon, .hamburger-icon{
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-icon:hover, .hamburger-icon:hover{
+    background-color: rgba(199, 199, 199, 0.200);
+}
+
+.mobile-menu{
+    position: fixed;
+    top: 0;
+    r/*right: -100%;*/  /*tillfällig kommenterad*/
+    width: 80%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: black;
+    transition: right 0.3 ease-in-out;
+    overflow-y: auto;
+    box-shadow: -5px 0 10px rgb(0, 0, 0, 0.5);
+    z-index: 1000;
+
+}
+.mobile-menu.active{
+    right: 0;
+}
+
+.header-mobile-menu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+
+}
+
+.header-mobile-menu h2{
+    font-size: 20px;
+    margin: 0;
+}
+
+.close-menu{
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-menu:hover{
+    color: var(--sec-color);
+}
+
+.mobile-nav ul{
+    list-style: none;
+}
+
+.mobile-nav li{
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-nav a{
+    display: block;     /*hela bredden är klickbar*/
+    padding: 15px 20px;
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.mobile-nav a.active{
+    color: var(--sec-text);
+    background-color: rgba(67, 67, 67, 0.4);
+    border-left: 3px solid rgba(67, 67, 67, 0.8);
+}
+
+.mobile-auth-buttons{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auth-btn{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
