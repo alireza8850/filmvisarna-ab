@@ -9,7 +9,7 @@ import productsLoader from "../utils/productsLoader";
 import { getHelpers } from "../utils/productPageHelpers";
 
 ProductsPage.route = {
-  path: "/",
+  path: "/products",
   menuLabel: "Products",
   index: 1,
   parent: "/",
