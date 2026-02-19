@@ -8,6 +8,7 @@ import OurVisionPage from "./pages/OurVisionPage.tsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
 import ProductsPage from "./pages/ProductsPage.tsx";
 import FilmDetailsPage from "./pages/FilmDetailsPage.tsx";
+import LandedPageFilms from "./pages/LandedPageFilms.tsx";
 
 interface Route {
   element: JSX.Element;
@@ -25,6 +26,7 @@ export default [
   OurVisionPage,
   ProductDetailsPage,
   ProductsPage,
+  LandedPageFilms,
   FilmDetailsPage,
 ]
   // map the route property of each page component to a Route
