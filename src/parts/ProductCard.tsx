@@ -15,6 +15,7 @@ export default function ProductCard({
     <Card
       className="mb-4 border-0"
       role="button" /*sets the cursor to pointer*/
+      
       onClick={() => navigate("/products/" + slug)}
     >
       <Card.Body as={Row}>
