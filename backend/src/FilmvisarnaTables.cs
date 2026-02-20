@@ -20,6 +20,7 @@ public static class FilmvisarnaTables
                 language VARCHAR(100), 
                 poster_url VARCHAR(500), 
                 trailer_url VARCHAR(500), 
+                is_featured BOOLEAN DEFAULT FALSE,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP() NOT NULL
             );
 
@@ -71,6 +72,10 @@ public static class FilmvisarnaTables
 
     // Check if tables are empty and seed if needed
     var command = db.CreateCommand();
+    // mark Avatar 3 as featured
+    command.CommandText = "UPDATE films SET is_featured = TRUE WHERE id = 1";
+
+    command.ExecuteNonQuery();
 
     // Seed films
     command.CommandText = "SELECT COUNT(*) FROM films";
