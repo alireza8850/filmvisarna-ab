@@ -9,6 +9,7 @@ export default interface Film{
   language: string;
   poster_url: string;
   trailer_url: string;
+  is_featured: boolean;
   created_at: Date;
 }
 
