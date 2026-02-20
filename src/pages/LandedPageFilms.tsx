@@ -29,7 +29,7 @@ export default function LandedPageFilms() {
   }, []);
 
   return (
-    <div className="container mt-4">
+    <article className="container mt-4">
 
       {/* --- Here we will show the featured film as a hero section --- */}
 
@@ -43,6 +43,6 @@ export default function LandedPageFilms() {
           </div>
         ))}
       </div>
-    </div>
+    </article>
   );
 }
