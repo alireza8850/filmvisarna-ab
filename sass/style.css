@@ -1,0 +1,205 @@
+:root {
+    --dark-bg: #060036;
+    --primary-color: #2a4cff;
+    --sec-color: #b80000;
+    --primary-text: #ffffff;
+    --sec-text: #b3b3b3;
+    --border-color: #333;
+}
+
+body {
+    background-color: var(--dark-bg);
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--primary-text);
+}
+
+
+.header {
+    background-color: #000000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    font-size: 32px;
+    letter-spacing: 1px;
+    margin: 0;
+    color: var(--primary-text);
+    white-space: nowrap;
+}
+
+
+.nav-links a {
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--sec-text);
+}
+
+
+.sign-button {
+    background-color: #ffffff;
+    font-size: 12px;
+    color: black;
+    padding: 7px 7px;
+    white-space: nowrap;
+    border: none;
+    border-radius: 5px;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.sign-button:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+
+.user-icon,
+.hamburger-icon {
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-icon:hover,
+.hamburger-icon:hover {
+    background-color: rgba(199, 199, 199, 0.2);
+}
+
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;           /* startar utanför skärmen till höger */
+    width: 80%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: #000000;
+    transition: right 0.3s ease-in-out;
+    overflow-y: auto;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+
+.mobile-menu.active {
+    right: 0;
+}
+
+
+.header-mobile-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-mobile-menu h2 {
+    font-size: 20px;
+    margin: 0;
+    color: var(--primary-text);
+}
+
+
+.close-menu {
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-menu:hover {
+    color: var(--sec-color);
+}
+
+
+.mobile-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav li {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-nav a {
+    display: block;
+    padding: 15px 20px;
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.mobile-nav a:hover {
+    color: var(--sec-text);
+    background-color: rgba(67, 67, 67, 0.2);
+}
+
+.mobile-nav a.active {
+    color: var(--sec-text);
+    background-color: rgba(67, 67, 67, 0.4);
+    border-left: 3px solid rgba(67, 67, 67, 0.8);
+}
+
+
+.auth-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+
+@media (max-width: 767px) {
+    .logo {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .logo {
+        font-size: 19px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .logo {
+        font-size: 20px;
+    }
+}
