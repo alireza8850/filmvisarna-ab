@@ -8,7 +8,7 @@ export default function FilmCard({ film }: { film: Film }) {
       <Link className="film-card shadow-sm rounded p-2 text-decoration-none text-dark" style={{
         display: "block",
         cursor: "pointer"
-      }} to={`/filmer/${film.id}`}
+      }} to={`/films/${film.id}`}
       >
         <img className="w-100 rounded" src={film.poster_url} alt={film.title} />
       </Link>
