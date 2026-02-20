@@ -1,15 +1,24 @@
+import type { RouteObject } from "react-router-dom";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "../sass/index.scss";
-import React from "react";
-import ReactDOM from "react-dom/client";
+import routes from "./routes";
 import App from "./App";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../sass/style.css';
 
-ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-).render(
-  <React.StrictMode>
-    <App/>
-  </React.StrictMode>
+// Create a router using settings/content from 'routes.tsx'
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: routes as RouteObject[],
+    HydrateFallback: App,
+  },
+]);
 
-)
+// Create the React root element
+createRoot(document.querySelector("#root")!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
+);
