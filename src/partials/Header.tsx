@@ -1,100 +1,57 @@
 import { useState } from "react";
-const Header: React.FC = () => {
+import { Link, useLocation } from "react-router-dom";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import routes from "../routes";
+
+export default function Header() {
   // whether the navbar is expanded or not
   // (we use this to close it after a click/selection)
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  const openMenu = (): void => {                            //öppna menyn och lås scrollning
-    setMenuOpen(true);
-    document.body.style.overflow = 'hidden';
-  }
-
-  const closeMenu = (): void => {                           //stäng menyn och lås upp scrollning
-    setMenuOpen(false);
-    document.body.style.overflow = '';
-  }
+  //  get the current route
+  const pathName = useLocation().pathname;
+  const currentRoute = routes
+    .slice()
+    .sort((a, b) => (a.path.length > b.path.length ? -1 : 1))
+    .find((x) => pathName.indexOf(x.path.split(":")[0]) === 0);
+  // function that returns true if a menu item is 'active'
+  const isActive = (path: string) =>
+    path === currentRoute?.path || path === currentRoute?.parent;
 
   return (
-    <>
-      
-            <header className="header py-3">                          {/* padding y 3 */}
-                <div className="container-fluid px-3 px-md-4">          {/* full bredd container med padding x 3 och padding 4 för skärm medium och större*/}
-                    <div className="d-flex justify-content-between align-items-center">
- 
-                        <h1 className="logo">Filmvisarna AB</h1>                 
-                        <nav className="desktop-nav d-none d-lg-flex align-items-center ms-auto gap-3">    {/* dold som standard och visas på lg(desktop)*/}
-
-                            <ul className="nav-links list-unstyled d-flex gap-3 mb-0">
-                                <li><a href="#">NU PÅ BIO</a></li>
-                                <li><a href="#">KOMMANDE FILMER</a></li>
-                                <li><a href="#">MAT &amp; DRYCK</a></li>
-                                <li><a href="#">NYHETER</a></li>
-                            </ul>
-                          
-                            <div className="d-flex gap-2">
-                                <button className="sign-button">BLI MEDLEM</button>
-                                <button className="sign-button">LOGGA IN</button>
-                            </div>
-                        </nav>
-
-                    
-                        <div className="d-flex d-lg-none align-items-center gap-2">
-                            <button
-                                className="user-icon"
-                                aria-label="Mitt konto"
-                            >
-                                <i className="bi bi-person-circle"></i>
-                            </button>
-                            <button
-                                className="hamburger-icon"
-                                aria-label="Öppna meny"        
-                                onClick={openMenu}
-                            >
-                                <i className="bi bi-list"></i>
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            </header>
-
-         
-            <div
-                className={`mobile-menu${menuOpen ? ' active' : ''}`}
-                aria-label="Mobilmeny"
-            >
-             
-                <div className="header-mobile-menu">
-                    <h2>Meny</h2>
-                    <button
-                        className="close-menu"
-                        aria-label="Stäng meny"
-                        onClick={closeMenu}
-                    >
-                        <i className="bi bi-x"></i>
-                    </button>
-                </div>
-
-                
-                <nav className="mobile-nav">
-                    <ul>
-                        <li><a href="#" className="active">PÅ BION</a></li>
-                        <li><a href="#">KOMMANDE FILMER</a></li>
-                        <li><a href="#">MAT &amp; DRYCK</a></li>
-                        <li><a href="#">NYHETER</a></li>
-                    </ul>
-                </nav>
-
-               
-                <div className="d-flex flex-column gap-2 p-3">
-                    <button className="auth-btn">BLI MEDLEM</button>
-                    <button className="auth-btn">LOGGA IN</button>
-                </div>
-            </div>
-    
-    </>
-  )
-
-};
-
-export default Header;
+    <header>
+      <Navbar
+        expanded={expanded}
+        expand="md"
+        className="bg-primary"
+        data-bs-theme="dark"
+        fixed="top"
+      >
+        <Container fluid>
+          <Navbar.Brand className="me-5" as={Link} to="/">
+            The Good Grocery
+          </Navbar.Brand>
+          <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              {routes
+                .filter((x) => x.menuLabel)
+                .map(({ menuLabel, path }, i) => (
+                  <Nav.Link
+                    as={Link}
+                    key={i}
+                    to={path}
+                    className={isActive(path) ? "active" : ""}
+                    /* close menu after selection*/
+                    onClick={() => setTimeout(() => setExpanded(false), 200)}
+                  >
+                    {menuLabel}
+                  </Nav.Link>
+                ))}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </header>
+  );
+}

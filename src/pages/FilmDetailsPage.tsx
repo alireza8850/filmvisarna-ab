@@ -31,6 +31,7 @@ export default function FilmDetailsPage() {
     language,
     poster_url,
     trailer_url,
+    is_featured,
     created_at
   } = film;
 
@@ -38,13 +39,13 @@ export default function FilmDetailsPage() {
     <article className="film-details">
       <Row>
         <Col>
-          <h2 className="text-primary">{title}</h2>
+          <h2 className="film-details__title">{title}</h2>
           <Image
-            src={"/images/filmss/" + id + ".jpg"}
+            src={poster_url}
             alt={"Poster image of the film " + title + "."}
           />
           {description.split("\n").map((x, i) => (
-            <p key={i}>{x}</p>
+            <p className="film-details__description" key={i}>{x}</p>
           ))}
         </Col>
       </Row>

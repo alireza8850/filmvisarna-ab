@@ -1,10 +1,37 @@
 
-.film-details-page {
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  img {
-    border-radius: 12px;
-  }
+.film-details {
+  color: #fff;
 }
+
+.film-details__poster {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.film-details__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  
+}
+.film-details__description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.film-details__trailer-btn {
+  background: #dc3545;
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background: #b02a37;
+    color: #fff;
+  }
+} 

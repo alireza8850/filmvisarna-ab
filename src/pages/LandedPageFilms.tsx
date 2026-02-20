@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 //import "./FilmCard.css";
 import { useEffect, useState } from "react";
+import type Film from "../interfaces/Film";
+import HeroFilm from "../partials/HeroFilm";
+import FilmCard from "../partials/FilmCard";
 
 LandedPageFilms.route = {
   path: "/",
@@ -8,44 +11,38 @@ LandedPageFilms.route = {
   index: 2,
 };
 
-type FilmCardProps = {
-  id: number; 
-  title: string;
-  image: string;
-  categories?: string[];
-  price?: number;
-};
 
-export default function LandedPageFilms({ id, title, image }: FilmCardProps) {
-  const [films, setFilms] = useState([]);
+
+export default function LandedPageFilms() {
+
+  const [films, setFilms] = useState<Film[]>([]);
+  const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null );
 
   async function GetFilms() {
     const results = await (await fetch("/api/films")).json();
     setFilms(results);
+      const hero = results.find((film: Film) => film.is_featured === true);
+      setFeaturedFilms(hero || null);
   }
   useEffect(() => {
     GetFilms();
   }, []);
 
   return (
-    <div className="film-card">
-      <Link to={`/filmer/${id}`}>
-        <img className="film-card__image" src={image} alt={title} />
-      </Link>
-      <button onClick={() => console.log(films)}>Log films</button>
-      {
-        films.map((film: any) => {
-          
-          return <div key={film.id}>
-        <h4>{film.title}</h4> 
-        </div>
-      })} 
-      
-      <h3 className="film-card__title">{title}</h3>
+    <article className="container mt-4">
 
-      <Link className="film-card__button" to={`/bokning/${id}`}>
-        Boka
-      </Link>
-    </div>
+      {/* --- Here we will show the featured film as a hero section --- */}
+
+      {featuredFilms && <HeroFilm film={featuredFilms} />}
+
+      {/* --- Here we will show the rest of the films as cards --- */}
+      <div className="row mt-5">
+        {films.filter(film => film.id !== featuredFilms?.id).map((film) => (
+          <div key={film.id} className="col-md-3 mb-4">
+            <FilmCard film={film} />    
+          </div>
+        ))}
+      </div>
+    </article>
   );
 }
