@@ -111,6 +111,12 @@ export default function FilmDetailsPage() {
               </Col>
           ))}
         </Row>
+
+        <div className="film-details__continue-btn-wrapper">
+          <button className="film-details__continue-btn">
+            Gå vidare
+          </button>
+        </div>
       </article>
   );
 }

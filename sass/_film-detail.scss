@@ -193,4 +193,30 @@
 
 .film-details__legend-box--selected {
   background-color: #008CFF;
+}
+
+.film-details__continue-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.film-details__continue-btn {
+  background-color: #008CFF;
+  color: #fff;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #0070d9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 } 
