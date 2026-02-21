@@ -1,6 +1,7 @@
 import type Film from "../interfaces/Film";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Accordion } from "react-bootstrap";
 import { useLoaderData } from "react-router-dom";
+import { useState } from "react";
 import NotFoundPage from "./NotFoundPage";
 import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
@@ -14,6 +15,7 @@ FilmDetailsPage.route = {
 
 export default function FilmDetailsPage() {
   const film = useLoaderData().film as Film;
+  const [selectedTime, setSelectedTime] = useState<number | null>(null);
 
   // if no film found, show 404
   if (!film) {
@@ -50,10 +52,60 @@ export default function FilmDetailsPage() {
           </Col>
         </Row>
 
-        <Row className="film-details__showtimes mt-4">
+        <Accordion className="film-details__accordion mt-4">
+          <Accordion.Item eventKey="0" className="film-details__accordion-item">
+            <Accordion.Header className="film-details__accordion-header">
+              Film Specifikationer
+            </Accordion.Header>
+            <Accordion.Body className="film-details__accordion-body">
+              <div className="film-details__spec-list">
+                <div className="film-details__spec-item">Åldersgräns:</div>
+                <div className="film-details__spec-item">Premiär:</div>
+                <div className="film-details__spec-item">Datum:</div>
+                <div className="film-details__spec-item">Speltid:</div>
+                <div className="film-details__spec-item">Skådespelare:</div>
+                <div className="film-details__spec-item">Språk:</div>
+                <div className="film-details__spec-item">Genre:</div>
+              </div>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+
+        <div className="film-details__date-filter mt-4">
+          <label htmlFor="date-time-filter" className="film-details__date-filter-label">
+            Välj datum
+          </label>
+          <input
+            type="datetime-local"
+            id="date-time-filter"
+            className="film-details__date-filter-input"
+          />
+        </div>
+
+        <Row className="mt-3">
+          <div className="film-details__legend">
+            <div className="film-details__legend-item">
+              <span className="film-details__legend-text">Tillgängliga tider</span>
+              <span className="film-details__legend-box film-details__legend-box--available"></span>
+            </div>
+            <div className="film-details__legend-item">
+              <span className="film-details__legend-text">Fullbokad</span>
+              <span className="film-details__legend-box film-details__legend-box--full"></span>
+            </div>
+            <div className="film-details__legend-item">
+              <span className="film-details__legend-text">Vald tid</span>
+              <span className="film-details__legend-box film-details__legend-box--selected"></span>
+            </div>
+          </div>
+        </Row>
+
+        <Row className="film-details__showtimes">
           {[...Array(8)].map((_, i) => (
               <Col xs={3} key={i} className="mb-3">
-                <div className="film-details__showtime-box border rounded p-3 text-center">
+                <div
+                  className={`film-details__showtime-box border rounded p-3 text-center ${selectedTime === i ? 'film-details__showtime-box--selected' : ''}`}
+                  onClick={() => setSelectedTime(i)}
+                >
                   —
                 </div>
               </Col>
