@@ -20,6 +20,14 @@
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
+.film-details__showtime-box {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  margin: 0 auto;
+}
 .film-details__trailer-btn {
   background: #dc3545;
   color: #fff;
