@@ -25,16 +25,17 @@ export default function FilmDetailsPage() {
   const {
     id: _id,
     title,
-    duration_minutes: _duration_minutes,
-    genre: _genre,
-    release_year: _release_year,
-    age_limit: _age_limit,
+    duration_minutes,
+    genre,
+    release_year,
+    age_limit,
     description,
-    language: _language,
+    language,
     poster_url,
     trailer_url: _trailer_url,
     is_featured: _is_featured,
-    created_at: _created_at
+    created_at,
+    actors
   } = film;
 
   return (
@@ -59,13 +60,27 @@ export default function FilmDetailsPage() {
             </Accordion.Header>
             <Accordion.Body className="film-details__accordion-body">
               <div className="film-details__spec-list">
-                <div className="film-details__spec-item">Åldersgräns:</div>
-                <div className="film-details__spec-item">Premiär:</div>
-                <div className="film-details__spec-item">Datum:</div>
-                <div className="film-details__spec-item">Speltid:</div>
-                <div className="film-details__spec-item">Skådespelare:</div>
-                <div className="film-details__spec-item">Språk:</div>
-                <div className="film-details__spec-item">Genre:</div>
+                <div className="film-details__spec-item">
+                  <strong>Åldersgräns:</strong> {age_limit} år
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Premiär:</strong> {release_year}
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Datum:</strong> {new Date(created_at).toLocaleDateString('sv-SE')}
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Speltid:</strong> {duration_minutes} minuter
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Skådespelare:</strong> {actors && actors.length > 0 ? actors.join(', ') : 'Inga skådespelare tillgängliga'}
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Språk:</strong> {language}
+                </div>
+                <div className="film-details__spec-item">
+                  <strong>Genre:</strong> {genre}
+                </div>
               </div>
             </Accordion.Body>
           </Accordion.Item>

@@ -41,10 +41,16 @@ public static class FilmRoutes
         return RestResult.Parse(context, new { error = "Filmen finns inte." });
       }
 
-      // fetch actors depending on api-contract 
-      // GET film's actors 
-
-
+      // fetch actors depending on api-contract
+      // GET film's actors
+      var actorsSql = @"
+          SELECT a.name
+          FROM actors a
+          JOIN film_actors fa ON a.id = fa.actor_id
+          WHERE fa.film_id = @id
+      ";
+      var actors = SQLQuery(actorsSql, new { id }, context);
+      film.actors = actors.Map(x => x.name);
 
       // fetch showings depending on api-contract
       // GET/api/films/{id}/showings

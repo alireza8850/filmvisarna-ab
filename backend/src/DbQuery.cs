@@ -70,6 +70,7 @@ public static class DbQuery
                 email VARCHAR(255) NOT NULL UNIQUE,
                 firstName VARCHAR(255) NOT NULL,
                 lastName VARCHAR(255) NOT NULL,
+                phoneNumber VARCHAR(50),
                 role VARCHAR(50) NOT NULL DEFAULT 'user',
                 password VARCHAR(255) NOT NULL
             );
@@ -122,10 +123,12 @@ public static class DbQuery
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       var usersData = @"
-                INSERT INTO users (created, email, firstName, lastName, role, password) VALUES
-                ('2024-04-02', 'thomas@nodehill.com', 'Thomas', 'Frank', 'admin', '$2a$13$IahRVtN2pxc1Ne1NzJUPpOQO5JCtDZvXpSF.IF8uW85S6VoZKCwZq'),
-                ('2024-04-02', 'olle@nodehill.com', 'Olle', 'Olofsson', 'user', '$2a$13$O2Gs3FME3oA1DAzwE0FkOuMAOOAgRyuvNQq937.cl7D.xq0IjgzN.'),
-                ('2024-04-02', 'maria@nodehill.com', 'Maria', 'Mårtensson', 'user', '$2a$13$p4sqCN3V3C1wQXspq4eN0eYwK51ypw7NPL6b6O4lMAOyATJtKqjHS');
+                INSERT INTO users (created, email, firstName, lastName, phoneNumber, role, password) VALUES
+                ('2025-12-14', 'fatima@al-murtadha', 'Fatima', 'Al-Murtadha', '(476) 5774921', 'admin', '123'),
+                ('2025-12-14', 'neha@unesco.org', 'Neha', 'Tadgell', '(476) 5774922', 'customer', '123'),
+                ('2025-04-21', 'arbaz@upenn.edu', 'Arbaz', 'Greenleaf', '(386) 3321896', 'staff', '123'),
+                ('2025-09-11', 'oskar@alexa.com', 'Oskar', 'Lummasana', '(651) 5012342', 'staff', '123'),
+                ('2025-09-25', 'ali@google.com.br', 'Ali', 'Dalla', '(920) 6104534', 'customer', '123');
             ";
       command.CommandText = usersData;
       command.ExecuteNonQuery();
