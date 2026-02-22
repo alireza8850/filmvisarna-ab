@@ -29,7 +29,7 @@
   margin: 0 auto;
   cursor: pointer;
   transition: all 0.3s ease;
-  background-color: #15FF00;
+  background-color: #2A8017;
 
   &:hover {
     opacity: 0.8;
@@ -40,7 +40,7 @@
   }
 }
 .film-details__trailer-btn {
-  background: #dc3545;
+  background: #B80000;
   color: #fff;
   padding: 6px 14px;
   font-size: 1rem;
@@ -50,7 +50,7 @@
   text-decoration: none;
 
   &:hover {
-    background: #b02a37;
+    background: #B80000;
     color: #fff;
   }
 }
@@ -184,11 +184,11 @@
 }
 
 .film-details__legend-box--available {
-  background-color: #15FF00;
+  background-color: #2A8017;
 }
 
 .film-details__legend-box--full {
-  background-color: #FF0606;
+  background-color: #B80000;
 }
 
 .film-details__legend-box--selected {
