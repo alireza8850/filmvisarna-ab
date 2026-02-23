@@ -43,10 +43,19 @@ export default function FilmDetailsPage() {
       <Row>
         <Col>
           <h2 className="film-details__title">{title}</h2>
-          <Image
-            src={"/images/" + poster_url}
-            alt={"Poster image of the film " + title + "."}
-          />
+          <span className="film-details__poster-and-trailer">
+            <Image
+              src={"/images/" + poster_url}
+              alt={"Poster image of the film " + title + "."}
+            />
+            <button
+              className="film-details__trailer-btn"
+              onClick={() => window.open(film.trailer_url, "_blank")}
+            >
+              Se Trailer
+            </button>
+          </span>
+
           {description.split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>
               {x}
