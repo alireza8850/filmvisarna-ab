@@ -11,6 +11,11 @@ $enable-negative-margins: true;
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
 // Override some Bootstrap defaults
+body {
+  background-color: #060036;
+  min-height: 100vh;
+}
+
 .navbar-brand {
   font-family: 'Chewy';
   font-size: 30px;
