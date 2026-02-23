@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer style={{
-      backgroundColor: '#01002c',
+      backgroundColor: '#000000',
       color: 'white',
       paddingTop: '64px',
       paddingBottom: '32px',
@@ -153,7 +153,7 @@ export default function Footer() {
           display: 'flex', 
           flexDirection: 'column', 
           gap: '12px',
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: 'rgba(255, 255, 255, 255)',
           fontSize: '14px'
         }}>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Om oss</a>
