@@ -1,17 +1,23 @@
-//import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Header from "./partials/Header";
-//import Main from "./partials/Main";
-//import Footer from "./partials/Footer";
-//import BootstrapBreakpoints from "./parts/BootstrapBreakpoints";
+import Main from "./partials/Main";
+import Footer from "./partials/Footer";
+import BootstrapBreakpoints from "./parts/BootstrapBreakpoints";
 
+// turn off when not needed for debugging
+const showBootstrapBreakpoints = false;
 
-const App: React.FC = () => 
-{
-  return(
+export default function App() {
+  // scroll to top when the route changes
+  useLocation();
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+  return (
     <>
-    <Header />
+      <Header />
+      <Main />
+      <Footer />
+      {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
     </>
-  )
-};
-
-export default App;
+  );
+}
