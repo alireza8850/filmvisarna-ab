@@ -48,15 +48,23 @@ export default function FilmDetailsPage() {
               src={"/images/" + poster_url}
               alt={"Poster image of the film " + title + "."}
             />
-            <button
-              className="film-details__trailer-btn"
-              onClick={() => window.open(film.trailer_url, "_blank")}
-            >
-              Se Trailer
-            </button>
+            {film.trailer_url && (
+              <button
+                className="film-details__trailer-btn"
+                onClick={() => {
+                  // Ensure the URL is properly formatted
+                  const url = film.trailer_url.startsWith('http')
+                    ? film.trailer_url
+                    : `https://${film.trailer_url}`;
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }}
+              >
+                Se Trailer
+              </button>
+            )}
           </span>
 
-          {description.split("\n").map((x, i) => (
+          {description?.split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>
               {x}
             </p>
