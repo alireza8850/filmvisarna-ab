@@ -1,41 +1,54 @@
 .film-card {
-  display: block;
-  padding: 10px;
+  position: relative;
+  overflow: hidden;
   border-radius: 12px;
-  text-decoration: none;
-  color: #fff;
-  background: #111;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  transition: transform .2s ease;
+  background: #000;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  } 
+    transform: scale(1.03);
+  }
 }
-.film-card__content {
-  margin-top: 10px;
-} 
 
-.film-card__link {
-  text-decoration: none;
-  color: inherit;
+.film-card__image-wrapper {
+  width: 100%;
+  aspect-ratio: 2 / 3; 
+  overflow: hidden;
 }
 
 .film-card__image {
   width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
   border-radius: 12px;
-} 
+}
+
+.film-card__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: rgba(88, 86, 86, 0.55); 
+  backdrop-filter: blur(4px);
+
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
 
 .film-card__title {
-  margin-top: 10px;
   font-size: 1rem;
   font-weight: 600;
-  text-align: center;
   color: #fff;
-} 
+}
 
 .film-card__genre {
   font-size: 0.9rem;
-  color: #aaa;
-  text-align: center;
+  color: #ccc;
 }
