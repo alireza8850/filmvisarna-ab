@@ -44,10 +44,12 @@ export default function FilmDetailsPage() {
         <Col>
           <h2 className="film-details__title">{title}</h2>
           <span className="film-details__poster-and-trailer">
-            <Image
+            <div className="film-details__poster-w">
+              <Image
               src={"/images/" + poster_url}
               alt={"Poster image of the film " + title + "."}
             />
+            </div> 
             {film.trailer_url && (
               <button
                 className="film-details__trailer-btn"
