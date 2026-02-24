@@ -23,7 +23,7 @@
 }
 
 .ticketRow--last {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    border-bottom: 1px solid rgb(244, 241, 241);
     padding-bottom: 14px;
     margin-bottom: 10px;
 }
@@ -70,8 +70,8 @@
 }
 
 .ticketBtn--plus {
-    background: #1aa34a;
-    color: #ffffff00;
+    background: #313633;
+    color: #dfb7b700;
 }
 
 .ticketCount {
@@ -89,7 +89,7 @@
 }
 
 .ticketTotal__label {
-    background: #6a5a3a;
+    background: #543c0c;
     padding: 10px 14px;
     border-radius: 6px;
     font-size: 18px;
@@ -103,7 +103,7 @@
 
 .ticketTotal__count {
     font-size: 20px;
-    font-weight: 900;
+    font-weight: 500;
     width: 40px;
     text-align: right;
 }

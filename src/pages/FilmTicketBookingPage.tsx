@@ -6,8 +6,8 @@ import NotFoundPage from "./NotFoundPage";
 
 
 const PRICES = {
-    adult: 150,
-    child: 90,
+    adult: 140,
+    child: 80,
     senior: 120
 };
 
@@ -23,7 +23,7 @@ export default function TicketPicker() {
 
     const navigate = useNavigate();
 
-    const [tickets, setTickets] = useState({ adult: 2, child: 1, senior: 1 });
+    const [tickets, setTickets] = useState({ adult: 0, child: 0, senior: 0 });
 
     // if no data found from the database, show 404
     if (!ticketData) {
