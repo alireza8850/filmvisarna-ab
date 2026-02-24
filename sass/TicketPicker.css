@@ -1,12 +1,12 @@
 .ticketBox {
     width: 520px;
     max-width: 100%;
-    background: #2f2f2f;
-    color: #fff;
+    background: #312E2E;
+    color: #dcd9d9;
     padding: 18px 18px 14px;
     border-radius: 6px;
-    border: 2px solid #173a8a;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0);
+    border: 2px solid #2a3f71;
+    box-shadow: 0 8px 24px rgba(24, 2, 2, 0);
 }
 
 .ticketBox__title {
@@ -23,27 +23,27 @@
 }
 
 .ticketRow--last {
-    border-bottom: 1px solid rgb(244, 241, 241);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    /* Clean, subtle line to match the picture */
     padding-bottom: 14px;
     margin-bottom: 10px;
 }
 
 .ticketRow__left {
     display: flex;
-    gap: 18px;
-    align-items: baseline;
-    min-width: 220px;
+    align-items: center;
 }
 
 .ticketRow__label {
     font-size: 18px;
     font-weight: 700;
+    width: 120px;
+    /* Lock this width so the prices all line up perfectly! */
 }
 
 .ticketRow__price {
     font-size: 18px;
     font-weight: 700;
-    opacity: 0.95;
 }
 
 .ticketRow__right {
@@ -62,6 +62,7 @@
     cursor: pointer;
     display: grid;
     place-items: center;
+    padding: 0;
 }
 
 .ticketBtn--minus {
@@ -70,8 +71,8 @@
 }
 
 .ticketBtn--plus {
-    background: #313633;
-    color: #dfb7b700;
+    background: #145731;
+    color: #ffffff;
 }
 
 .ticketCount {
@@ -82,28 +83,27 @@
 }
 
 .ticketTotal {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 14px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding-top: 5px;
 }
 
-.ticketTotal__label {
+.ticketTotal__box {
     background: #543c0c;
     padding: 10px 14px;
     border-radius: 6px;
     font-size: 18px;
     font-weight: 800;
-}
-
-.ticketTotal__price {
-    font-size: 20px;
-    font-weight: 900;
+    display: flex;
+    gap: 12px;
+    /* "Total pris:" and "480 kr" */
 }
 
 .ticketTotal__count {
     font-size: 20px;
-    font-weight: 500;
-    width: 40px;
-    text-align: right;
+    font-weight: 800;
+    width: 34px;
+    text-align: center;
+    margin-right: 52px;
 }

@@ -4,7 +4,6 @@ import ticketTypeLoader from "../utils/TickettypeLoader";
 import type TicketType from "../interfaces/TicketType";
 import NotFoundPage from "./NotFoundPage";
 
-
 const PRICES = {
     adult: 140,
     child: 80,
@@ -45,29 +44,40 @@ export default function TicketPicker() {
 
     return (
         <article className="ticket-details mt-4">
-            <h2 className="ticket-details__title mb-4">Välj biljetter</h2>
+            <h2 className="ticket-details__title mb-4" style={{ color: "#fff" }}></h2>
 
-            <section className="ticketBox p-4 border rounded">
-                {rows.map(({ id, label, price }) => (
-                    <div key={id} className="d-flex justify-content-between align-items-center mb-3">
-                        <div className="fw-bold">{label}: <span className="text-muted fw-normal">{price} kr</span></div>
-                        <div className="d-flex align-items-center gap-3">
-                            <button className="btn btn-outline-dark" onClick={() => update(id, -1)}>−</button>
-                            <div className="fw-bold fs-5">{tickets[id]}</div>
-                            <button className="btn btn-outline-dark" onClick={() => update(id, 1)}>+</button>
+            {/* 2. ALL CUSTOM CSS CLASSES ARE APPLIED HERE */}
+            <section className="ticketBox">
+                <h2 className="ticketBox__title">Välj biljetter</h2>
+
+                {rows.map(({ id, label, price }, index) => (
+                    <div key={id} className={`ticketRow ${index === rows.length - 1 ? 'ticketRow--last' : ''}`}>
+                        <div className="ticketRow__left">
+                            <div className="ticketRow__label">{label}:</div>
+                            <div className="ticketRow__price">{price} kr</div>
                         </div>
+
+                        <div className="ticketRow__right">
+                            <button className="ticketBtn ticketBtn--minus" onClick={() => update(id, -1)}>−</button>
+                            <div className="ticketCount">{tickets[id]}</div>
+                            <button className="ticketBtn ticketBtn--plus" onClick={() => update(id, 1)}>+</button>
+                        </div>
+
                     </div>
                 ))}
 
-                <div className="d-flex justify-content-between align-items-center bg-light p-3 rounded mt-4 border-top">
-                    <div className="fw-bold">Total pris ({totalCount} st):</div>
-                    <div className="fw-bold fs-4">{totalPrice} kr</div>
+                <div className="ticketTotal">
+                    <div className="ticketTotal__box">
+                        <span>Total pris:</span>
+                        <span>{totalPrice}kr</span>
+                    </div>
+                    <div className="ticketTotal__count">{totalCount}</div>
                 </div>
             </section>
 
-            <div className="mt-4 d-flex justify-content-end">
+            <div className="mt-4" style={{ maxWidth: "1000px", display: "flex", justifyContent: "flex-end" }}>
                 <button
-                    className="btn btn-dark btn-lg px-5"
+                    className="btn btn-primary btn-lg px-5"
                     disabled={totalCount === 0}
                     onClick={() => {
                         navigate("/checkout");
