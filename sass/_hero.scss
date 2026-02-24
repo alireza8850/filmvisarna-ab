@@ -14,6 +14,11 @@
   height: 100%;
   object-fit: cover;
 }
+.hero-film-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
 
 .hero-overlay {
   position: absolute;
@@ -35,8 +40,12 @@
   width: 100%;
   margin-bottom: 1rem;
 }
+.btn-sections {
+  display: flex;
+  justify-content: space-between;
+}
 .hero-trailer-btn {
-  background: #dc3545;
+  background: #B80000;
   color: #fff;
   padding: 6px 14px;
   font-size: 0.85rem;
