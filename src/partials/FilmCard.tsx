@@ -6,14 +6,18 @@ export default function FilmCard({ film }: { film: Film }) {
   return (
     <div className="film-card">
       <Link className="film-card__link" to={`/films/${film.id}`}>
-        <img
-          className="film-card__image"
-          src={"/images/" + film.poster_url}
-          alt={film.title}
-        />
+        <div className="film-card__image-wrapper">
+          <img
+            className="film-card__image"
+            src={"/images/" + film.poster_url}
+            alt={film.title}
+          />
+        </div>
+        <div className="film-card__info">
+          <span className="film-card__title">{film.title}</span>
+          <span className="film-card__genre">{film.genre}</span>
+        </div>
       </Link>
-      <h5 className="film-card__title">{film.title}</h5>
-      <p className="film-card__genre">{film.genre}</p>
     </div>
   );
 } 
