@@ -5,6 +5,11 @@ import { Row, Col, Accordion } from "react-bootstrap";
 import { useLoaderData } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
 
+const PRICES = {
+    adult: 150,
+    child: 90,
+    senior: 120
+};
 
 export const TicketBookingPageRoute = {
     path: "/ticket_types/:id",
@@ -12,93 +17,59 @@ export const TicketBookingPageRoute = {
     loader: ticketTypeLoader,
 };
 export default function TicketPicker() {
-    const [adult, setAdult] = useState(2);
-    const [child, setChild] = useState(1);
-    const [senior, setSenior] = useState(1);
-        const ticket_types = useLoaderData().ticket_types as TicketType;
-    const [selectedTime, setSelectedTime] = useState<number | null>(null);
+    const ticket_types = (useLoaderData() as any)?.ticket_types as TicketType;
 
-    const totalCount = adult + child + senior;
+    // 1. Group all ticket counts into a single state object
+    const [tickets, setTickets] = useState({ adult: 2, child: 1, senior: 1 });
 
-    const totalPrice = useMemo(() => {
-        return adult * PRICES.adult + child * PRICES.child + senior * PRICES.senior;
-    }, [adult, child, senior]);
+   // if no ticket_types found, show 404
+  if (!ticket_types) {
+    return <NotFoundPage />;
+  }
 
-    function dec(setter: (n: number) => void) {
-        setter((n) => Math.max(0, n - 1));
-    }
+    const totalCount = tickets.adult + tickets.child + tickets.senior;
+    const totalPrice = (tickets.adult * PRICES.adult) + (tickets.child * PRICES.child) + (tickets.senior * PRICES.senior);
 
-    function inc(setter: (n: number) => void) {
-        setter((n) => n + 1);
-    }
+    // 3. One single function to handle both plus and minus for any ticket type
+    const update = (type: keyof typeof tickets, delta: number) => {
+        setTickets(prev => ({ ...prev, [type]: Math.max(0, prev[type] + delta) }));
+    };
 
-    // if no  found, show 404
-    if (!ticket_types) {
-        return <NotFoundPage />;
-    }
+    // 4. Data array to generate the rows automatically
+    const rows = [
+        { id: "adult", label: "Vuxen", price: PRICES.adult },
+        { id: "child", label: "Barn", price: PRICES.child },
+        { id: "senior", label: "Pensionär", price: PRICES.senior },
+    ] as const;
 
-     return (
-        <section className="ticketBox">
-            <h3 className="ticketBox__title">Välj biljetter</h3>
+    return (
+        <article className="ticket-details mt-4">
+            <h2 className="ticket-details__title mb-4">Välj biljetter</h2>
 
-            <div className="ticketRow">
-                <div className="ticketRow__left">
-                    <div className="ticketRow__label">Vuxen:</div>
-                    <div className="ticketRow__price">{PRICES.adult} kr</div>
+            <section className="ticketBox p-4 border rounded">
+                {/* 5. Loop through the rows instead of writing the HTML 3 times */}
+                {rows.map(({ id, label, price }) => (
+                    <div key={id} className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="fw-bold">{label}: <span className="text-muted fw-normal">{price} kr</span></div>
+                        <div className="d-flex align-items-center gap-3">
+                            <button className="btn btn-outline-dark" onClick={() => update(id, -1)}>−</button>
+                            <div className="fw-bold fs-5">{tickets[id]}</div>
+                            <button className="btn btn-outline-dark" onClick={() => update(id, 1)}>+</button>
+                        </div>
+                    </div>
+                ))}
+
+                <div className="d-flex justify-content-between align-items-center bg-light p-3 rounded mt-4 border-top">
+                    <div className="fw-bold">Total pris ({totalCount} st):</div>
+                    <div className="fw-bold fs-4">{totalPrice} kr</div>
                 </div>
-
-                <div className="ticketRow__right">
-                    <button className="ticketBtn ticketBtn--minus" onClick={() => dec(setAdult)} aria-label="minus vuxen">−</button>
-                    <div className="ticketCount">{adult}</div>
-                    <button className="ticketBtn ticketBtn--plus" onClick={() => inc(setAdult)} aria-label="plus vuxen">+</button>
-                </div>
-            </div>
-
-            <div className="ticketRow">
-                <div className="ticketRow__left">
-                    <div className="ticketRow__label">Barn:</div>
-                    <div className="ticketRow__price">{PRICES.child} kr</div>
-                </div>
-
-                <div className="ticketRow__right">
-                    <button className="ticketBtn ticketBtn--minus" onClick={() => dec(setChild)} aria-label="minus barn">−</button>
-                    <div className="ticketCount">{child}</div>
-                    <button className="ticketBtn ticketBtn--plus" onClick={() => inc(setChild)} aria-label="plus barn">+</button>
-                </div>
-            </div>
-
-            <div className="ticketRow ticketRow--last">
-                <div className="ticketRow__left">
-                    <div className="ticketRow__label">Pensionär:</div>
-                    <div className="ticketRow__price">{PRICES.senior} kr</div>
-                </div>
-
-                <div className="ticketRow__right">
-                    <button className="ticketBtn ticketBtn--minus" onClick={() => dec(setSenior)} aria-label="minus pensionär">−</button>
-                    <div className="ticketCount">{senior}</div>
-                    <button className="ticketBtn ticketBtn--plus" onClick={() => inc(setSenior)} aria-label="plus pensionär">+</button>
-                </div>
-            </div>
-
-            <div className="ticketTotal">
-                <div className="ticketTotal__label">Total pris:</div>
-                <div className="ticketTotal__price">{totalPrice} kr</div>
-                <div className="ticketTotal__count">{totalCount}</div>
-            </div>
-        </section>
+            </section>
+        </article>
     );
-
-
 }
 
-
-
-
-/*
-export default function TicketPicker() {
-    
-
-
-   
-}
-*/
+TicketPicker.route = {
+    path: "/ticket_types/:id",
+    parent: "/",
+    loader: ticketTypeLoader,
+};
