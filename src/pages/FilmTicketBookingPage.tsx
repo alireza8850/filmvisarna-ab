@@ -18,7 +18,7 @@ TicketPicker.route = {
 };
 
 export default function TicketPicker() {
-    // 🚨 THE FIX IS HERE: Changed .ticket_types to .TicketType to match your loader!
+
     const ticketData = (useLoaderData() as any)?.TicketType as TicketType;
 
     const navigate = useNavigate();
