@@ -1,12 +1,10 @@
 import type Film from "../interfaces/Film";
 import { Row, Col, Accordion } from "react-bootstrap";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotFoundPage from "./NotFoundPage";
 import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
-
-
 
 FilmDetailsPage.route = {
   path: "/films/:id",
@@ -17,6 +15,9 @@ FilmDetailsPage.route = {
 export default function FilmDetailsPage() {
   const film = useLoaderData().film as Film;
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
+
+  // 2. INITIALIZED navigate HERE:
+  const navigate = useNavigate();
 
   // if no film found, show 404
   if (!film) {
@@ -48,9 +49,12 @@ export default function FilmDetailsPage() {
             src={poster_url}
             alt={"Poster image of the film " + title + "."}
           />
-          {description.split("\n").map((x, i) => (
+
+          {/* BULLETPROOF FIX: Safely handles missing or empty descriptions */}
+          {description ? String(description).split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>{x}</p>
-          ))}
+          )) : null}
+
         </Col>
       </Row>
 
@@ -129,7 +133,11 @@ export default function FilmDetailsPage() {
       </Row>
 
       <div className="film-details__continue-btn-wrapper">
-        <button className="film-details__continue-btn">
+        {/* 3. UPDATED BUTTON TO ACTUALLY NAVIGATE */}
+        <button
+          className="film-details__continue-btn"
+          onClick={() => navigate(`/ticket_types/${film.id}`)}
+        >
           Gå vidare
         </button>
       </div>

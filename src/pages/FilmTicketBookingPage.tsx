@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import ticketTypeLoader from "../utils/TickettypeLoader";
 import type TicketType from "../interfaces/TicketType";
-import { Row, Col, Accordion } from "react-bootstrap";
-import { useLoaderData } from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
+
 
 const PRICES = {
     adult: 150,
@@ -11,31 +11,32 @@ const PRICES = {
     senior: 120
 };
 
-export const TicketBookingPageRoute = {
+TicketPicker.route = {
     path: "/ticket_types/:id",
     parent: "/",
     loader: ticketTypeLoader,
 };
-export default function TicketPicker() {
-    const ticket_types = (useLoaderData() as any)?.ticket_types as TicketType;
 
-    // 1. Group all ticket counts into a single state object
+export default function TicketPicker() {
+    // 🚨 THE FIX IS HERE: Changed .ticket_types to .TicketType to match your loader!
+    const ticketData = (useLoaderData() as any)?.TicketType as TicketType;
+
+    const navigate = useNavigate();
+
     const [tickets, setTickets] = useState({ adult: 2, child: 1, senior: 1 });
 
-   // if no ticket_types found, show 404
-  if (!ticket_types) {
-    return <NotFoundPage />;
-  }
+    // if no data found from the database, show 404
+    if (!ticketData) {
+        return <NotFoundPage />;
+    }
 
     const totalCount = tickets.adult + tickets.child + tickets.senior;
     const totalPrice = (tickets.adult * PRICES.adult) + (tickets.child * PRICES.child) + (tickets.senior * PRICES.senior);
 
-    // 3. One single function to handle both plus and minus for any ticket type
     const update = (type: keyof typeof tickets, delta: number) => {
         setTickets(prev => ({ ...prev, [type]: Math.max(0, prev[type] + delta) }));
     };
 
-    // 4. Data array to generate the rows automatically
     const rows = [
         { id: "adult", label: "Vuxen", price: PRICES.adult },
         { id: "child", label: "Barn", price: PRICES.child },
@@ -47,7 +48,6 @@ export default function TicketPicker() {
             <h2 className="ticket-details__title mb-4">Välj biljetter</h2>
 
             <section className="ticketBox p-4 border rounded">
-                {/* 5. Loop through the rows instead of writing the HTML 3 times */}
                 {rows.map(({ id, label, price }) => (
                     <div key={id} className="d-flex justify-content-between align-items-center mb-3">
                         <div className="fw-bold">{label}: <span className="text-muted fw-normal">{price} kr</span></div>
@@ -64,12 +64,19 @@ export default function TicketPicker() {
                     <div className="fw-bold fs-4">{totalPrice} kr</div>
                 </div>
             </section>
+
+            <div className="mt-4 d-flex justify-content-end">
+                <button
+                    className="btn btn-dark btn-lg px-5"
+                    disabled={totalCount === 0}
+                    onClick={() => {
+                        navigate("/checkout");
+                    }}
+                >
+                    Gå vidare
+                </button>
+            </div>
+
         </article>
     );
 }
-
-TicketPicker.route = {
-    path: "/ticket_types/:id",
-    parent: "/",
-    loader: ticketTypeLoader,
-};
