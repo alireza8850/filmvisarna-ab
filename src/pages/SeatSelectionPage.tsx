@@ -1,9 +1,11 @@
 import { useLoaderData } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { useState } from "react";
-
+import SeatsLoader from "../interfaces/SeatsLoader";
 SeatSelectionPage.route = {
-  path:"/booking/:showingId"
+  path: "/booking/:showingId",
+  parent: "/",
+  loader:SeatsLoader ,
 }
 
 export default function SeatSelectionPage() {
