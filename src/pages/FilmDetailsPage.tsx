@@ -164,20 +164,7 @@ export default function FilmDetailsPage() {
                 </div>
                 
               </div>
-              <div className="film-details__spec-item">
-                <strong>Skådespelare:</strong>{" "}
-                {actors && actors.length > 0
-                  ? actors.join(", ")
-                  : "Inga skådespelare tillgängliga"}
-              </div>
-              <div className="film-details__spec-item">
-                <strong>Språk:</strong> {language}
-              </div>
-              <div className="film-details__spec-item">
-                <strong>Genre:</strong> {genre}
-              </div>
-            </div>
-          </Accordion.Body>
+            </Accordion.Body>
         </Accordion.Item>
       </Accordion>
 
