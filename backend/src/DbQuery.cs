@@ -121,6 +121,10 @@ public static class DbQuery
                  -- showing
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/showings', 'true', 'Allow all user roles to read showings')
                 ;
+                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/Hall', 'true', 'Allow all user roles to read showings')
+                ;
+                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/Seat', 'true', 'Allow all user roles to read showings')
+                ;
             ";
       command.CommandText = aclData;
       command.ExecuteNonQuery();

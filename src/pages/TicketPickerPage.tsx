@@ -1,10 +1,12 @@
 import { useLoaderData } from "react-router-dom";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import bookingLoader from "../utils/bookingLoader";
 import type TicketPrice from "../interfaces/TicketPrice";
 import type TicketType from "../interfaces/TicketType";
 import type Showing from "../interfaces/Showing";
 import type Film from "../interfaces/Film";
+import SeatSelectionPage from "./SeatSelectionPage";
 
 
 TicketPickerPage.route = {
@@ -113,6 +115,7 @@ export default function TicketPickerPage() {
           <div className="ticketTotal_count">{totalCount}</div>
         </div>
       </section>
+      <SeatSelectionPage />
 
     </article>
   );
