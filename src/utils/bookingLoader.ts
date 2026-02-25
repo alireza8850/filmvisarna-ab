@@ -3,7 +3,9 @@ import type Showing from "../interfaces/Showing";
 import type Film from "../interfaces/Film";
 import type TicketType from "../interfaces/TicketType";
 import type TicketPrice from "../interfaces/TicketPrice";
- 
+import type Hall from "../interfaces/Hall";
+import type Seat from "../interfaces/Seat";
+
 export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   const showingId = params.showingId;
  
@@ -26,11 +28,16 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
  
   // 4) Fetch ticket prices
   const ticketPrices: TicketPrice[] = await (await fetch(`/api/ticket_prices`)).json();
- 
+ //5) Featch hall 
+  const Hall: Hall[] = await (await fetch(`/api/Hall`)).json();
+  //6) featch seat
+  const Seat: Seat[] = await (await fetch(`/api/Seat`)).json();
   return {
     showing,
     film,
     ticketTypes,
-    ticketPrices
+    ticketPrices,
+    Hall,
+    Seat,
   };
 }
