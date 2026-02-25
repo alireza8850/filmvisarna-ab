@@ -4,8 +4,19 @@
 }
 
 .film-details__poster {
+  display: block;
   width: 100%;
-  max-width: 400px;
+  height: 100%;
+  object-fit: cover;
+  max-width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.film-details__poster-w{
+  width: 100%;
+  min-width: 200px;
+  max-width: 950px;
+  overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
