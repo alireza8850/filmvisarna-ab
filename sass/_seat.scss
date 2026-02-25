@@ -1,0 +1,17 @@
+.legend {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  color: white;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  margin-right: 5px;
+  .available { background: green; }
+  .booked { background: #B80000; }
+  .selected { background: #1b178a; }
+}
+
+
+
+

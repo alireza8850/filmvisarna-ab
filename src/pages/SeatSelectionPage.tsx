@@ -19,6 +19,11 @@ export default function SeatSelectionPage() {
     return(
         <article className = "seatpicker">
             <h2> find seat</h2>
+            <div className="legend">
+         <div><span className="box available"></span> Tillgänglig</div>
+         <div><span className="box booked"></span> Fullbokad</div>
+         <div><span className="box selected"></span> Vald</div>
+         </div>
         </article>
     );
 }
