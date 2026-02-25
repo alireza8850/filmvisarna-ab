@@ -111,7 +111,15 @@ public static class DbQuery
                 ('admin', '*', 'allow', '/api/acl', 'true', 'Allow admins to see and edit acl rules'),
                 ('visitor,user,admin', 'GET', 'allow', '/api/products', 'true', 'Allow all user roles to read products'),
                 -- Films 
-                ('visitor,user,staff,admin', 'GET', 'allow', '/api/films', 'true', 'Allow all user roles to read films')
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/films', 'true', 'Allow all user roles to read films'),
+                -- Tickets
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/tickets', 'true', 'Allow all user roles to read tickets'),
+                 -- Tickets type
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/ticket_types', 'true', 'Allow all user roles to read tickets_types'),
+                 -- Tickets prices
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/ticket_prices', 'true', 'Allow all user roles to read ticket_prices'),
+                 -- showing
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/showings', 'true', 'Allow all user roles to read showings')
                 ;
             ";
       command.CommandText = aclData;
