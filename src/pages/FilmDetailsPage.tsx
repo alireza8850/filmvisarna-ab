@@ -1,10 +1,11 @@
 import type Film from "../interfaces/Film";
 import { Row, Col, Accordion } from "react-bootstrap";
-import { useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import NotFoundPage from "./NotFoundPage";
 import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
+
 
 
 FilmDetailsPage.route = {
@@ -14,6 +15,7 @@ FilmDetailsPage.route = {
 };
 
 export default function FilmDetailsPage() {
+  const navigate = useNavigate();
   const film = useLoaderData().film as Film;
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(() => {
@@ -229,7 +231,9 @@ export default function FilmDetailsPage() {
 
 
       <div className="film-details__continue-btn-wrapper">
-        <button className="film-details__continue-btn">Gå vidare</button>
+        <button className="film-details__continue-btn"
+        onClick={() => navigate('/booking/$ {i}/tickets')}
+        >Gå vidare</button>
       </div>
     </article>
   );
