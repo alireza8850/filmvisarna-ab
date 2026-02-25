@@ -1,6 +1,4 @@
 import { useLoaderData } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type TicketPrice from "../interfaces/TicketPrice";
@@ -16,7 +14,7 @@ TicketPickerPage.route = {
 };
 
 export default function TicketPickerPage() {
-  const navigate = useNavigate();
+
 
   const { showing, film, ticketTypes, ticketPrices } = useLoaderData() as {
     showing: Showing;
@@ -117,16 +115,6 @@ export default function TicketPickerPage() {
         </div>
       </section>
 
-      {/* Continue Button */}
-      <div className="mt-4 d-flex justify-content-end">
-        <button
-          className="btn btn-primary btn-lg px-5"
-          disabled={totalCount === 0}
-          onClick={() => navigate(`/booking/${showing.id}/seats`)}
-        >
-          Gå vidare
-        </button>
-      </div>
     </article>
   );
 }
