@@ -27,7 +27,6 @@ export default function TicketPickerPage() {
   const initialState = Object.fromEntries(
     ticketTypes.map((t) => [t.ticket_types, 0])
   ) as Record<string, number>;
-
   const [tickets, setTickets] = useState(initialState);
 
   // Helper: get price for a ticket type
