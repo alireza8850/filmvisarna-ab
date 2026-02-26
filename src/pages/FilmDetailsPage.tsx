@@ -1,5 +1,5 @@
 import type Film from "../interfaces/Film";
-import { Row, Col, Accordion } from "react-bootstrap";
+import { Row, Col, Accordion, Modal } from "react-bootstrap";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import NotFoundPage from "./NotFoundPage";
@@ -23,6 +23,15 @@ export default function FilmDetailsPage() {
     const today = new Date();
     return today.toISOString().split('T')[0];
   });
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
+
+  // Extract YouTube video ID from URL
+  const getYouTubeVideoId = (url: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
 
   // if no film found, show 404
   if (!film) {
@@ -117,13 +126,7 @@ export default function FilmDetailsPage() {
             {film.trailer_url && (
               <button
                 className="film-details__trailer-btn"
-                onClick={() => {
-                  // Ensure the URL is properly formatted
-                  const url = film.trailer_url.startsWith('http')
-                    ? film.trailer_url
-                    : `https://${film.trailer_url}`;
-                  window.open(url, "_blank", "noopener,noreferrer");
-                }}
+                onClick={() => setShowTrailerModal(true)}
               >
                 Se Trailer
               </button>
@@ -235,6 +238,34 @@ export default function FilmDetailsPage() {
         onClick={() => navigate('/booking/$ {i}/tickets')}
         >Gå vidare</button>
       </div>
+
+      {/* Trailer Modal */}
+      <Modal
+        show={showTrailerModal}
+        onHide={() => setShowTrailerModal(false)}
+        size="xl"
+        centered
+        className="trailer-modal"
+      >
+        <Modal.Header closeButton className="trailer-modal__header">
+          <Modal.Title>{title} - Trailer</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="trailer-modal__body">
+          {film.trailer_url && getYouTubeVideoId(film.trailer_url) && (
+            <div className="trailer-modal__video-wrapper">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${getYouTubeVideoId(film.trailer_url)}?autoplay=1&volume=50`}
+                title={`${title} Trailer`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
     </article>
   );
 }

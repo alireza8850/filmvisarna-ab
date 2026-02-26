@@ -1,0 +1,132 @@
+// main container - just centers everything lol
+.confirmation-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden; // hides the curtains when they slide off screen
+}
+
+// the fancy cinema curtains, took me 2 hours to figure this out
+.confirmation-page__curtain {
+  position: fixed;
+  top: 0;
+  width: 50%; // each curtain is half the screen
+  height: 100vh;
+  background: linear-gradient(to bottom, #8B0000 0%, #5A0000 50%, #3D0000 100%); // red gradient for that theater vibe
+  z-index: 1000; // gotta be on top of everything
+  animation: curtainOpen 1.2s ease-in-out forwards;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+
+  // this adds the vertical lines to make it look like fabric, i might get back  to this later
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 40px,
+      rgba(0, 0, 0, 0.1) 40px,
+      rgba(0, 0, 0, 0.1) 42px
+    );
+  }
+
+  &--left {
+    left: 0;
+  }
+
+  &--right {
+    right: 0;
+  }
+}
+
+// left curtain slides left
+@keyframes curtainOpen {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+// right curtain needs its own animation to slide right (duh)
+.confirmation-page__curtain--right {
+  animation: curtainOpenRight 1.2s ease-in-out forwards;
+}
+
+@keyframes curtainOpenRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// the actual content wrapper - starts invisible then fades in after curtains open. 
+.confirmation-page__content {
+  text-align: center;
+  color: #fff;
+  background: none;
+  border: none;
+  box-shadow: none;
+  opacity: 0; // starts invisible
+  animation: fadeIn 0.6s ease-in forwards 0.8s; // waits 0.8s then fades in
+  position: relative;
+  z-index: 1; // below curtains but above background
+}
+
+// fade in with a lil slide up effect MIGHT change this since i dont like how it just spawns
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// big "Tack!" text
+.confirmation-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+// confirmation message text 
+.confirmation-page__message {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  color: #fff;
+}
+
+// the button to go back home
+.confirmation-page__button {
+  background-color: #008CFF;
+  color: #fff;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease; // smooth hover transitions
+
+  &:hover {
+    background-color: #0070d9; // slightly darker blue
+  }
+
+  &:active {
+    transform: scale(0.98); // lil press effect
+  }
+}
