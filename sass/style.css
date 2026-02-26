@@ -27,6 +27,10 @@ body {
     white-space: nowrap;
 }
 
+.logo:hover{
+    cursor: pointer;
+}
+
 
 .nav-links a {
     color: var(--primary-text);
