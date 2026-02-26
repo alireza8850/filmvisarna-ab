@@ -8,14 +8,24 @@ import type Film from "../interfaces/Film";
 
 import type Hall from "../interfaces/Hall";
 import type Seat from "../interfaces/Seat";
+import type Booking from "../interfaces/Booking";
 
 SeatSelectionPage.route = {
-  path: "/booking/:showingId/Seats",
+  path: "/booking/:showingId/seats",
   parent: "/",
   loader: bookingLoader,
 };
 
 export default function SeatSelectionPage() {
+    const { showing, film, ticketTypes, ticketPrices,Hall,Seat,Booking } = useLoaderData() as {
+        showing: Showing;
+        film: Film;
+        ticketTypes: TicketType[];
+        ticketPrices: TicketPrice[];
+        hall : Hall[];
+        seat :Seat[];
+        booking : Booking[]; 
+      };
     return(
         <article className = "seatpicker">
             <h2> find seat</h2>

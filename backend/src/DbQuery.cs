@@ -116,14 +116,17 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/tickets', 'true', 'Allow all user roles to read tickets'),
                  -- Tickets type
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/ticket_types', 'true', 'Allow all user roles to read tickets_types'),
-                 -- Tickets prices
+                 -- Ticket prices
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/ticket_prices', 'true', 'Allow all user roles to read ticket_prices'),
                  -- showing
-                ('visitor,user,staff,admin', 'GET', 'allow', '/api/showings', 'true', 'Allow all user roles to read showings')
-                ;
-                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/Hall', 'true', 'Allow all user roles to read showings')
-                ;
-                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/Seat', 'true', 'Allow all user roles to read showings')
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/showings', 'true', 'Allow all user roles to read showings'),
+                -- halls
+                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/halls', 'true', 'Allow all user roles to read showings'),
+                 -- seats
+                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats', 'true', 'Allow all user roles to read showings'),
+                 -- bookings
+                 ('user,staff,admin', 'GET', 'allow', '/api/bookings', 'true', 'Allow all user roles to read showings'),
+
                 ;
             ";
       command.CommandText = aclData;
