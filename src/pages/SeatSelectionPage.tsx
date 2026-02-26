@@ -1,40 +1,34 @@
 import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import bookingLoader from "../utils/bookingLoader";
-import type TicketPrice from "../interfaces/TicketPrice";
-import type TicketType from "../interfaces/TicketType";
-import type Showing from "../interfaces/Showing";
-import type Film from "../interfaces/Film";
-
 import type Hall from "../interfaces/Hall";
 import type Seat from "../interfaces/Seat";
 import type Booking from "../interfaces/Booking";
+import "../styles/seat.scss";
 
+// ─── Props ────────────────────────────────────────────────────────────────────
+interface SeatSelectionProps {
+  /** How many seats the user may pick (= totalCount from TicketPickerPage) */
+  totalTickets: number;
+  /** Called with final selected seat IDs when the user confirms */
+  onSeatsConfirmed?: (seatIds: number[]) => void;
+}
+
+// Route config kept so the file works standalone if needed
 SeatSelectionPage.route = {
   path: "/booking/:showingId/seats",
   parent: "/",
   loader: bookingLoader,
-};
 
-export default function SeatSelectionPage() {
-    const { showing, film, ticketTypes, ticketPrices, Hall, Seat, Booking } =
-  useLoaderData() as {
-    showing: Showing;
-    film: Film;
-    ticketTypes: TicketType[];
-    ticketPrices: TicketPrice[];
+export default function SeatSelectionPage({
+  totalTickets,
+  onSeatsConfirmed,
+}: SeatSelectionProps) {
+  // ── Data from bookingLoader ─────────────────────────────────────────────────
+  const { Hall, Seat, Booking } = useLoaderData() as {
     Hall: Hall[];
     Seat: Seat[];
     Booking: Booking[];
   };
-    return(
-        <article className = "seatpicker">
-            <h2> find seat</h2>
-            <div className="legend">
-         <div><span className="box available"></span> Tillgänglig</div>
-         <div><span className="box booked"></span> Fullbokad</div>
-         <div><span className="box selected"></span> Vald</div>
-         </div>
-        </article>
-    );
-}
+
+  
