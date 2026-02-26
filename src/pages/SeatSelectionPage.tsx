@@ -17,15 +17,16 @@ SeatSelectionPage.route = {
 };
 
 export default function SeatSelectionPage() {
-    const { } = useLoaderData() as {
-        showing: Showing;
-        film: Film;
-        ticketTypes: TicketType[];
-        ticketPrices: TicketPrice[];
-        hall : Hall[];
-        seat :Seat[];
-        booking : Booking[]; 
-      };
+    const { showing, film, ticketTypes, ticketPrices, Hall, Seat, Booking } =
+  useLoaderData() as {
+    showing: Showing;
+    film: Film;
+    ticketTypes: TicketType[];
+    ticketPrices: TicketPrice[];
+    Hall: Hall[];
+    Seat: Seat[];
+    Booking: Booking[];
+  };
     return(
         <article className = "seatpicker">
             <h2> find seat</h2>
