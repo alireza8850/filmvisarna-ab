@@ -17,7 +17,7 @@ SeatSelectionPage.route = {
 };
 
 export default function SeatSelectionPage() {
-    const { showing, film, ticketTypes, ticketPrices,Hall,Seat,Booking } = useLoaderData() as {
+    const { } = useLoaderData() as {
         showing: Showing;
         film: Film;
         ticketTypes: TicketType[];
