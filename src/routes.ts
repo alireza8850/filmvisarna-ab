@@ -11,6 +11,7 @@ import FilmDetailsPage from "./pages/FilmDetailsPage.tsx";
 import LandedPageFilms from "./pages/LandedPageFilms.tsx";
 import TicketPickerPage from "./pages/TicketPickerPage.tsx";
 import ConfirmationPage from "./pages/ConfirmationPage.tsx";
+import BookingFormPage from "./pages/BookingFormPage.tsx";
 
 
 interface Route {
@@ -33,6 +34,7 @@ export default [
   FilmDetailsPage,
   TicketPickerPage,
   ConfirmationPage,
+  BookingFormPage,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)

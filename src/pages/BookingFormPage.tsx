@@ -1,21 +1,16 @@
-// imports här
-//import { useState } from "react";
-//import BookingState from "../interfaces/BookingState";
+
 import { Row, Col } from "react-bootstrap";
+import "/sass/-booking-form.scss";
+
 
 BookingFormPage.route = {
-  path: "/",
+  path: "/bookingformpage",
   
 };
 
-//interface Overview{
-//  booking = BookingState;
-//}
 
 
-export default function BookingFormPage({booking}: Overview){
-
-  //const [email, setEmail] = useState<string>("");
+export default function BookingFormPage(){
 
   return(
 
@@ -34,16 +29,16 @@ export default function BookingFormPage({booking}: Overview){
                   [
                     /*en array av objekt med etikett och varde */
 
-                    { etikett: "Film:", varde: booking.film},
-                    { etikett: "Tid:", varde: booking.time},
-                    { etikett: "Datum", varde: booking.date},
-                    { etikett: "Salong", varde: String(booking.hall)},
+                    { etikett: "Film:"},
+                    { etikett: "Tid:"},
+                    { etikett: "Datum"},
+                    { etikett: "Salong"},
                   ]
-                  .map(({etikett, varde}) =>
+                  .map(({etikett}) =>
                     (
                     <Row key={etikett} className="mb-2">
                       <Col><span className="film-info">{etikett}</span></Col>
-                      <Col xs="auto"><span className="film-info-value">{varde}</span></Col>
+                      <Col xs="auto"><span className="film-info-value">--</span></Col>
                     </Row>
                     )
                   )
@@ -90,11 +85,11 @@ export default function BookingFormPage({booking}: Overview){
         <Col>
           <Row className="mb-2">
             <Col>
-                <input type="email" className="email-input" placeholder="skrive in din e-post" />
+                <input type="email" className="email-input" placeholder="skriv in din e-post" />
             </Col>
           </Row>
-          <Row>
-            <Col>
+          <Row className="mt-3 justify-content-end">
+            <Col xs="auto">
                 <button className="slutfor-btn" type="button">Slutför</button>
             </Col>
           </Row>
