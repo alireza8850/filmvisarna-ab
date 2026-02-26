@@ -21,7 +21,8 @@ import type Ticket from "../interfaces/Ticket";
     parent: "/",
     loader: bookingLoader,
     };
-    export default function SeatSelectionPage({ totalTickets, onSeatsConfirmed }: SeatSelection) {
+    export default function SeatSelectionPage({ totalTickets, onSeatsConfirmed }: SeatSelection) 
+    {
      const { Hall, Seat, Ticket } = useLoaderData() as {
      Hall: Hall[];
      Seat: Seat[];
@@ -40,6 +41,36 @@ import type Ticket from "../interfaces/Ticket";
     const hall       = Hall[0];
     const totalRows  = hall.total_rows;    // 10 or 8
     const seatsPerRow = hall.seats_per_row; // 10 or 8
+    //  Step 3: Column letters A, B, C … J (or A … H)
+   // seatsPerRow = 10 → ["A","B","C","D","E","F","G","H","I","J"]
+   // seatsPerRow = 8  → ["A","B","C","D","E","F","G","H"]
+   const columns: string[] = [];
+   for (let i = 0; i < seatsPerRow; i++) {
+     columns.push(String.fromCharCode(65 + i)); // 65 = "A"
+    }
 
 
-  
+    //Step 4: Row numbers 1, 2, 3 … 10 (shown top=10, bottom=1)
+    const rows: number[] = [];
+    for (let r = totalRows; r >= 1; r--) {
+    rows.push(r);
+    } 
+   // rows = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+   // Row 10 renders at top of the grid, row 1 at bottom — like a real cinema
+
+   // ── Step 5: Quick seat lookup "1-A" → Seat object
+   // Instead of searching the whole Seat array on every render,
+   // we build a simple object map once.
+   const seatMap: Record<string, Seat> = {};
+   for (const seat of Seat) {
+     seatMap[`${seat.row_index}-${seat.seats_letter}`] = seat;
+   }
+   // seatMap["1-A"] = { id: 1, row_index: 1, seat_letter: "A", hall_id: 1 }
+   // seatMap["3-C"] = { id: 23, ... }
+   // ── Step 6: How many seats still need to be picked ────────────────────────
+   const remaining  = totalTickets - selectedIds.length;
+   const isComplete = totalTickets > 0 && remaining === 0;
+
+
+
+    }
