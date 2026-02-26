@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const Header: React.FC = () => {
   // whether the navbar is expanded or not
   // (we use this to close it after a click/selection)
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const openMenu = (): void => {                            //öppna menyn och lås scrollning
     setMenuOpen(true);
@@ -21,7 +24,7 @@ const Header: React.FC = () => {
                 <div className="container-fluid px-3 px-md-4">          {/* full bredd container med padding x 3 och padding 4 för skärm medium och större*/}
                     <div className="d-flex justify-content-between align-items-center">
  
-                        <h1 className="logo">Filmvisarna AB</h1>                 
+                        <h1 className="logo" onClick={() => navigate("/")}>Filmvisarna AB</h1>                 
                         <nav className="desktop-nav d-none d-lg-flex align-items-center ms-auto gap-3">    {/* dold som standard och visas på lg(desktop)*/}
 
                             <ul className="nav-links list-unstyled d-flex gap-3 mb-0">
