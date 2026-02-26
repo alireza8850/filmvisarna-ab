@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Hall from "../interfaces/Hall";
 import type Seat from "../interfaces/Seat";
@@ -67,7 +67,7 @@ import type Ticket from "../interfaces/Ticket";
    }
    // seatMap["1-A"] = { id: 1, row_index: 1, seat_letter: "A", hall_id: 1 }
    // seatMap["3-C"] = { id: 23, ... }
-   // ── Step 6: How many seats still need to be picked ────────────────────────
+   // Step 6: How many seats still need to be picked 
    const remaining  = totalTickets - selectedIds.length;
    const isComplete = totalTickets > 0 && remaining === 0;
 
