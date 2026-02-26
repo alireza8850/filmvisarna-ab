@@ -1,5 +1,6 @@
 
 import { Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "/sass/-booking-form.scss";
 
 
@@ -11,6 +12,7 @@ BookingFormPage.route = {
 
 
 export default function BookingFormPage(){
+  const navigate = useNavigate();
 
   return(
 
@@ -71,7 +73,7 @@ export default function BookingFormPage(){
                 <Col xs="auto"><span className="summery-info-value"> kr</span></Col>
             </Row>
             <Row className="price-summery">
-                <Col><span className="summery-info">Pansionär x --</span></Col>
+                <Col><span className="summery-info">Pensionär x --</span></Col>
                 <Col xs="auto"><span className="summery-info-value"> kr</span></Col>
             </Row>
             <Row className="price-summery" style={{borderBottom:"none", paddingTop: "10px"}}>
@@ -90,7 +92,7 @@ export default function BookingFormPage(){
           </Row>
           <Row className="mt-3 justify-content-end">
             <Col xs="auto">
-                <button className="slutfor-btn" type="button">Slutför</button>
+                <button className="slutfor-btn" type="button" onClick={() => navigate("/confirmation")}>Slutför</button>
             </Col>
           </Row>
         </Col>
