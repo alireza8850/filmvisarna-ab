@@ -70,6 +70,29 @@ import type Ticket from "../interfaces/Ticket";
    // Step 6: How many seats still need to be picked 
    const remaining  = totalTickets - selectedIds.length;
    const isComplete = totalTickets > 0 && remaining === 0;
+    // Step 7: What is the status of a seat?
+   function getSeatStatus(seat: Seat): "booked" | "selected" | "available" {
+    if (bookedSeatIds.includes(seat.id)) return "booked";    // already sold
+    if (selectedIds.includes(seat.id))   return "selected";  // user picked it
+    return "available";                                       // free to pick
+  }
+
+   //  Step 8: User clicks a seat 
+   function handleSeatClick(seat: Seat) {
+    // Booked seats can never be clicked
+    if (bookedSeatIds.includes(seat.id)) return;
+
+    if (selectedIds.includes(seat.id)) {
+      // Already selected → deselect it
+      setSelectedIds(selectedIds.filter((id) => id !== seat.id));
+    } else {
+      // Not selected → add it, but only if we still have tickets left
+      if (selectedIds.length < totalTickets) {
+        setSelectedIds([...selectedIds, seat.id]);
+      }
+    }
+  }
+
 
 
 
