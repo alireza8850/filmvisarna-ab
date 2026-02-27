@@ -45,12 +45,12 @@ public static class BookingRoutes
 
       // Extract fields from request body
       var showingId = body.showing_id;
-      var email = body.email;
+      var email = body.email; // Used for receipt, but not saved to DB
       var tickets = (Arr)body.tickets; // Array of { ticket_type_id, seat_id (optional) }
 
-      if (showingId == null || email == null || tickets == null)
+      if (showingId == null || tickets == null)
       {
-        return RestResult.Parse(context, new { error = "Missing required fields: showing_id, email, tickets." });
+        return RestResult.Parse(context, new { error = "Missing required fields: showing_id, tickets." });
       }
 
       // Get user_id if logged in (optional)
@@ -96,11 +96,11 @@ public static class BookingRoutes
 
       // Insert booking
       var insertBookingSql = @"
-          INSERT INTO bookings (booking_number, user_id, email, showing_id, booking_status, total_price)
-          VALUES (@bookingNumber, @userId, @email, @showingId, 'confirmed', @totalPrice);
+          INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price)
+          VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice);
           SELECT LAST_INSERT_ID() as id;
       ";
-      var bookingResult = SQLQueryOne(insertBookingSql, new { bookingNumber, userId, email, showingId, totalPrice }, context);
+      var bookingResult = SQLQueryOne(insertBookingSql, new { bookingNumber, userId, showingId, totalPrice }, context);
 
       if (bookingResult == null || bookingResult.error != null)
       {

@@ -73,7 +73,6 @@ public static class FilmvisarnaTables
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 booking_number VARCHAR(50) NOT NULL UNIQUE,
                 user_id INT,
-                email VARCHAR(255),
                 showing_id INT NOT NULL,
                 booking_status ENUM('reserved','confirmed','cancelled','expired') DEFAULT 'reserved',
                 total_price DECIMAL(10,2),
@@ -257,6 +256,12 @@ public static class FilmvisarnaTables
                 (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 21:30:00')),
                 (1, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 10:30:00')),
                 (1, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 19:00:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 13:00:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 18:30:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 4 DAY), ' 14:00:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 15:30:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 17:00:00')),
+                (1, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 7 DAY), ' 20:30:00')),
 
                 -- Mercy (film 2)
                 (2, 2, CONCAT(CURDATE(), ' 12:00:00')),
@@ -266,6 +271,8 @@ public static class FilmvisarnaTables
                 (2, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 19:30:00')),
                 (2, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 15:00:00')),
                 (2, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 21:00:00')),
+                (2, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 14:00:00')),
+                (2, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 18:30:00')),
 
                 -- SvampBob Fyrkant (film 3)
                 (3, 2, CONCAT(CURDATE(), ' 10:00:00')),
@@ -276,6 +283,8 @@ public static class FilmvisarnaTables
                 (3, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 16:00:00')),
                 (3, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 11:00:00')),
                 (3, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 14:00:00')),
+                (3, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 4 DAY), ' 10:00:00')),
+                (3, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 13:00:00')),
 
                 -- Greenland 2 (film 4)
                 (4, 1, CONCAT(CURDATE(), ' 11:30:00')),
@@ -286,6 +295,8 @@ public static class FilmvisarnaTables
                 (4, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 17:30:00')),
                 (4, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 13:30:00')),
                 (4, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 20:00:00')),
+                (4, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 15:00:00')),
+                (4, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 21:00:00')),
 
                 -- Send Help (film 5)
                 (5, 2, CONCAT(CURDATE(), ' 14:00:00')),
@@ -349,6 +360,8 @@ public static class FilmvisarnaTables
                 (11, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 19:30:00')),
                 (11, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 12:30:00')),
                 (11, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 18:30:00')),
+                (11, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 4 DAY), ' 15:00:00')),
+                (11, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 20:00:00')),
 
                 -- Oppenheimer (film 12)
                 (12, 1, CONCAT(CURDATE(), ' 13:00:00')),
@@ -369,7 +382,29 @@ public static class FilmvisarnaTables
                 (13, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 18:30:00')),
                 (13, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 22:00:00')),
                 (13, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 11:00:00')),
-                (13, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 17:00:00'))";
+                (13, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 17:00:00')),
+
+                -- Bamse och havets hemlighet (film 14)
+                (14, 2, CONCAT(CURDATE(), ' 09:30:00')),
+                (14, 2, CONCAT(CURDATE(), ' 12:30:00')),
+                (14, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 10:00:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 09:00:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 10:00:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 4 DAY), ' 11:30:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 09:30:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 12:00:00')),
+                (14, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 7 DAY), ' 10:30:00')),
+
+                -- Lek med Alfons Åberg (film 15)
+                (15, 2, CONCAT(CURDATE(), ' 10:30:00')),
+                (15, 2, CONCAT(CURDATE(), ' 13:30:00')),
+                (15, 1, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 11:00:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), ' 10:00:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 3 DAY), ' 11:30:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 4 DAY), ' 09:00:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 11:00:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 10:00:00')),
+                (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 7 DAY), ' 13:00:00'))";
       command.ExecuteNonQuery();
     }
 
@@ -434,7 +469,14 @@ public static class FilmvisarnaTables
                 ('Robert Pattinson'),
                 ('Emily Blunt'),
                 ('Bodzio Bodzio'),
-                ('Efi Gonzales Hernandez')";
+                ('Efi Gonzales Hernandez'),
+                ('Rolf Lassgård'),
+                ('Lena Endre'),
+                ('Gunilla Bergström'),
+                ('Petter Lennstrand'),
+                ('Shima Niavarani'),
+                ('Johan Rheborg'),
+                ('Tomas von Brömssen')";
       command.ExecuteNonQuery();
     }
 
@@ -448,7 +490,15 @@ public static class FilmvisarnaTables
                 (12, 4),
                 (12, 6),
                 (13, 5),
-                (10, 8)";
+                (10, 8),
+                (15, 11),
+                (15, 12),
+                (14, 13),
+                (14, 14),
+                (14, 15),
+                (11, 4),
+                (7, 9),
+                (7, 10)";
       command.ExecuteNonQuery();
     }
     }

@@ -21,28 +21,10 @@ export default function FilmDetailsPage() {
   const { setFilm, setShowing } = useBooking();
   const [selectedShowingId, setSelectedShowingId] = useState<number | null>(null);
 
-  // Find a sensible default date
-  const getDefaultDate = () => {
-    const todayStr = new Date().toLocaleDateString('sv-SE');
-    if (!Array.isArray(allShowings) || allShowings.length === 0) return todayStr;
-
-    const dates = allShowings
-      .map(s => s.start_time ? s.start_time.split('T')[0] : null)
-      .filter(Boolean) as string[];
-
-    // Use Set to get unique dates and sort them
-    const uniqueDates = [...new Set(dates)].sort();
-
-    if (uniqueDates.includes(todayStr)) return todayStr;
-
-    // Pick the first future date, or if none, the first available date
-    const futureDates = uniqueDates.filter(d => d >= todayStr);
-    if (futureDates.length > 0) return futureDates[0];
-
-    return uniqueDates[0] || todayStr;
-  };
-
-  const [selectedDate, setSelectedDate] = useState<string>(getDefaultDate);
+  // Default to today's date (YYYY-MM-DD)
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    return new Date().toLocaleDateString('sv-SE');
+  });
   const [showTrailerModal, setShowTrailerModal] = useState(false);
 
   // Extract YouTube video ID from URL
@@ -181,26 +163,35 @@ export default function FilmDetailsPage() {
 
 
         <Row className="film-details__showtimes">
-          {showtimes.length > 0 ? showtimes.map((showtime: any) => (
-              <Col xs={3} key={showtime.id} className="mb-3">
-                <div
-                  className={`film-details__showtime-box border rounded p-3 text-center ${selectedShowingId === showtime.id ? 'film-details__showtime-box--selected' : ''}`}
-                  onClick={() => setSelectedShowingId(showtime.id)}
-                >
-                  <div className="film-details__showtime-date">
-                    {new Date(showtime.start_time).toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' })}
-                  </div>
-                  <div className="film-details__showtime-time">
-                    {new Date(showtime.start_time).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                  <div className="film-details__showtime-hall">
-                    {showtime.hall_name}
-                  </div>
-                </div>
+          {showtimes.length > 0 ? (
+            <>
+              <Col xs={12}>
+                <h4 className="film-details__showtimes-date-title mb-4">
+                  Visningar {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </h4>
               </Col>
-          )) : (
+              {showtimes.map((showtime: any) => (
+                <Col xs={6} sm={4} md={3} key={showtime.id} className="mb-3">
+                  <div
+                    className={`film-details__showtime-box border rounded p-3 text-center ${selectedShowingId === showtime.id ? 'film-details__showtime-box--selected' : ''}`}
+                    onClick={() => setSelectedShowingId(showtime.id)}
+                  >
+                    <div className="film-details__showtime-time">
+                      {new Date(showtime.start_time).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div className="film-details__showtime-hall">
+                      {showtime.hall_name}
+                    </div>
+                  </div>
+                </Col>
+              ))}
+            </>
+          ) : (
             <Col>
-              <p className="text-center p-4">Inga visningar tillgängliga för valt datum.</p>
+              <div className="film-details__no-showtimes text-center p-5 border rounded bg-light">
+                <p className="mb-0">Tyvärr finns det inga visningar för {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}.</p>
+                <p className="text-muted small mt-2">Prova att välja ett annat datum i kalendern ovan.</p>
+              </div>
             </Col>
           )}
         </Row>
