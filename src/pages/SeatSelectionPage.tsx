@@ -3,9 +3,10 @@ import { useState } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Hall from "../interfaces/Hall";
 import type Seat from "../interfaces/Seat";
-import type Booking from "../interfaces/Booking";
-import "../styles/seat.scss";
+//import type Booking from "../interfaces/Booking";
+import "/sass/_seat.scss";
 import type Ticket from "../interfaces/Ticket";
+
 
 
    interface SeatSelection {
@@ -92,8 +93,109 @@ import type Ticket from "../interfaces/Ticket";
       }
     }
   }
+   // render 
+   return (
+    <section className="seat-section">
+
+      {/* Legend */}
+      <div className="legend">
+        <div className="legend__item">
+          <SofaIcon className="legend__icon legend__icon--booked" />
+          <span>Fullbokad</span>
+        </div>
+        <div className="legend__item">
+          <SofaIcon className="legend__icon legend__icon--available" />
+          <span>Tillgänglig</span>
+        </div>
+        <div className="legend__item">
+          <SofaIcon className="legend__icon legend__icon--selected" />
+          <span>Vald</span>
+        </div>
+      </div>
+
+      {/* How many seats left to pick */}
+      <p className="seat-hint">
+        {totalTickets === 0 ? (
+          <span className="seat-hint--warn">Välj antal biljetter ovan</span>
+        ) : isComplete ? (
+          <span className="seat-hint--done">✓ {selectedIds.length} platser valda</span>
+        ) : (
+          <>Välj <strong>{remaining}</strong> {remaining === 1 ? "plats" : "platser"} till</>
+        )}
+      </p>
+
+      {/* Seat grid */}
+      <div className="seat-grid">
+
+        {/* Column labels: A B C … J */}
+        <div className="seat-grid__row seat-grid__row--header">
+          <span className="seat-grid__row-num" /> {/* empty spacer */}
+          {columns.map((col) => (
+            <span key={col} className="seat-grid__col-label">{col}</span>
+          ))}
+        </div>
+
+        {/* One row per row number: 10 at top → 1 at bottom */}
+        {rows.map((rowIndex) => (
+          <div key={rowIndex} className="seat-grid__row">
+
+            {/* One seat button per column */}
+            {columns.map((col) => {
+              const seat   = seatMap[`${rowIndex}-${col}`];
+              const status = seat ? getSeatStatus(seat) : null;
+
+              // No seat exists at this position
+              if (!seat) {
+                return <span key={col} className="seat seat--empty" />;
+              }
+
+              // Grey out available seats once the user has picked enough
+              const isAtCap = status === "available" && remaining === 0;
+
+              return (
+                <button
+                  key={col}
+                  className={`seat seat--${status}${isAtCap ? " seat--dim" : ""}`}
+                  onClick={() => handleSeatClick(seat)}
+                  disabled={status === "booked"}
+                  title={`${col}${rowIndex}`}
+                  aria-label={`Rad ${rowIndex} plats ${col} – ${status}`}
+                >
+                  <SofaIcon />
+                </button>
+              );
+            })}
+
+            {/* Row number on the right: 10, 9 … 1 */}
+            <span className="seat-grid__row-num">{rowIndex}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Confirm button — only shows when all seats are selected */}
+      {isComplete && (
+        <div className="seat-confirm">
+          <button
+            className="seat-confirm__btn"
+            onClick={() => onSeatsConfirmed?.(selectedIds)}
+          >
+            Bekräfta platser →
+          </button>
+        </div>
+      )}
+
+    </section>
+  );
+}
+
+   function SofaIcon({ className }: { className?: string }) {
+   return (
+     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M21 9V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2v1h2v-1h10v1h2v-1a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-1 7H4v-4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4Z" />
+    </svg>
+  );
+}
 
 
 
-
-    }
+    
