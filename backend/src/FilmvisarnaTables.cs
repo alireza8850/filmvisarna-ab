@@ -73,6 +73,7 @@ public static class FilmvisarnaTables
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 booking_number VARCHAR(50) NOT NULL UNIQUE,
                 user_id INT,
+                email VARCHAR(255),
                 showing_id INT NOT NULL,
                 booking_status ENUM('reserved','confirmed','cancelled','expired') DEFAULT 'reserved',
                 total_price DECIMAL(10,2),
@@ -87,13 +88,12 @@ public static class FilmvisarnaTables
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 booking_id INT NOT NULL,
                 showing_id INT NOT NULL,
-                seat_id INT NOT NULL,
+                seat_id INT NULL,
                 ticket_type_id INT NOT NULL,
                 FOREIGN KEY (booking_id) REFERENCES bookings(id),
                 FOREIGN KEY (showing_id) REFERENCES showings(id),
                 FOREIGN KEY (seat_id) REFERENCES seats(id),
-                FOREIGN KEY (ticket_type_id) REFERENCES ticket_types(id),
-                UNIQUE(showing_id, seat_id)
+                FOREIGN KEY (ticket_type_id) REFERENCES ticket_types(id)
             );
 
             -- actors

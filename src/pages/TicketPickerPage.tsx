@@ -1,7 +1,8 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
+import { useBooking } from "../utils/BookingContext";
 
 
 TicketPickerPage.route = {
@@ -11,10 +12,12 @@ TicketPickerPage.route = {
 };
 
 export default function TicketPickerPage() {
-
+  const navigate = useNavigate();
   const { film } = useLoaderData() as {
     film: Film;
   };
+
+  const { setTickets, setPrices } = useBooking();
 
   const [vuxen, setVuxen] = useState(0);
   const [barn, setBarn] = useState(0);
@@ -26,6 +29,20 @@ export default function TicketPickerPage() {
 
   const totalPrice = (vuxen * vuxenPrice) + (barn * barnPrice) + (pensionar * pensionarPrice);
   const totalCount = vuxen + barn + pensionar;
+
+  const handleContinue = () => {
+    if (totalCount === 0) {
+      alert('Välj minst en biljett!');
+      return;
+    }
+
+    // Save ticket counts to context
+    setTickets({ vuxen, barn, pensionar });
+    setPrices({ vuxen: vuxenPrice, barn: barnPrice, pensionar: pensionarPrice });
+
+    // Navigate to booking form
+    navigate('/bookingformpage');
+  };
 
   return (
     <article className="ticket-picker container mt-4">
@@ -120,6 +137,15 @@ export default function TicketPickerPage() {
           </div>
         </div>
       </section>
+
+      <div className="mt-3 d-flex justify-content-end">
+        <button
+          className="btn btn-primary"
+          onClick={handleContinue}
+        >
+          Fortsätt till bokning
+        </button>
+      </div>
 
     </article>
   );

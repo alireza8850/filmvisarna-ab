@@ -3,4 +3,5 @@ export default interface Showing {
     film_id: number;
     hall_id: number;
     start_time: string;
+    hall_name?: string;
 }
