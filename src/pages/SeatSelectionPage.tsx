@@ -64,7 +64,7 @@ import type Ticket from "../interfaces/Ticket";
    // we build a simple object map once.
    const seatMap: Record<string, Seat> = {};
    for (const seat of Seat) {
-     seatMap[`${seat.row_index}-${seat.seats_letter}`] = seat;
+     seatMap[`${seat.row_index}-${seat.seat_letter}`] = seat;
    }
    // seatMap["1-A"] = { id: 1, row_index: 1, seat_letter: "A", hall_id: 1 }
    // seatMap["3-C"] = { id: 23, ... }
@@ -95,107 +95,94 @@ import type Ticket from "../interfaces/Ticket";
   }
    // render 
    return (
-    <section className="seat-section">
+    <section className="seats">
 
       {/* Legend */}
       <div className="legend">
-        <div className="legend__item">
-          <SofaIcon className="legend__icon legend__icon--booked" />
+        <div className="legend-row">
+          <SofaIcon color="red" />
           <span>Fullbokad</span>
         </div>
-        <div className="legend__item">
-          <SofaIcon className="legend__icon legend__icon--available" />
+        <div className="legend-row">
+          <SofaIcon color="green" />
           <span>Tillgänglig</span>
         </div>
-        <div className="legend__item">
-          <SofaIcon className="legend__icon legend__icon--selected" />
+        <div className="legend-row">
+          <SofaIcon color="blue" />
           <span>Vald</span>
         </div>
       </div>
 
-      {/* How many seats left to pick */}
-      <p className="seat-hint">
-        {totalTickets === 0 ? (
-          <span className="seat-hint--warn">Välj antal biljetter ovan</span>
-        ) : isComplete ? (
-          <span className="seat-hint--done">✓ {selectedIds.length} platser valda</span>
-        ) : (
-          <>Välj <strong>{remaining}</strong> {remaining === 1 ? "plats" : "platser"} till</>
-        )}
+      {/* Hint */}
+      <p className="hint">
+        {totalTickets === 0 && <span className="hint-orange">Välj antal biljetter ovan</span>}
+        {totalTickets > 0 && !isComplete && <>Välj <strong>{remaining}</strong> {remaining === 1 ? "plats" : "platser"} till</>}
+        {isComplete && <span className="hint-green">✓ {selectedIds.length} platser valda</span>}
       </p>
 
-      {/* Seat grid */}
-      <div className="seat-grid">
+      {/* Grid */}
+      <div className="grid">
 
-        {/* Column labels: A B C … J */}
-        <div className="seat-grid__row seat-grid__row--header">
-          <span className="seat-grid__row-num" /> {/* empty spacer */}
+        {/* Column letters: A B C … J */}
+        <div className="grid-header">
+          <span className="row-num" />
           {columns.map((col) => (
-            <span key={col} className="seat-grid__col-label">{col}</span>
+            <span key={col} className="col-label">{col}</span>
           ))}
         </div>
 
-        {/* One row per row number: 10 at top → 1 at bottom */}
+        {/* Rows: 10 at top → 1 at bottom */}
         {rows.map((rowIndex) => (
-          <div key={rowIndex} className="seat-grid__row">
+          <div key={rowIndex} className="grid-row">
 
-            {/* One seat button per column */}
             {columns.map((col) => {
               const seat   = seatMap[`${rowIndex}-${col}`];
               const status = seat ? getSeatStatus(seat) : null;
 
-              // No seat exists at this position
-              if (!seat) {
-                return <span key={col} className="seat seat--empty" />;
-              }
+              if (!seat) return <span key={col} className="seat empty" />;
 
-              // Grey out available seats once the user has picked enough
-              const isAtCap = status === "available" && remaining === 0;
+              const dimmed = status === "available" && remaining === 0;
 
               return (
                 <button
                   key={col}
-                  className={`seat seat--${status}${isAtCap ? " seat--dim" : ""}`}
+                  className={`seat ${status}${dimmed ? " dim" : ""}`}
                   onClick={() => handleSeatClick(seat)}
                   disabled={status === "booked"}
                   title={`${col}${rowIndex}`}
-                  aria-label={`Rad ${rowIndex} plats ${col} – ${status}`}
                 >
                   <SofaIcon />
                 </button>
               );
             })}
 
-            {/* Row number on the right: 10, 9 … 1 */}
-            <span className="seat-grid__row-num">{rowIndex}</span>
+            <span className="row-num">{rowIndex}</span>
           </div>
         ))}
       </div>
 
-      {/* Confirm button — only shows when all seats are selected */}
+      {/* Confirm button */}
       {isComplete && (
-        <div className="seat-confirm">
-          <button
-            className="seat-confirm__btn"
-            onClick={() => onSeatsConfirmed?.(selectedIds)}
-          >
+        <div className="confirm">
+          <button className="confirm-btn" onClick={() => onSeatsConfirmed?.(selectedIds)}>
             Bekräfta platser →
           </button>
         </div>
       )}
 
-    </section>
-  );
-}
+      </section>
+    );
+    }
 
-   function SofaIcon({ className }: { className?: string }) {
-   return (
-     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+   function SofaIcon({ color }: { color?: string }) {
+    return (
+     <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      style={{ color: color, width: "100%", height: "100%", display: "block" }}
+    >
       <path d="M21 9V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2v1h2v-1h10v1h2v-1a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-1 7H4v-4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4Z" />
     </svg>
-  );
-}
-
-
-
-    
+   );
+  }

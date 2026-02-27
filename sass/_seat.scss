@@ -1,131 +1,97 @@
 // _seat.scss
-// Styles every class used in SeatSelectionPage.tsx
-// ─────────────────────────────────────────────────
 
-// ── Colors ────────────────────────────────────────
-$booked:    #d93636;   // red   — sold seats
-$available: #2eb86a;   // green — free seats
-$selected:  #3d8ef0;   // blue  — user picked
-$bg:        #0d1117;   // dark page background
-$muted:     #6b7280;   // grey text (labels, hints)
-$white:     #e4e8f0;   // bright text
+$red:   #d93636;
+$green: #2eb86a;
+$blue:  #3d8ef0;
+$bg:    #0d1117;
+$grey:  #6b7280;
+$white: #e4e8f0;
 
-// ─────────────────────────────────────────────────
-// .seat-section  — the whole component wrapper
-// ─────────────────────────────────────────────────
-.seat-section {
+// ── Page wrapper ─────────────────────────────────
+.seats {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.25rem 0.75rem 2.5rem;
+  padding: 1rem 0.75rem 2rem;
   background: $bg;
 }
 
-// ─────────────────────────────────────────────────
-// .legend  — the three icons at the top
-// .legend__item  — one icon + label pair
-// .legend__icon  — the sofa svg used as icon
-// ─────────────────────────────────────────────────
+// ── Legend ───────────────────────────────────────
 .legend {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+}
 
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.78rem;
-    color: $muted;
-  }
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: $grey;
 
-  &__icon {
+  svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
-
-    // Each modifier sets the SVG fill color
-    &--booked    { color: $booked;    }
-    &--available { color: $available; }
-    &--selected  { color: $selected;  }
   }
 }
 
-// ─────────────────────────────────────────────────
-// .seat-hint  — "Välj 3 platser till" text
-// .seat-hint--warn  — shown when totalTickets = 0
-// .seat-hint--done  — shown when all seats picked
-// ─────────────────────────────────────────────────
-.seat-hint {
+// ── Hint text ────────────────────────────────────
+.hint {
   margin: 0;
   text-align: center;
-  min-height: 1.5rem;
   font-size: 0.82rem;
-  color: $muted;
+  color: $grey;
+  min-height: 1.4rem;
 
-  // The <strong> inside the hint (shows the number)
-  strong {
-    color: $selected;
-    font-weight: 700;
-  }
-
-  &--warn {
-    color: #f5a623; // orange warning
-  }
-
-  &--done {
-    color: $available;  // green when complete
-    font-weight: 600;
-    animation: popIn 0.25s ease both;
-  }
+  strong { color: $blue; font-weight: 700; }
 }
 
-// ─────────────────────────────────────────────────
-// .seat-grid  — the whole rows+columns block
-// ─────────────────────────────────────────────────
-.seat-grid {
+.hint-orange { color: #f5a623; }
+
+.hint-green {
+  color: $green;
+  font-weight: 600;
+  animation: pop 0.25s ease both;
+}
+
+// ── Grid ─────────────────────────────────────────
+.grid {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  overflow-x: auto; // scroll on small screens
-
-  // ── .seat-grid__row  — one horizontal row of seats
-  &__row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-
-    // The top header row with A B C … J labels
-    &--header {
-      margin-bottom: 2px;
-    }
-  }
-
-  // ── .seat-grid__col-label  — letters A B C … J at the top
-  &__col-label {
-    width: 28px;
-    flex-shrink: 0;
-    text-align: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: $muted;
-  }
-
-  // ── .seat-grid__row-num  — numbers 1–10 on the right side
-  &__row-num {
-    min-width: 22px;
-    flex-shrink: 0;
-    text-align: right;
-    padding-left: 4px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: $muted;
-  }
+  overflow-x: auto;
 }
 
-// ─────────────────────────────────────────────────
-// .seat  — every individual seat button
-// ─────────────────────────────────────────────────
+.grid-header,
+.grid-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.grid-header { margin-bottom: 2px; }
+
+.col-label {
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: $grey;
+}
+
+.row-num {
+  min-width: 22px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: $grey;
+}
+
+// ── Seat ─────────────────────────────────────────
 .seat {
   width: 28px;
   height: 28px;
@@ -137,118 +103,80 @@ $white:     #e4e8f0;   // bright text
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+  transition: transform 0.12s, box-shadow 0.15s, opacity 0.2s;
 
-  // The sofa SVG inside each button
-  svg {
-    width: 100%;
-    height: 100%;
-    pointer-events: none; // so click goes to the button, not the svg
-  }
-
-  // ── .seat--booked  — red, already sold, not clickable ─
-  &--booked {
-    background: rgba($booked, 0.15);
-    color: $booked;
-    cursor: not-allowed;
-    opacity: 0.75;
-  }
-
-  // ── .seat--available  — green, free to pick ──────────
-  &--available {
-    background: rgba($available, 0.15);
-    color: $available;
-
-    &:hover {
-      background: rgba($available, 0.28);
-      transform: scale(1.18);
-    }
-
-    &:active {
-      transform: scale(0.92);
-    }
-  }
-
-  // ── .seat--selected  — blue, user has picked this seat
-  &--selected {
-    background: rgba($selected, 0.22);
-    color: $selected;
-    transform: scale(1.1);
-    box-shadow: 0 0 8px rgba($selected, 0.55);
-
-    &:hover {
-      transform: scale(1.18);
-      box-shadow: 0 0 13px rgba($selected, 0.7);
-    }
-  }
-
-  // ── .seat--empty  — no seat exists at this grid position
-  &--empty {
-    background: transparent;
-    cursor: default;
-    pointer-events: none;
-  }
-
-  // ── .seat--dim  — available but cap reached, greyed out
-  &--dim {
-    opacity: 0.28;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
+  svg { width: 100%; height: 100%; pointer-events: none; }
 }
 
-// ─────────────────────────────────────────────────
-// .seat-confirm  — wrapper for the confirm button
-// .seat-confirm__btn  — the actual button
-// Only shown when isComplete = true
-// ─────────────────────────────────────────────────
-.seat-confirm {
+.seat.booked {
+  background: rgba($red, 0.15);
+  color: $red;
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.seat.available {
+  background: rgba($green, 0.15);
+  color: $green;
+
+  &:hover  { background: rgba($green, 0.28); transform: scale(1.18); }
+  &:active { transform: scale(0.92); }
+}
+
+.seat.selected {
+  background: rgba($blue, 0.22);
+  color: $blue;
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba($blue, 0.55);
+
+  &:hover { transform: scale(1.18); box-shadow: 0 0 13px rgba($blue, 0.7); }
+}
+
+.seat.empty {
+  background: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+.seat.dim {
+  opacity: 0.28;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+// ── Confirm button ───────────────────────────────
+.confirm {
   display: flex;
   justify-content: center;
   animation: slideUp 0.3s ease both;
-
-  &__btn {
-    width: 100%;
-    max-width: 360px;
-    padding: 0.85rem 2rem;
-    background: linear-gradient(135deg, #3d8ef0, #1a5fc4);
-    color: $white;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    box-shadow: 0 4px 18px rgba($selected, 0.38);
-    transition: transform 0.15s, box-shadow 0.15s;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba($selected, 0.5);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
 }
 
-// ─────────────────────────────────────────────────
-// Animations
-// ─────────────────────────────────────────────────
+.confirm-btn {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, $blue, #1a5fc4);
+  color: $white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba($blue, 0.38);
+  transition: transform 0.15s, box-shadow 0.15s;
 
-// Confirm button slides up when it appears
+  &:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba($blue, 0.5); }
+  &:active { transform: translateY(0); } // ← fixed: was "transla teY(0)"
+}
+
+// ── Animations ───────────────────────────────────
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-// "✓ X platser valda" pops in when selection is complete
-@keyframes popIn {
-  0%   { opacity: 0; transform: scale(0.8); }
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(0.8);  }
   65%  {             transform: scale(1.08); }
-  100% { opacity: 1; transform: scale(1);   }
+  100% { opacity: 1; transform: scale(1);    }
 }
-
-
-

@@ -4,4 +4,5 @@ export default interface Ticket {
     showing_id: number;
     seat_id: number;
     ticket_type_id: number;
+    
 }

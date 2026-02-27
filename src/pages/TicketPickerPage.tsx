@@ -1,9 +1,10 @@
 import { useLoaderData } from "react-router-dom";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
 import SeatSelectionPage from "./SeatSelectionPage";
+
 
 
 TicketPickerPage.route = {
@@ -122,7 +123,8 @@ export default function TicketPickerPage() {
           </div>
         </div>
       </section>
-      <SeatSelectionPage />
+      {/* ✅ Pass totalCount so SeatSelectionPage knows how many seats to allow */}
+      <SeatSelectionPage totalTickets={totalCount} />
 
     </article>
   );
