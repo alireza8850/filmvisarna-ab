@@ -13,7 +13,7 @@ public static class FilmRoutes
       string ageLimit = query.TryGetValue("ageLimit", out var a) ? a.ToString() : null;
 
       var sql = @"
-          SELECT id, title, genre, release_year, age_limit, poster_url
+          SELECT id, title, genre, release_year, age_limit, poster_url, is_featured
           FROM films
           WHERE (@search IS NULL OR title LIKE CONCAT('%', @search, '%'))
           AND (@genre IS NULL OR genre = @genre)
