@@ -92,7 +92,7 @@ public static class BookingRoutes
       }
 
       // Generate unique booking number
-      var bookingNumber = $"BK-{DateTime.Now.Year}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
+      var bookingNumber = GenerateBookingNumber();
 
       // Insert booking
       var insertBookingSql = @"
@@ -164,5 +164,17 @@ public static class BookingRoutes
       var bookings = SQLQuery(sql, new { userId = user.id }, context);
       return RestResult.Parse(context, bookings);
     });
+  }
+
+  private static string GenerateBookingNumber()
+  {
+    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var random = new Random();
+    var result = new char[6];
+    for (int i = 0; i < 6; i++)
+    {
+      result[i] = chars[random.Next(chars.Length)];
+    }
+    return new string(result);
   }
 }

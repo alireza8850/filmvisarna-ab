@@ -435,8 +435,8 @@ public static class FilmvisarnaTables
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, expires_at) VALUES
-                ('BK-2026-0001', 2, 1, 'confirmed', 320.00, NULL),
-                ('BK-2026-0002', 5, 3, 'reserved', 160.00, '2026-03-01 15:45:00')";
+                ('A7B2X9', 2, 1, 'confirmed', 320.00, NULL),
+                ('R5K8M1', 5, 3, 'reserved', 160.00, '2026-03-01 15:45:00')";
       command.ExecuteNonQuery();
     }
 
