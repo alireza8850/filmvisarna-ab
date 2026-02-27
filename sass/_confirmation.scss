@@ -68,7 +68,7 @@
   }
 }
 
-// cinematic letterbox bars - HIGH QUALITY widescreen movie look
+// cinematic letterbox bars - HIGH QUALITY CRAYZEE quality
 .confirmation-page__letterbox-top {
   position: fixed;
   top: 0;
@@ -196,25 +196,6 @@
       );
     opacity: 0.6;
   }
-
-  // subtle horizontal scan lines like film projector
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15) 0px,
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-    opacity: 0.3;
-  }
 }
 
 @keyframes letterboxSlideInTop {
@@ -281,7 +262,7 @@
       );
   }
 
-  // gold trim at the inner edge
+  // gold trim at the inner edge. open to change the shade a bit
   &::after {
     content: '';
     position: absolute;
