@@ -40,6 +40,29 @@ public static class DbQuery
       FilmvisarnaTables.SeedFilmvisarnaData(db);
     }
 
+    // Temporary: Ensure booking ACL rules exist even if already seeded
+    try
+    {
+      var aclCheckCmd = db.CreateCommand();
+      aclCheckCmd.CommandText = "SELECT COUNT(*) FROM acl WHERE route = '/api/bookings' AND method = 'POST'";
+      if (Convert.ToInt32(aclCheckCmd.ExecuteScalar()) == 0)
+      {
+        var fixAclCmd = db.CreateCommand();
+        fixAclCmd.CommandText = @"
+                INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/halls', 'true', 'Allow all user roles to read halls'),
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats', 'true', 'Allow all user roles to read seats'),
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings', 'true', 'Allow all user roles to create bookings'),
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets');
+            ";
+        fixAclCmd.ExecuteNonQuery();
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine("Error applying one-time ACL fix: " + ex.Message);
+    }
+
     db.Close();
   }
 
@@ -127,6 +150,9 @@ public static class DbQuery
                  -- bookings
                  ('user,staff,admin', 'GET', 'allow', '/api/bookings', 'true', 'Allow all user roles to read showings'),
 
+                
+                -- Tickets (POSTing new tickets during booking)
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets')
                 ;
             ";
       command.CommandText = aclData;
@@ -215,6 +241,7 @@ public static class DbQuery
       string sql, object parameters = null, HttpContext context = null
   )
   {
+    sql = sql.TrimStart();
     var paras = parameters == null ? Obj() : Obj(parameters);
     using var db = new MySqlConnection(connectionString);
     db.Open();

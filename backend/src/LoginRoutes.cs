@@ -44,6 +44,19 @@ public static class LoginRoutes
       // Add the user to the session, without password
       dbUser.Delete("password");
       Session.Set(context, "user", dbUser);
+      
+      // Skickar mail vid lyckad inloggning 
+      Console.WriteLine("Provar skicka mail.");
+      try
+      {
+        EmailService.SendEmail(body.email, "Login", $"<h1>Hej {body.email}!</h1> <br> <p>Du har lyckats logga in. Välkommen til FILMVISARNA AB</p>");
+        Console.WriteLine("Mail skickat!");
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine("Mail misslyckades: " + ex.Message);
+      }
+        
 
       // Return the user
       return RestResult.Parse(context, dbUser!);

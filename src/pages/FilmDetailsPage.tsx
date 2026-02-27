@@ -5,6 +5,7 @@ import { useState } from "react";
 import NotFoundPage from "./NotFoundPage";
 import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
+import { useBooking } from "../utils/BookingContext";
 
 
 
@@ -16,12 +17,13 @@ FilmDetailsPage.route = {
 
 export default function FilmDetailsPage() {
   const navigate = useNavigate();
-  const film = useLoaderData().film as Film;
-  const [selectedTime, setSelectedTime] = useState<number | null>(null);
+  const { film, showings: allShowings } = useLoaderData() as { film: Film, showings: any[] };
+  const { setFilm, setShowing } = useBooking();
+  const [selectedShowingId, setSelectedShowingId] = useState<number | null>(null);
+
+  // Default to today's date (YYYY-MM-DD)
   const [selectedDate, setSelectedDate] = useState<string>(() => {
-    // Set default to today's date in YYYY-MM-DD format
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+    return new Date().toLocaleDateString('sv-SE');
   });
   const [showTrailerModal, setShowTrailerModal] = useState(false);
 
@@ -38,63 +40,12 @@ export default function FilmDetailsPage() {
     return <NotFoundPage />;
   }
 
-  // Generate mock showtimes for development - each film gets unique times based on film ID
-  const generateAllShowtimes = (): Array<{ time: Date; hall: string }> => {
-    const showtimes: Array<{ time: Date; hall: string }> = [];
-    const today = new Date();
-
-    // Different time slots for variety
-    const timeSlots = [
-      ['10:00', '13:00', '15:30', '18:00', '20:30'],
-      ['10:30', '11:00', '13:00', '16:30', '18:00', '21:30'],
-      ['11:00', '13:00', '15:30', '18:00', '20:00'],
-      ['11:30', '13:00', '15:30', '18:00', '22:30'],
-      ['10:00', '11:00', '13:00', '15:30', '18:00', '21:00']
-    ];
-
-    // Use film ID to pick a time slot pattern
-    const filmId = film.id || 1;
-    const times = timeSlots[filmId % timeSlots.length];
-
-    // Generate showtimes for next 7 days
-    for (let day = 0; day < 7; day++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + day);
-
-      // Add 3-4 times per day depending on film popularity
-      const timesPerDay = (filmId % 2 === 0) ? 4 : 3;
-
-      for (let i = 0; i < timesPerDay && i < times.length; i++) {
-        const time = times[i];
-        const [hours, minutes] = time.split(':');
-        const showtime = new Date(date);
-        showtime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-        // Assign hall based on time
-        let hall = '';
-        if (time === '13:00' || time === '18:00') {
-          hall = 'Stora salongen';
-        } else if (time === '11:00' || time === '15:30') {
-          hall = 'Lilla salongen';
-        } else {
-          // For other times, alternate between halls
-          hall = i % 2 === 0 ? 'Stora salongen' : 'Lilla salongen';
-        }
-
-        showtimes.push({ time: showtime, hall });
-      }
-    }
-
-    return showtimes;
-  };
-
-  const allShowtimes = generateAllShowtimes();
-
   // Filter showtimes based on selected date
-  const showtimes = allShowtimes.filter(showtime => {
-    const showtimeDate = showtime.time.toISOString().split('T')[0];
+  const showtimes = Array.isArray(allShowings) ? allShowings.filter((showtime: any) => {
+    if (!showtime.start_time) return false;
+    const showtimeDate = showtime.start_time.split('T')[0];
     return showtimeDate === selectedDate;
-  });
+  }) : [];
 
   const {
     id: _id,
@@ -185,7 +136,7 @@ export default function FilmDetailsPage() {
             value={selectedDate}
             onChange={(e) => {
               setSelectedDate(e.target.value);
-              setSelectedTime(null); // Reset selected time when date changes
+              setSelectedShowingId(null); // Reset selected showing when date changes
             }}
           />
         </div>
@@ -212,30 +163,51 @@ export default function FilmDetailsPage() {
 
 
         <Row className="film-details__showtimes">
-          {showtimes.map((showtime, i) => (
-              <Col xs={3} key={i} className="mb-3">
-                <div
-                  className={`film-details__showtime-box border rounded p-3 text-center ${selectedTime === i ? 'film-details__showtime-box--selected' : ''}`}
-                  onClick={() => setSelectedTime(i)}
-                >
-                  <div className="film-details__showtime-date">
-                    {showtime.time.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' })}
-                  </div>
-                  <div className="film-details__showtime-time">
-                    {showtime.time.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                  <div className="film-details__showtime-hall">
-                    {showtime.hall}
-                  </div>
-                </div>
+          {showtimes.length > 0 ? (
+            <>
+              <Col xs={12}>
+                <h4 className="film-details__showtimes-date-title mb-4">
+                  Visningar {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </h4>
               </Col>
-          ))}
+              {showtimes.map((showtime: any) => (
+                <Col xs={6} sm={4} md={3} key={showtime.id} className="mb-3">
+                  <div
+                    className={`film-details__showtime-box border rounded p-3 text-center ${selectedShowingId === showtime.id ? 'film-details__showtime-box--selected' : ''}`}
+                    onClick={() => setSelectedShowingId(showtime.id)}
+                  >
+                    <div className="film-details__showtime-time">
+                      {new Date(showtime.start_time).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div className="film-details__showtime-hall">
+                      {showtime.hall_name}
+                    </div>
+                  </div>
+                </Col>
+              ))}
+            </>
+          ) : (
+            <Col>
+              <div className="film-details__no-showtimes text-center p-5 border rounded bg-light">
+                <p className="mb-0">Tyvärr finns det inga visningar för {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}.</p>
+                <p className="text-muted small mt-2">Prova att välja ett annat datum i kalendern ovan.</p>
+              </div>
+            </Col>
+          )}
         </Row>
 
 
       <div className="film-details__continue-btn-wrapper">
         <button className="film-details__continue-btn"
-        onClick={() => navigate('/booking/$ {i}/tickets')}
+        disabled={!selectedShowingId}
+        onClick={() => {
+          const selectedShowing = Array.isArray(allShowings) ? allShowings.find((s: any) => s.id === selectedShowingId) : null;
+          if (selectedShowing) {
+            setFilm(film);
+            setShowing(selectedShowing);
+            navigate(`/booking/${selectedShowingId}/tickets`);
+          }
+        }}
         >Gå vidare</button>
       </div>
 

@@ -1,10 +1,11 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState } from "react";
 //import { Link } from "react-router-dom";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
 import SeatSelectionPage from "./SeatSelectionPage";
 
+import { useBooking } from "../utils/BookingContext";
 
 
 TicketPickerPage.route = {
@@ -14,17 +15,18 @@ TicketPickerPage.route = {
 };
 
 export default function TicketPickerPage() {
-
+  const navigate = useNavigate();
   const { film } = useLoaderData() as {
     film: Film;
   };
+  const { setTickets } = useBooking();
 
   const [vuxen, setVuxen] = useState(0);
   const [barn, setBarn] = useState(0);
   const [pensionar, setPensionar] = useState(0);
 
-  const vuxenPrice = 140;
-  const barnPrice = 80;
+  const vuxenPrice = 160;
+  const barnPrice = 95;
   const pensionarPrice = 120;
 
   const totalPrice = (vuxen * vuxenPrice) + (barn * barnPrice) + (pensionar * pensionarPrice);
@@ -121,6 +123,19 @@ export default function TicketPickerPage() {
             <div className="ticketTotal_label">Antal Biljetter</div>
             <div className="ticketTotal_number">{totalCount}</div>
           </div>
+        </div>
+
+        <div className="d-flex justify-content-end mt-4 pb-4">
+          <button
+            className="slutfor-btn"
+            disabled={totalCount === 0}
+            onClick={() => {
+              setTickets({ adult: vuxen, child: barn, senior: pensionar });
+              navigate("/bookingformpage");
+            }}
+          >
+            Fortsätt
+          </button>
         </div>
       </section>
       {/* ✅ Pass totalCount so SeatSelectionPage knows how many seats to allow */}

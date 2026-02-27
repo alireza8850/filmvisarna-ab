@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 //import "./FilmCard.css";
 import { useEffect, useState } from "react";
 import type Film from "../interfaces/Film";
