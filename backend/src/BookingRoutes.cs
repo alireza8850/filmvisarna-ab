@@ -119,13 +119,71 @@ public static class BookingRoutes
             INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
             VALUES (@bookingId, @showingId, @seatId, @ticketTypeId)
         ";
-        SQLQuery(ticketSql, new {
+        SQLQuery(ticketSql, new
+        {
           bookingId,
           showingId,
           seatId = seatId,
           ticketTypeId = ticket.ticket_type_id
         }, context);
       }
+      // Note: I need this function in order to fix the error 
+      // 'object' does not contain a definition for 'ticket_type_id'
+      // Build ticket lines for email body
+
+      var ticketLines = new List<string>();
+      foreach (var ticket in tickets)
+      {
+        int ticketTypeId = ticket.ticket_type_id;
+
+        string lable = ticketTypeId switch
+        {
+          1 => "Vuxen",
+          2 => "Barn",
+          3 => "Pensionär",
+          _ => "Biljett"
+        };
+        ticketLines.Add($"<li>{lable}</li>");
+      } 
+      string ticketLinesHtml = string.Join("\n", ticketLines);
+
+      // Build confirmation email
+      string htmlBody = $@"
+        <h2>Bokningsbekräftelse</h2>
+        <p>Tack för din bokning! Här är dina bokningsdetaljer:</p>
+        <ul>
+          <li><strong>Bokningsnummer:</strong> {bookingNumber}</li>
+          <li><strong>Film:</strong> {showing.film_title}</li>
+          <li><strong>Salong:</strong> {showing.hall_name}</li>
+          <li><strong>Datum:</strong> {((DateTime)showing.start_time).ToString("yyyy-MM-dd")}</li>
+          <li><strong>Tid:</strong> {((DateTime)showing.start_time).ToString("HH:mm")}</li>
+        </ul>
+        <h3><strong>Biljetter:</strong></h3>
+        <ul>{ticketLinesHtml}</ul>
+
+        <h3>Totalpris:</h3>
+        <p><strong>{totalPrice} Kr</strong></p>
+        <h3>Viktig information:</h3>
+        <ul>
+          <li><strong>Ta med denna bekräftelse (utskriven eller digital) till biografen.</strong></li>
+          <li><strong>Avbokning måste ske minst 2 timmar innan visningen.</strong></li>
+          <li><strong>Betalning sker på plats vid biografen.</strong></li>
+          <li><strong>Om du har valt specifika sittplatser, se till att sitta på de angivna platserna.</strong></li>
+        </ul>
+
+        <p>Välkommen till vårt biograf och trevlig filmupplevelse!</p>
+      ";
+
+      // Send confirmation email (if email is provided)
+      try
+      {
+       EmailService.SendEmail(email, "Bokningsbekräftelse", htmlBody);
+      }
+      catch (Exception ex)
+      {
+        // Log email sending failure, but do not fail the booking process
+        Console.WriteLine($"Kunde inte skicka bekräftelsemail: {ex.Message}");
+      } 
 
       // Return success response
       context.Response.StatusCode = 201;
