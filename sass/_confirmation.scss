@@ -15,40 +15,93 @@
   top: 0;
   width: 50%; // each curtain is half the screen
   height: 100vh;
-  background: linear-gradient(to bottom, #8B0000 0%, #5A0000 50%, #3D0000 100%); // red gradient for that theater vibe
+  background:
+    linear-gradient(to bottom,
+      #9B1C1C 0%,
+      #7F1D1D 20%,
+      #991B1B 40%,
+      #7F1D1D 60%,
+      #5A0000 80%,
+      #3D0000 100%
+    ); // richer red gradient for luxurious velvet look
   z-index: 1000; // gotta be on top of everything
-  animation: curtainOpen 1.2s ease-in-out forwards;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: curtainOpen 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(0, 0, 0, 0.6);
 
-  // this adds the vertical lines to make it look like fabric, i might get back  to this later
+  // enhanced fabric pleats - looks way more realistic now
   &::before {
     content: '';
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 40px,
-      rgba(0, 0, 0, 0.1) 40px,
-      rgba(0, 0, 0, 0.1) 42px
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 2px,
+        transparent 2px,
+        transparent 15px,
+        rgba(255, 255, 255, 0.05) 15px,
+        rgba(255, 255, 255, 0.05) 18px,
+        transparent 18px,
+        transparent 35px
+      );
+  }
+
+  // gold trim at the inner edge
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      #FFD700 0%,
+      #FFA500 50%,
+      #DAA520 100%
     );
+    box-shadow:
+      0 0 10px rgba(255, 215, 0, 0.5),
+      inset 0 0 10px rgba(0, 0, 0, 0.3);
   }
 
   &--left {
     left: 0;
+
+    &::after {
+      right: 0;
+    }
   }
 
   &--right {
     right: 0;
+
+    &::after {
+      left: 0;
+    }
   }
 }
 
-// left curtain slides left
+// decorative curtain rod/valance at the top
+.confirmation-page__curtain--left::before,
+.confirmation-page__curtain--right::before {
+  z-index: 1;
+}
+
+// left curtain slides left with subtle bounce at the end
 @keyframes curtainOpen {
   0% {
     transform: translateX(0);
+  }
+  70% {
+    transform: translateX(-95%);
+  }
+  85% {
+    transform: translateX(-102%);
   }
   100% {
     transform: translateX(-100%);
@@ -57,19 +110,25 @@
 
 // right curtain needs its own animation to slide right (duh)
 .confirmation-page__curtain--right {
-  animation: curtainOpenRight 1.2s ease-in-out forwards;
+  animation: curtainOpenRight 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes curtainOpenRight {
   0% {
     transform: translateX(0);
   }
+  70% {
+    transform: translateX(95%);
+  }
+  85% {
+    transform: translateX(102%);
+  }
   100% {
     transform: translateX(100%);
   }
 }
 
-// the actual content wrapper - starts invisible then fades in after curtains open. 
+// the actual content wrapper - starts invisible then fades in after curtains open.
 .confirmation-page__content {
   text-align: center;
   color: #fff;
@@ -77,20 +136,20 @@
   border: none;
   box-shadow: none;
   opacity: 0; // starts invisible
-  animation: fadeIn 0.6s ease-in forwards 0.8s; // waits 0.8s then fades in
+  animation: fadeIn 0.8s ease-out forwards 1s; // waits 1s for curtains, then fades in
   position: relative;
   z-index: 1; // below curtains but above background
 }
 
-// fade in with a lil slide up effect MIGHT change this since i dont like how it just spawns
+// improved fade in - content scales up like a spotlight reveal
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.9);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
