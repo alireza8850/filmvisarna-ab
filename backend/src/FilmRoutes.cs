@@ -2,7 +2,7 @@ namespace WebApp;
 
 public static class FilmRoutes
 {
-  public static void start()
+  public static void Start()
   {
     // GET/api/films
     App.MapGet("/api/films", (HttpContext context) =>

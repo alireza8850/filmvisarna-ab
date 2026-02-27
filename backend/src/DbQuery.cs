@@ -208,6 +208,7 @@ public static class DbQuery
       string sql, object parameters = null, HttpContext context = null
   )
   {
+    sql = sql.TrimStart();
     var paras = parameters == null ? Obj() : Obj(parameters);
     using var db = new MySqlConnection(connectionString);
     db.Open();

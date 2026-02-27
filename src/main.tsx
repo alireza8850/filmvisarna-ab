@@ -6,12 +6,17 @@ import "../sass/index.scss";
 import routes from "./routes";
 import App from "./App";
 import "../sass/style.css";
+import { BookingProvider } from "./utils/BookingContext";
 
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <BookingProvider>
+        <App />
+      </BookingProvider>
+    ),
     children: routes as RouteObject[],
     HydrateFallback: App,
   },
