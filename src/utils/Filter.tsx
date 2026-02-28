@@ -1,0 +1,1 @@
+import type Product from '../interfaces/Product';

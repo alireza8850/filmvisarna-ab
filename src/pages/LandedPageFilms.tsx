@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import type Film from "../interfaces/Film";
 import HeroFilm from "../partials/HeroFilm";
 import FilmCard from "../partials/FilmCard";
+import { getHelpers } from '../utils/Filter';
+import type { SortOption } from '../utils/Filter';
 
 LandedPageFilms.route = {
   path: "/",
