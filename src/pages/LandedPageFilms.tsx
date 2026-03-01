@@ -1,11 +1,9 @@
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 //import "./FilmCard.css";
 import { useEffect, useState } from "react";
 import type Film from "../interfaces/Film";
 import HeroFilm from "../partials/HeroFilm";
 import FilmCard from "../partials/FilmCard";
-import { getHelpers } from '../utils/Filter';
-import type { SortOption } from '../utils/Filter';
 
 LandedPageFilms.route = {
   path: "/",
@@ -18,13 +16,13 @@ LandedPageFilms.route = {
 export default function LandedPageFilms() {
 
   const [films, setFilms] = useState<Film[]>([]);
-  const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null );
+  const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null);
 
   async function GetFilms() {
     const results = await (await fetch("/api/films")).json();
     setFilms(results);
-      const hero = results.find((film: Film) => film.is_featured === true);
-      setFeaturedFilms(hero || null);
+    const hero = results.find((film: Film) => film.is_featured === true);
+    setFeaturedFilms(hero || null);
   }
   useEffect(() => {
     GetFilms();
@@ -41,7 +39,7 @@ export default function LandedPageFilms() {
       <div className="row mt-5">
         {films.filter(film => film.id !== featuredFilms?.id).map((film) => (
           <div key={film.id} className="col-md-3 mb-4">
-            <FilmCard film={film} />    
+            <FilmCard film={film} />
           </div>
         ))}
       </div>
