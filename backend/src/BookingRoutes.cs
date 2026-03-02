@@ -139,8 +139,11 @@ public static class BookingRoutes
       // Build the cancelation URL (for email body)
       // We need first to determine email based on login status.
       // If user is logged in, use their email. Otherwise, use the email provided in the session.
-      var user = Session.Get(context, "user")?.email;
+
+      var user = Session.Get(context, "user"); // an object containing user details if logged in, otherwise null
+
       string emailToSend;
+
       if (user != null)
       {
         // Logged-in user ==> use email from DB
@@ -149,16 +152,15 @@ public static class BookingRoutes
       }
       else
       {
-        // Visitor ==> must provide email in session 
+        // Visitor ==> must provide email in body 
         if (body.email == null || body.email == "")
         {
-          return RestResult.Parse(context, new { error = "Email is required for visitors" });
+          return RestResult.Parse(context, new { error = "E-postadress är obligatorisk för besökare" });
         }
         emailToSend = (string)body.email;
       }
-      string cancelationUrl = $"https://localhost:5173/cancel?booking_number={bookingNumber}&email={emailToSend}";
+      string cancellationUrl = $"https://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
 
-  
       // Note: I need this function in order to fix the error 
       // 'object' does not contain a definition for 'ticket_type_id'
       // Build ticket lines for email body
@@ -170,14 +172,14 @@ public static class BookingRoutes
         if (ticketTypeIdRaw == null) continue;
         long ticketTypeId = (long)ticketTypeIdRaw;
 
-        string lable = ticketTypeId switch
+        string label = ticketTypeId switch
         {
           1 => "Vuxen",
           2 => "Barn",
           3 => "Pensionär",
           _ => "Biljett"
         };
-        ticketLines.Add($"<li>{lable}</li>");
+        ticketLines.Add($"<li>{label}</li>");
       } 
       string ticketLinesHtml = string.Join("\n", ticketLines);
 
@@ -199,7 +201,7 @@ public static class BookingRoutes
         <p><strong>{totalPrice} Kr</strong></p>
         <h3>Avbokning:</h3>
         <p>Om du behöver avboka din bokning, klicka på länken nedan:</p>
-        <p><a href='{cancelationUrl}'>Avboka min bokning</a></p>
+        <p><a href='{cancellationUrl}'>Avboka min bokning</a></p>
 
         <h3>Viktig information:</h3>
         <ul>
@@ -215,7 +217,7 @@ public static class BookingRoutes
       // Send confirmation email (if email is provided)
       try
       {
-       EmailService.SendEmail(email, "Bokningsbekräftelse", htmlBody);
+       EmailService.SendEmail(emailToSend, "Bokningsbekräftelse", htmlBody);
       }
       catch (Exception ex)
       {
@@ -260,6 +262,62 @@ public static class BookingRoutes
       var bookings = SQLQuery(sql, new { userId = user.id }, context);
       return RestResult.Parse(context, bookings);
     });
+
+    // POST /api/bookings/cancel
+    App.MapPost("/api/bookings/cancel", (HttpContext context, JsonElement bodyJson) =>
+    {
+      var body = JSON.Parse(bodyJson.ToString());
+      string bookingNumber = (string)body.booking_number;
+      string email = (string)body.email;
+
+      if (string.IsNullOrWhiteSpace(bookingNumber) || string.IsNullOrWhiteSpace(email))
+      {
+        return RestResult.Parse(context, new { error = "E-post och bokningsnummer är obligatoriska." });
+      }
+
+      // Fetch booking by booking number
+      var booking = SQLQueryOne(
+        "SELECT * FROM bookings WHERE booking_number = @booking_number",
+        new { booking_number = bookingNumber }
+      );
+      // Check if booking exists and is not already canceled
+      if (booking == null)
+      {
+        return RestResult.Parse(context, new { error = "Ingen bokning hittades med det angivna bokningsnumret." });
+      }
+
+      // Check if the provided email matches the booking's email
+      if ((string)booking.email != email)
+      {
+        return RestResult.Parse(context, new { error = "E-post matcher inte bokningens email." });
+      }
+      // Check if the booking is already cancelled
+      if ((string)booking.booking_status == "cancelled")
+      {
+        return RestResult.Parse(context, new { error = "Bokningen är redan avbokad." });
+      }
+      // Check if the showing is more than 2 hours away
+      var showing = SQLQueryOne(
+        "SELECT * FROM showings WHERE id = @id",
+        new { id = booking.showing_id }
+      );
+      DateTime startTime = DateTime.Parse((string)showing.start_time);
+
+      // Avbokning måste ske minst 2 timmar innan visningen
+      if (DateTime.Now > startTime.AddHours(-2))
+      {
+        return RestResult.Parse(context, new { error = "Avbokning måste ske minst 2 timmar innan visningen." });
+      }
+      // Cancel the booking and associated tickets
+      // Update booking status to 'cancelled'
+      SQLQuery(
+        "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
+        new { bookingId = booking.id }
+      );
+
+      return RestResult.Parse(context, new { message = "Bokningen har avbokats." });
+    });
+
   }
 
   private static string GenerateBookingNumber()
