@@ -97,7 +97,7 @@ export default function CancellationPage() {
             <h1 className="cancelation-page__title">Avbokad!</h1>
             <p className="cancelation-page__message">{message}</p>
             <button
-              className="cancelation-page__button"
+              className="cancelation-page__buttonHome"
               onClick={() => navigate("/")}
             >
               Gå till start sidan
@@ -110,7 +110,7 @@ export default function CancellationPage() {
             <h1 className="cancelation-page__title">Avbokning misslyckades</h1>
             <p className="cancelation-page__message">{message}</p>
             <button
-              className="cancelation-page__button"
+              className="cancelation-page__buttonHome"
               onClick={() => navigate("/")}
             >
               Gå till start sidan
