@@ -134,6 +134,31 @@ public static class BookingRoutes
           ticketTypeId = ticketTypeId
         }, context);
       }
+      // 
+      // 
+      // Build the cancelation URL (for email body)
+      // We need first to determine email based on login status.
+      // If user is logged in, use their email. Otherwise, use the email provided in the session.
+      var user = Session.Get(context, "user")?.email;
+      string emailToSend;
+      if (user != null)
+      {
+        // Logged-in user ==> use email from DB
+        emailToSend = (string)user.email;
+
+      }
+      else
+      {
+        // Visitor ==> must provide email in session 
+        if (body.email == null || body.email == "")
+        {
+          return RestResult.Parse(context, new { error = "Email is required for visitors" });
+        }
+        emailToSend = (string)body.email;
+      }
+      string cancelationUrl = $"https://localhost:5173/cancel?booking_number={bookingNumber}&email={emailToSend}";
+
+  
       // Note: I need this function in order to fix the error 
       // 'object' does not contain a definition for 'ticket_type_id'
       // Build ticket lines for email body
@@ -172,6 +197,10 @@ public static class BookingRoutes
 
         <h3>Totalpris:</h3>
         <p><strong>{totalPrice} Kr</strong></p>
+        <h3>Avbokning:</h3>
+        <p>Om du behöver avboka din bokning, klicka på länken nedan:</p>
+        <p><a href='{cancelationUrl}'>Avboka min bokning</a></p>
+
         <h3>Viktig information:</h3>
         <ul>
           <li><strong>Ta med denna bekräftelse (utskriven eller digital) till biografen.</strong></li>
