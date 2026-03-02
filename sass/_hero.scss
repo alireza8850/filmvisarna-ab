@@ -4,6 +4,7 @@
   border-radius: 12px;
   overflow: hidden;
 }
+
 .hero-media {
   margin: 0;
   height: 100%;
@@ -14,6 +15,7 @@
   height: 100%;
   object-fit: cover;
 }
+
 .hero-film-link {
   display: block;
   text-decoration: none;
@@ -27,12 +29,12 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-
   background: linear-gradient(to top,
       rgba(0, 0, 0, 0.75),
       rgba(0, 0, 0, 0.2));
 }
-.her-top {
+
+.hero-top {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -40,10 +42,12 @@
   width: 100%;
   margin-bottom: 1rem;
 }
+
 .btn-sections {
   display: flex;
   justify-content: space-between;
 }
+
 .hero-trailer-btn {
   background: #B80000;
   color: #fff;
@@ -74,4 +78,109 @@
   font-weight: 700;
   font-size: 2.4rem;
   margin: 0;
+}
+
+// --- Filter & Search Section ---
+
+.film-filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-toggle-btn {
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+
+  i {
+    color: #6c757d;
+    font-size: 0.8rem;
+  }
+}
+
+.filter-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 200;
+  width: 220px;
+  background: #e2e3e5;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+}
+
+.filter-menu-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    background: #ced4da;
+  }
+
+  &--active {
+    background: #ced4da;
+  }
+}
+
+.film-search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex-grow: 1;
+  max-width: 1000px;
+
+  i {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+  }
+}
+
+.film-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+
+  &::placeholder {
+    color: #adb5bd;
+    font-weight: 400;
+  }
 }
