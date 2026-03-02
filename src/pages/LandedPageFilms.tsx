@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type Film from "../interfaces/Film";
 import HeroFilm from "../partials/HeroFilm";
+import type Showing from "../interfaces/Showing";
 import FilmCard from "../partials/FilmCard";
 
 LandedPageFilms.route = {
