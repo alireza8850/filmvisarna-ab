@@ -50,12 +50,20 @@
   margin-bottom: 2.5rem;
   color: #fff;
 }
+.cancelation-page__buttons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
 
 // the button to go back home
-.cancelation-page__button {
+.cancelation-page__buttonHome {
   background-color: #008CFF;
   color: #fff;
-  padding: 0.875rem 2rem;
+  padding: 0.9rem 1.8rem;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
@@ -69,5 +77,25 @@
 
   &:active {
     transform: scale(0.98); // lil press effect
+  }
+}
+.cancelation-page__btnAvboka{
+  background-color: #B80000;
+  color: white;
+  margin-bottom: 23px;
+  gap: 1rem;
+  display: flex;
+  align-items: start;
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease; // smooth hover transitions
+
+  &:hover {
+    background-color: #722424;
   }
 }

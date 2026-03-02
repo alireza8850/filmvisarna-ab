@@ -10,8 +10,8 @@ export default function CancellationPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams(); // To read the email and booking number from the link
   // we need useState to save the page status
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading",
+  const [status, setStatus] = useState<"waiting" |"loading" | "success" | "error">(
+    "waiting",
   );
   const [message, setMessage] = useState<string>("");
 
@@ -19,7 +19,7 @@ export default function CancellationPage() {
   const bookingNumber = searchParams.get("booking");
   const email = searchParams.get("email");
 
-  // to execute the cancelation
+  // validate link
   useEffect(() => {
     // first check if the link has a booking and an email
     if (!bookingNumber || !email) {
@@ -27,7 +27,9 @@ export default function CancellationPage() {
       setMessage("Ogiltig avbokningslänk.");
       return;
     }
+  }, [bookingNumber, email]);
 
+  // function to execute the cancelation
     // Send a post to backend ==> Read the response ==> set and display the response
     // ==> change the page status depending on the response
     const cancelBooking = async () => {
@@ -55,15 +57,32 @@ export default function CancellationPage() {
         setMessage("Ett fel inträffade vid avbokningen.");
       }
     };
-
-    cancelBooking();
-  }, [bookingNumber, email]);
-
+  
   // UI
   
   return (
     <article className="cancelation-page">
       <div className="cancelation-page__content">
+        {status === "waiting" && (
+          <>
+            <h1 className="cancelation-page__title">Avboka din boking</h1>
+            <p className="cancelation-page__message">
+              Vill du verkligen avboka denna bokning?
+            </p>
+            <div className="cancelation-page__buttons">
+              <button className="cancelation-page__btnAvboka" onClick={cancelBooking}>
+                AVBOKA
+              </button>
+              <button
+                className="cancelation-page__buttonHome"
+                onClick={() => navigate("/")}
+              >
+                Gå till start sidan
+              </button>
+            </div>
+          </>
+        )}
+
         {status === "loading" && (
           <>
             <h1 className="cancelation-page__title">Avbokar...</h1>
@@ -77,6 +96,12 @@ export default function CancellationPage() {
           <>
             <h1 className="cancelation-page__title">Avbokad!</h1>
             <p className="cancelation-page__message">{message}</p>
+            <button
+              className="cancelation-page__button"
+              onClick={() => navigate("/")}
+            >
+              Gå till start sidan
+            </button>
           </>
         )}
 
@@ -84,16 +109,16 @@ export default function CancellationPage() {
           <>
             <h1 className="cancelation-page__title">Avbokning misslyckades</h1>
             <p className="cancelation-page__message">{message}</p>
+            <button
+              className="cancelation-page__button"
+              onClick={() => navigate("/")}
+            >
+              Gå till start sidan
+            </button>
           </>
         )}
-
-        <button
-          className="cancelation-page__button"
-          onClick={() => navigate("/")}
-        >
-          Gå till start sidan
-        </button>
       </div>
     </article>
   );
+
 }
