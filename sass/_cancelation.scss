@@ -1,0 +1,73 @@
+// main container 
+.cancelation-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+// the actual content wrapper
+.cancelation-page__content {
+  text-align: center;
+  color: #fff;
+  background: none;
+  border: none;
+  box-shadow: none;
+  opacity: 0; // starts invisible
+  animation: fadeIn 0.8s ease-out forwards 1s; // waits 1s for curtains, then fades in
+  position: relative;
+  z-index: 1; // below curtains but above background
+}
+
+// improved fade in - content scales up like a spotlight reveal
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// big "Tack!" text
+.cancelation-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+// confirmation message text 
+.cancelation-page__message {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  color: #fff;
+}
+
+// the button to go back home
+.cancelation-page__button {
+  background-color: #008CFF;
+  color: #fff;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease; // smooth hover transitions
+
+  &:hover {
+    background-color: #0070d9; // slightly darker blue
+  }
+
+  &:active {
+    transform: scale(0.98); // lil press effect
+  }
+}
