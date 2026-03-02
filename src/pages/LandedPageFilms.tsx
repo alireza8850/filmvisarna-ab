@@ -47,6 +47,19 @@ async function GetFilms() {
   useEffect(() => {
     GetFilms();
   }, []);
+  const today = new Date().toISOString().split("T")[0];
+
+  let displayFilms = films.filter((film) => {
+    const searchWord = searchQuery.toLowerCase().replace(/\s+/g, "");
+    const title = film.title.toLowerCase().replace(/\s+/g, "");
+    const genre = (film.genre || "").toLowerCase().replace(/\s+/g, "");
+    const desc = (film.description || "").toLowerCase().replace(/\s+/g, "");
+
+    const matchesSearch =
+      searchWord === "" ||
+      title.includes(searchWord) ||
+      genre.includes(searchWord) ||
+      desc.includes(searchWord);
 
   return (
     <article className="container mt-4">
