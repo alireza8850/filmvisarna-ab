@@ -19,7 +19,6 @@ export default function LandedPageFilms() {
   const [films, setFilms] = useState<Film[]>([]);
   const [showings, setShowings] = useState<Showing[]>([]);
   const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null );
-  const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Alla");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -27,11 +26,23 @@ export default function LandedPageFilms() {
     "Alla", "Idag", "Kommande","Romance", "Barn & Familj", "Sci-Fi", "Thriller", "Klassiker"
   ];
 
-  async function GetFilms() {
-    const results = await (await fetch("/api/films")).json();
-    setFilms(results);
-      const hero = results.find((film: Film) => film.is_featured === true);
+async function GetFilms() {
+    try {
+      const filmsRes = await fetch("/api/films");
+      const filmsData = await filmsRes.json();
+      setFilms(filmsData);
+      
+      const hero = filmsData.find((film: Film) => film.is_featured === true);
       setFeaturedFilms(hero || null);
+
+      const showingsRes = await fetch("/api/showings");
+      if (showingsRes.ok) {
+        const showingsData = await showingsRes.json();
+        setShowings(showingsData);
+      }
+    } catch (error) {
+      console.error("Fel vid hämtning av data:", error);
+    }
   }
   useEffect(() => {
     GetFilms();
