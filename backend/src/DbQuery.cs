@@ -149,6 +149,8 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats', 'true', 'Allow all user roles to read seats'),
                 -- Bookings
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings', 'true', 'Allow all user roles to create bookings'),
+                -- Booking cancelation
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings/cancel', 'true', 'Allow all user roles to cancel bookings'), 
                 -- Tickets (POSTing new tickets during booking)
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets')
                 ;
