@@ -60,10 +60,73 @@ async function GetFilms() {
       title.includes(searchWord) ||
       genre.includes(searchWord) ||
       desc.includes(searchWord);
+    let matchesFilter = true;
+    if (selectedFilter !== "Alla") {
+      const filmGenre = film.genre?.toLowerCase() || "";
+      if (selectedFilter === "Barn & Familj") {
+        matchesFilter = filmGenre.includes("barn") || filmGenre.includes("familj");
+      } else if (selectedFilter === "Kommande") {
+        matchesFilter = film.release_year >= 2026;
+      } else if (selectedFilter === "Idag") {
+        matchesFilter = showings.some(
+          (showing) => showing.film_id === film.id && showing.start_time.startsWith(today)
+        );
+      } else {
+        matchesFilter = filmGenre.includes(selectedFilter.toLowerCase());
+      }
+    }
+
+    return matchesSearch && matchesFilter;
+  });
+
+  const isFiltering = searchQuery.trim() !== "" || selectedFilter !== "Alla";
 
   return (
     <article className="container mt-4">
+      {/* --- FILTER & SEARCH --- */}
+      <div className="film-filter-section">
 
+        {/* Filter Dropdown */}
+        <div className="filter-dropdown">
+          <button
+            className="filter-toggle-btn"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            Filter
+            <i className={`bi bi-chevron-${isFilterOpen ? "up" : "down"}`}></i>
+          </button>
+
+          {isFilterOpen && (
+            <div className="filter-menu">
+              {availableFilters.map((filter) => (
+                <div
+                  key={filter}
+                  className={`filter-menu-item${selectedFilter === filter ? " filter-menu-item--active" : ""}`}
+                  onClick={() => {
+                    setSelectedFilter(filter);
+                    setIsFilterOpen(false);
+                  }}
+                >
+                  {filter} {selectedFilter === filter && "✓"}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Search Bar */}
+        <div className="film-search-bar">
+          <i className="bi bi-search"></i>
+          <input
+            type="search"
+            className="film-search-input"
+            placeholder="Sök filmer..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+      </div>
       {/* --- Here we will show the featured film as a hero section --- */}
 
       {featuredFilms && <HeroFilm film={featuredFilms} />}
