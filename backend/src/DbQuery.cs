@@ -269,10 +269,12 @@ public static class DbQuery
       }
       else
       {
+        var rowsAffected = command.ExecuteNonQuery();
         rows.Push(new
         {
           command = sql.Split(" ")[0].ToUpper(),
-          rowsAffected = command.ExecuteNonQuery()
+          rowsAffected = rowsAffected,
+          lastInsertId = command.LastInsertedId
         });
       }
     }

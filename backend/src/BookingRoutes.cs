@@ -76,7 +76,9 @@ public static class BookingRoutes
       decimal totalPrice = 0;
       foreach (dynamic ticket in tickets)
       {
-        var ticketTypeId = ticket.ticket_type_id;
+        var ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
+        if (ticketTypeId == 0) continue;
+
         var priceSql = @"
             SELECT tp.price
             FROM ticket_prices tp
@@ -97,23 +99,28 @@ public static class BookingRoutes
       // Insert booking
       var insertBookingSql = @"
           INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price)
-          VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice);
-          SELECT LAST_INSERT_ID() as id;
+          VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice)
       ";
-      var bookingResult = SQLQueryOne(insertBookingSql, new { bookingNumber, userId, showingId, totalPrice }, context);
+      var insertResult = SQLQueryOne(insertBookingSql, new { bookingNumber, userId, showingId, totalPrice }, context);
 
-      if (bookingResult == null || bookingResult.error != null)
+      if (insertResult == null || insertResult.error != null)
       {
         return RestResult.Parse(context, new { error = "Failed to create booking." });
       }
 
-      var bookingId = bookingResult.id;
+      var bookingId = insertResult.lastInsertId != null ? (long)insertResult.lastInsertId : 0;
+      if (bookingId == 0)
+      {
+          return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
+      }
 
       // Insert tickets
       foreach (var ticket in tickets)
       {
         // Check if seat_id is provided, otherwise use NULL
-        var seatId = ticket.seat_id != null ? (int?)ticket.seat_id : null;
+        var seatId = ticket.seat_id != null ? (long?)ticket.seat_id : null;
+        var ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
+        if (ticketTypeId == 0) continue;
 
         var ticketSql = @"
             INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
@@ -124,7 +131,7 @@ public static class BookingRoutes
           bookingId,
           showingId,
           seatId = seatId,
-          ticketTypeId = ticket.ticket_type_id
+          ticketTypeId = ticketTypeId
         }, context);
       }
       // Note: I need this function in order to fix the error 
@@ -134,7 +141,9 @@ public static class BookingRoutes
       var ticketLines = new List<string>();
       foreach (var ticket in tickets)
       {
-        int ticketTypeId = ticket.ticket_type_id;
+        var ticketTypeIdRaw = ticket.ticket_type_id;
+        if (ticketTypeIdRaw == null) continue;
+        long ticketTypeId = (long)ticketTypeIdRaw;
 
         string lable = ticketTypeId switch
         {
@@ -155,8 +164,8 @@ public static class BookingRoutes
           <li><strong>Bokningsnummer:</strong> {bookingNumber}</li>
           <li><strong>Film:</strong> {showing.film_title}</li>
           <li><strong>Salong:</strong> {showing.hall_name}</li>
-          <li><strong>Datum:</strong> {((DateTime)showing.start_time).ToString("yyyy-MM-dd")}</li>
-          <li><strong>Tid:</strong> {((DateTime)showing.start_time).ToString("HH:mm")}</li>
+          <li><strong>Datum:</strong> {DateTime.Parse(showing.start_time).ToString("yyyy-MM-dd")}</li>
+          <li><strong>Tid:</strong> {DateTime.Parse(showing.start_time).ToString("HH:mm")}</li>
         </ul>
         <h3><strong>Biljetter:</strong></h3>
         <ul>{ticketLinesHtml}</ul>

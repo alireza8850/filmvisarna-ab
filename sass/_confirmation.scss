@@ -7,6 +7,217 @@
   padding: 2rem;
   position: relative;
   overflow: hidden; // hides the curtains when they slide off screen
+
+  // dramatic lighting overlay - starts dark, brightens as curtains open
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92); // darker overlay
+    animation: lightsOn 1.5s ease-out forwards;
+    z-index: 999; // below curtains but above everything else
+    pointer-events: none; // don't block clicks
+  }
+
+  // spotlight effect shining down on the content
+  &::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 200%;
+    background: radial-gradient(
+      ellipse 400px 800px at center,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      transparent 70%
+    );
+    opacity: 0;
+    animation: spotlightOn 1s ease-out forwards 1s;
+    z-index: 2; // above content but below curtains
+    pointer-events: none;
+  }
+}
+
+// lights gradually turn on as curtains open
+@keyframes lightsOn {
+  0% {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.92);
+  }
+  100% {
+    opacity: 0;
+    background: rgba(0, 0, 0, 0);
+  }
+}
+
+// spotlight beam shines down from above
+@keyframes spotlightOn {
+  0% {
+    opacity: 0;
+    width: 0;
+  }
+  100% {
+    opacity: 1;
+    width: 800px;
+  }
+}
+
+// cinematic letterbox bars - HIGH QUALITY CRAYZEE quality
+.confirmation-page__letterbox-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 15vh;
+  background:
+    linear-gradient(to bottom,
+      #000000 0%,
+      #000000 65%,
+      #0a0a0a 78%,
+      rgba(15, 15, 15, 0.98) 86%,
+      rgba(25, 25, 25, 0.92) 92%,
+      rgba(35, 35, 35, 0.80) 96%,
+      rgba(45, 45, 45, 0.50) 99%,
+      transparent 100%
+    );
+  box-shadow:
+    0 4px 60px rgba(0, 0, 0, 0.95),
+    0 8px 100px rgba(0, 0, 0, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.02);
+  z-index: 1001; // above curtains
+  transform: translateY(-100%);
+  animation: letterboxSlideInTop 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.7s;
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+
+  // film grain texture for authentic cinema feel
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 255, 255, 0.008) 1px,
+        rgba(255, 255, 255, 0.008) 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 255, 255, 0.008) 1px,
+        rgba(255, 255, 255, 0.008) 2px
+      );
+    opacity: 0.6;
+  }
+
+  // subtle horizontal scan lines like film projector
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    opacity: 0.3;
+  }
+}
+
+.confirmation-page__letterbox-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 15vh;
+  background:
+    linear-gradient(to top,
+      #000000 0%,
+      #000000 65%,
+      #0a0a0a 78%,
+      rgba(15, 15, 15, 0.98) 86%,
+      rgba(25, 25, 25, 0.92) 92%,
+      rgba(35, 35, 35, 0.80) 96%,
+      rgba(45, 45, 45, 0.50) 99%,
+      transparent 100%
+    );
+  box-shadow:
+    0 -4px 60px rgba(0, 0, 0, 0.95),
+    0 -8px 100px rgba(0, 0, 0, 0.8),
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.02);
+  z-index: 1001; // above curtains
+  transform: translateY(100%);
+  animation: letterboxSlideInBottom 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.7s;
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+
+  // film grain texture for authentic cinema feel
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 255, 255, 0.008) 1px,
+        rgba(255, 255, 255, 0.008) 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 255, 255, 0.008) 1px,
+        rgba(255, 255, 255, 0.008) 2px
+      );
+    opacity: 0.6;
+  }
+}
+
+@keyframes letterboxSlideInTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes letterboxSlideInBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 // the fancy cinema curtains, took me 2 hours to figure this out
@@ -15,40 +226,93 @@
   top: 0;
   width: 50%; // each curtain is half the screen
   height: 100vh;
-  background: linear-gradient(to bottom, #8B0000 0%, #5A0000 50%, #3D0000 100%); // red gradient for that theater vibe
+  background:
+    linear-gradient(to bottom,
+      #9B1C1C 0%,
+      #7F1D1D 20%,
+      #991B1B 40%,
+      #7F1D1D 60%,
+      #5A0000 80%,
+      #3D0000 100%
+    ); // richer red gradient for luxurious velvet look
   z-index: 1000; // gotta be on top of everything
-  animation: curtainOpen 1.2s ease-in-out forwards;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  animation: curtainOpen 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(0, 0, 0, 0.6);
 
-  // this adds the vertical lines to make it look like fabric, i might get back  to this later
+  // enhanced fabric pleats - looks way more realistic now
   &::before {
     content: '';
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 40px,
-      rgba(0, 0, 0, 0.1) 40px,
-      rgba(0, 0, 0, 0.1) 42px
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 2px,
+        transparent 2px,
+        transparent 15px,
+        rgba(255, 255, 255, 0.05) 15px,
+        rgba(255, 255, 255, 0.05) 18px,
+        transparent 18px,
+        transparent 35px
+      );
+  }
+
+  // gold trim at the inner edge. open to change the shade a bit
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      #FFD700 0%,
+      #FFA500 50%,
+      #DAA520 100%
     );
+    box-shadow:
+      0 0 10px rgba(255, 215, 0, 0.5),
+      inset 0 0 10px rgba(0, 0, 0, 0.3);
   }
 
   &--left {
     left: 0;
+
+    &::after {
+      right: 0;
+    }
   }
 
   &--right {
     right: 0;
+
+    &::after {
+      left: 0;
+    }
   }
 }
 
-// left curtain slides left
+// decorative curtain rod/valance at the top
+.confirmation-page__curtain--left::before,
+.confirmation-page__curtain--right::before {
+  z-index: 1;
+}
+
+// left curtain slides left with subtle bounce at the end
 @keyframes curtainOpen {
   0% {
     transform: translateX(0);
+  }
+  70% {
+    transform: translateX(-95%);
+  }
+  85% {
+    transform: translateX(-102%);
   }
   100% {
     transform: translateX(-100%);
@@ -57,19 +321,25 @@
 
 // right curtain needs its own animation to slide right (duh)
 .confirmation-page__curtain--right {
-  animation: curtainOpenRight 1.2s ease-in-out forwards;
+  animation: curtainOpenRight 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes curtainOpenRight {
   0% {
     transform: translateX(0);
   }
+  70% {
+    transform: translateX(95%);
+  }
+  85% {
+    transform: translateX(102%);
+  }
   100% {
     transform: translateX(100%);
   }
 }
 
-// the actual content wrapper - starts invisible then fades in after curtains open. 
+// the actual content wrapper - starts invisible then fades in after curtains open.
 .confirmation-page__content {
   text-align: center;
   color: #fff;
@@ -77,20 +347,20 @@
   border: none;
   box-shadow: none;
   opacity: 0; // starts invisible
-  animation: fadeIn 0.6s ease-in forwards 0.8s; // waits 0.8s then fades in
+  animation: fadeIn 0.8s ease-out forwards 1s; // waits 1s for curtains, then fades in
   position: relative;
   z-index: 1; // below curtains but above background
 }
 
-// fade in with a lil slide up effect MIGHT change this since i dont like how it just spawns
+// improved fade in - content scales up like a spotlight reveal
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.9);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
