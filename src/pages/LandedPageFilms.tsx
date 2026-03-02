@@ -17,7 +17,15 @@ LandedPageFilms.route = {
 export default function LandedPageFilms() {
 
   const [films, setFilms] = useState<Film[]>([]);
+  const [showings, setShowings] = useState<Showing[]>([]);
   const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null );
+  const [featuredFilms, setFeaturedFilms] = useState<Film | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("Alla");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const availableFilters = [
+    "Alla", "Idag", "Kommande","Romance", "Barn & Familj", "Sci-Fi", "Thriller", "Klassiker"
+  ];
 
   async function GetFilms() {
     const results = await (await fetch("/api/films")).json();
