@@ -129,16 +129,31 @@ async function GetFilms() {
       </div>
       {/* --- Here we will show the featured film as a hero section --- */}
 
-      {featuredFilms && <HeroFilm film={featuredFilms} />}
+      {!isFiltering &&featuredFilms && <HeroFilm film={featuredFilms} />}
 
       {/* --- Here we will show the rest of the films as cards --- */}
       <div className="row mt-5">
-        {films.filter(film => film.id !== featuredFilms?.id).map((film) => (
-          <div key={film.id} className="col-md-3 mb-4">
-            <FilmCard film={film} />    
+    {displayFilms
+          .filter((film) => isFiltering || film.id !== featuredFilms?.id)
+          .map((film) => (
+            <div key={film.id} className="col-md-3 mb-4">
+              <FilmCard film={film} />
+            </div>
+          ))}
+
+        {displayFilms.length === 0 && (
+          <div className="col-12 text-center text-white mt-4">
+            <h3 className="mb-3">Inga filmer hittades.</h3>
+            <button
+              className="btn btn-outline-light rounded-pill px-4 fw-bold"
+              onClick={() => { setSearchQuery(""); setSelectedFilter("Alla"); }}
+            >
+              Rensa filter och visa alla filmer
+            </button>
           </div>
-        ))}
+        )}
       </div>
+
     </article>
   );
 }
