@@ -149,6 +149,8 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats', 'true', 'Allow all user roles to read seats'),
                 -- Bookings
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings', 'true', 'Allow all user roles to create bookings'),
+                -- Booking cancelation
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings/cancel', 'true', 'Allow all user roles to cancel bookings'), 
                 -- Tickets (POSTing new tickets during booking)
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets')
                 ;
@@ -167,7 +169,7 @@ public static class DbQuery
                 ('2025-12-14', 'neha@unesco.org', 'Neha', 'Tadgell', '(476) 5774922', 'customer', '123'),
                 ('2025-04-21', 'arbaz@upenn.edu', 'Arbaz', 'Greenleaf', '(386) 3321896', 'staff', '123'),
                 ('2025-09-11', 'oskar@alexa.com', 'Oskar', 'Lummasana', '(651) 5012342', 'staff', '123'),
-                ('2025-09-25', 'ali@google.com.br', 'Ali', 'Dalla', '(920) 6104534', 'customer', '123');
+                ('2025-09-25', 'ali@google.com', 'Ali', 'Dalla', '(920) 6104534', 'customer', '123');
             ";
       command.CommandText = usersData;
       command.ExecuteNonQuery();

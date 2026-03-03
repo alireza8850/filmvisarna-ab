@@ -76,6 +76,7 @@ public static class FilmvisarnaTables
                 showing_id INT NOT NULL,
                 booking_status ENUM('reserved','confirmed','cancelled','expired') DEFAULT 'reserved',
                 total_price DECIMAL(10,2),
+                booking_email VARCHAR(255) NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 expires_at DATETIME,
                 FOREIGN KEY (user_id) REFERENCES users(id),
@@ -434,9 +435,10 @@ public static class FilmvisarnaTables
     command.CommandText = "SELECT COUNT(*) FROM bookings";
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
-      command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, expires_at) VALUES
-                ('A7B2X9', 2, 1, 'confirmed', 320.00, NULL),
-                ('R5K8M1', 5, 3, 'reserved', 160.00, '2026-03-01 15:45:00')";
+      command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
+                ('A7B2X9', 2, 1, 'confirmed', 320.00, 'neha@unesco.org', NULL),
+                ('B9B2X9', null, 2, 'confirmed', 320.00, 'arbaz@gmail.com', '2026-03-21 22:00:00'),
+                ('R5K8M1', 5, 3, 'reserved', 160.00, 'ali@google.com', '2026-03-01 15:45:00')";
       command.ExecuteNonQuery();
     }
 
