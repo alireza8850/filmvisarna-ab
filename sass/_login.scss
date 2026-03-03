@@ -1,0 +1,123 @@
+.login-page {
+    background-color: #060036;
+    min-height: 100vh;
+    color: white;
+    font-family: 'IBM Plex Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.login-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 32px;
+}
+
+
+.login-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+}
+
+
+.login-form {
+    width: 100%;
+    max-width: 420px;
+}
+
+
+.auth-label {
+    display: block;
+    font-size: 14px;
+    color: $primary-text;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+
+.auth-input-wrap {
+    position: relative;
+    margin-bottom: 18px;
+
+    .auth-input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $sec-text;
+        font-size: 15px;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        background-color: #0d0a3a;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 8px;
+        color: #2a4cff;
+        font-size: 14px;
+        padding: 10px 12px 10px 36px;
+        outline: none;
+        transition: border-color;
+
+        &::placeholder { color: rgba(255,255,255,0.25); }
+
+        &:focus {
+            border-color: #2a4cff;
+            box-shadow: 0 0 0 2px rgba(#2a4cff, 0.2);
+        }
+
+        // Felstatus
+        &.fel {
+            border-color: #b80000;
+            &:focus { box-shadow: 0 0 0 2px rgba(#b80000, 0.2); }
+        }
+    }
+}
+
+
+
+
+.auth-fel {
+    color: lighten(#b80000, 20%);
+    font-size: 8px;
+    margin-top: -14px;
+    margin-bottom: 12px;
+}
+
+
+.login-submit-btn {
+    
+    border-radius: 20px;       // Pill-form som i designen
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-top: 8px;
+}
+
+
+.auth-lank-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: $sec-text;
+
+    a, button {
+        color: white;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px
+        padding: 0;
+
+        &:hover { color: lighten(white 20%); }
+    }
+}

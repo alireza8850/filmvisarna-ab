@@ -36,7 +36,7 @@ const Header: React.FC = () => {
                           
                             <div className="d-flex gap-2">
                                 <button className="sign-button">BLI MEDLEM</button>
-                                <button className="sign-button">LOGGA IN</button>
+                                <button className="sign-button" onClick={()=> navigate("/login")}>LOGGA IN</button>
                             </div>
                         </nav>
 
