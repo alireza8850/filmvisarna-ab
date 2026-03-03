@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Row, Col} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import "/sass/_login.scss";
 
 LoginPage.route = {
   path: "/login",
@@ -21,12 +22,9 @@ export default function LoginPage(){
         if(!bothValid) return;
     }
 
-
-
-
     return(
         <div className="login-page">
-            <div style={{ paddingTop: '52px' }}>
+            <div>
 
                 <div className="login-wrap">
                     <h1 className="login-title">Logga In</h1>
