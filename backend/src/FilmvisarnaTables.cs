@@ -27,18 +27,18 @@ public static class FilmvisarnaTables
             -- halls
             CREATE TABLE IF NOT EXISTS halls (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                hall_name VARCHAR(100) NOT NULL,
+                hall_name VARCHAR(255) NOT NULL,
                 total_rows INT NOT NULL,
-                seats_per_row INT NOT NULL
+                seats_per_row INT NOT NULL,
                 hall_description TEXT NOT NULL,
                 halls_image VARCHAR(255) NOT NULL,
-                audio_name VARCHAR(100) NOT NULL,
+                audio_name VARCHAR(255) NOT NULL,
                 audio_description TEXT NOT NULL,
                 audio_image VARCHAR(255) NOT NULL,
-                food_name VARCHAR(100) NOT NULL,
+                food_name VARCHAR(255) NOT NULL,
                 food_description TEXT NOT NULL,
-                glasses_name VARCHAR(100)NOT NULL,
-                glasses_description TEXT NOT NULL;
+                glasses_name VARCHAR(255) NOT NULL,
+                glasses_description TEXT NOT NULL
                );
 
             -- seats
@@ -187,7 +187,7 @@ public static class FilmvisarnaTables
                              'Godis & Snacks',
                              'Ett urval av godis, chips och läsk finns tillgängligt i foajén.',
                              'Standardglasgögon',
-                              'Bekväma standardglaögon för en tydlig upplevelse.'
+                             'Bekväma standardglaögon för en tydlig upplevelse.'
                               )";
       command.ExecuteNonQuery();
      
