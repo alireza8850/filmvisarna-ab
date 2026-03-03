@@ -436,8 +436,9 @@ public static class FilmvisarnaTables
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
-                ('A7B2X9', 2, 1, 'confirmed', 320.00, 'test1@example.com', NULL),
-                ('R5K8M1', 5, 3, 'reserved', 160.00, 'test2@example.com', '2026-03-01 15:45:00')";
+                ('A7B2X9', 2, 1, 'confirmed', 320.00, 'neha@unesco.org', NULL),
+                ('B9B2X9', null, 2, 'confirmed', 320.00, 'arbaz@gmail.com', '2026-03-21 22:00:00'),
+                ('R5K8M1', 5, 3, 'reserved', 160.00, 'ali@google.com', '2026-03-01 15:45:00')";
       command.ExecuteNonQuery();
     }
 
