@@ -11,7 +11,6 @@ import type TicketPrice from "../interfaces/TicketPrice";
 import { useBooking } from "../utils/BookingContext";
 import SeatSelector from "./SeatSelector";
 
-
 TicketPickerPage.route = {
   path: "/booking/:showingId/tickets",
   parent: "/",
@@ -36,17 +35,17 @@ export default function TicketPickerPage() {
   const [barn, setBarn] = useState(0);
   const [pensionar, setPensionar] = useState(0);
 
-  // 
+  //
   useEffect(() => {
     setTickets({ adult: vuxen, child: barn, senior: pensionar });
-
-  }, [vuxen, barn, pensionar, setTickets]
-  );
+  }, [vuxen, barn, pensionar, setTickets]);
   //Extract prices from DB;
-const vuxenPrice = ticketPrices.find((p) => p.ticket_type_id === 1)?.price ?? 0;
-const barnPrice = ticketPrices.find((p) => p.ticket_type_id === 2)?.price ?? 0;
-const pensionarPrice =
-  ticketPrices.find((p) => p.ticket_type_id === 3)?.price ?? 0;
+  const vuxenPrice =
+    ticketPrices.find((p) => p.ticket_type_id === 1)?.price ?? 0;
+  const barnPrice =
+    ticketPrices.find((p) => p.ticket_type_id === 2)?.price ?? 0;
+  const pensionarPrice =
+    ticketPrices.find((p) => p.ticket_type_id === 3)?.price ?? 0;
 
   const totalPrice =
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
@@ -151,6 +150,7 @@ const pensionarPrice =
               film={film}
               halls={halls}
               seats={seats}
+              tickets={tickets}
               ticketTypes={ticketTypes}
               ticketPrices={ticketPrices}
             />
