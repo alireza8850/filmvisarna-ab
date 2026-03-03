@@ -152,7 +152,9 @@ public static class FilmvisarnaTables
     {
       command.CommandText = @"INSERT INTO halls (id, hall_name, total_rows, seats_per_row) VALUES
                 (1, 'Stora salongen', 10, 10),
-                (2, 'Lilla salongen', 8, 8)";
+                (2, 'Lilla salongen', 8, 8)
+                ON DUPLICATE KEY UPDATE hall_name = hall_name
+                ";
       command.ExecuteNonQuery();
     }
 
@@ -163,11 +165,11 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(74 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     1 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-                     UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
                      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s";
@@ -181,10 +183,10 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(72 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     2 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
                      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
@@ -425,8 +427,8 @@ public static class FilmvisarnaTables
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       command.CommandText = @"INSERT INTO ticket_prices (ticket_type_id, price, valid_from, valid_to) VALUES
-                (1, 160.00, '2025-01-01', '2026-12-31'),
-                (2, 95.00, '2025-01-01', '2026-12-31'),
+                (1, 140.00, '2025-01-01', '2026-12-31'),
+                (2, 80.00, '2025-01-01', '2026-12-31'),
                 (3, 120.00, '2025-01-01', '2026-12-31')";
       command.ExecuteNonQuery();
     }
