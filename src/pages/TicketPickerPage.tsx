@@ -1,5 +1,5 @@
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
 import type Hall from "../interfaces/Hall";
@@ -36,7 +36,13 @@ export default function TicketPickerPage() {
   const [barn, setBarn] = useState(0);
   const [pensionar, setPensionar] = useState(0);
 
-  // Extract prices from DB
+  // 
+  useEffect(() => {
+    setTickets({ adult: vuxen, child: barn, senior: pensionar });
+
+  }, [vuxen, barn, pensionar, setTickets]
+  );
+  //Extract prices from DB;
 const vuxenPrice = ticketPrices.find((p) => p.ticket_type_id === 1)?.price ?? 0;
 const barnPrice = ticketPrices.find((p) => p.ticket_type_id === 2)?.price ?? 0;
 const pensionarPrice =
@@ -145,7 +151,6 @@ const pensionarPrice =
               film={film}
               halls={halls}
               seats={seats}
-              tickets={tickets}
               ticketTypes={ticketTypes}
               ticketPrices={ticketPrices}
             />

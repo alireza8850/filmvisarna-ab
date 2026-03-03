@@ -187,7 +187,7 @@ public static class FilmvisarnaTables
                     2 AS hall_id
                 FROM
                     (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8) r
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
                      UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s";
