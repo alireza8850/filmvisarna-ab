@@ -189,7 +189,7 @@ public static class FilmvisarnaTables
                              'Standardglasögon',
                              'Bekväma standardglasögon för en tydlig upplevelse.'
                               )
-                              ON DUPLICATE KEY UPDATE hall_name = hall_name
+                              
                               ";
       command.ExecuteNonQuery();
      
@@ -210,7 +210,7 @@ public static class FilmvisarnaTables
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
                      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s
-                     ON DUPLICATE KEY UPDATE seat_letter = seat_letter
+                     
                      ";
       command.ExecuteNonQuery();
     }
@@ -230,7 +230,7 @@ public static class FilmvisarnaTables
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
                      UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s
-                     ON DUPLICATE KEY UPDATE seat_letter = seat_letter
+                     
                      ";
       command.ExecuteNonQuery();
     }
