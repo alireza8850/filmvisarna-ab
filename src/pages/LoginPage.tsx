@@ -87,7 +87,7 @@ export default function LoginPage(){
                             <Col>
                                 <p className="auth-lank-text">
                                     Inte medlem än?{' '}
-                                    <button onClick={() => navigate("/")} type="button">
+                                    <button onClick={() => navigate("/register")} type="button">
                                         Registrera dig här!
                                     </button>
                                 </p>

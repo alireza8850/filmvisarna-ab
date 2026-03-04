@@ -1,4 +1,4 @@
-.login-page {
+.login-page, .register-page{
     background-color: #060036;
     min-height: 100vh;
     color: white;
@@ -8,7 +8,7 @@
 }
 
 
-.login-wrap {
+.login-wrap, .register-wrap{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,7 +16,7 @@
 }
 
 
-.login-title {
+.login-title, .register-title{
     font-size: 22px;
     font-weight: 700;
     color: white;
@@ -26,7 +26,7 @@
     text-transform: uppercase;
 }
 
-.login-form {
+.login-form, .register-form {
     width: 100%;
     max-width: 420px;
 }
@@ -92,7 +92,7 @@
 }
 
 
-.login-submit-btn {
+.login-submit-btn, .register-submit-btn{
     font-size: 14px;
     padding: 11px;
     background-color: #2a4cff;
@@ -123,3 +123,24 @@
         &:hover {color:white 20%}
     }
 }
+
+
+.age-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+
+    input {
+        width: 60px;
+        background-color: #0d0a3a;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 4px;
+        color: #2a4cff;
+        font-size: 14px;
+        padding: 10px 8px;
+        text-align: center;
+        outline: none;
+
+        &::placeholder { color: rgba(255,255,255,0.3); }
+        }
+    }

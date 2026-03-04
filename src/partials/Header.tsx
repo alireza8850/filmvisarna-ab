@@ -70,7 +70,7 @@ useEffect(
                             </ul>
                           
                             <div className="d-flex gap-2">
-                                <button className="sign-button">BLI MEDLEM</button>
+                                <button className="sign-button" onClick={()=> navigate("/register")}>BLI MEDLEM</button>
                                 <button className="sign-button" onClick={()=> navigate("/login")}>LOGGA IN</button>
                             </div>
                             <div className="mer-dropdown" ref={dropdownRef}>
