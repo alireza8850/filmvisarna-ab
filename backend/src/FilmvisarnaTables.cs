@@ -27,10 +27,19 @@ public static class FilmvisarnaTables
             -- halls
             CREATE TABLE IF NOT EXISTS halls (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                hall_name VARCHAR(100) NOT NULL,
+                hall_name VARCHAR(255) NOT NULL,
                 total_rows INT NOT NULL,
-                seats_per_row INT NOT NULL
-            );
+                seats_per_row INT NOT NULL,
+                hall_description TEXT NOT NULL,
+                halls_image VARCHAR(255) NOT NULL,
+                audio_name VARCHAR(255) NOT NULL,
+                audio_description TEXT NOT NULL,
+                audio_image VARCHAR(255) NOT NULL,
+                food_name VARCHAR(255) NOT NULL,
+                food_description TEXT NOT NULL,
+                glasses_name VARCHAR(255) NOT NULL,
+                glasses_description TEXT NOT NULL
+               );
 
             -- seats
             CREATE TABLE IF NOT EXISTS seats (
@@ -150,10 +159,40 @@ public static class FilmvisarnaTables
     command.CommandText = "SELECT COUNT(*) FROM halls";
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
-      command.CommandText = @"INSERT INTO halls (id, hall_name, total_rows, seats_per_row) VALUES
-                (1, 'Stora salongen', 10, 10),
-                (2, 'Lilla salongen', 8, 8)";
+      command.CommandText = @"INSERT INTO halls 
+                           (id, hall_name, total_rows, seats_per_row, 
+                           hall_description, halls_image,
+                           audio_name, audio_description, audio_image,
+                           food_name, food_description,
+                           glasses_name, glasses_description) 
+                          VALUES(
+                            1, 'Stora salongen', 10, 10,
+                            'Med en enorm sal får du en oförglömlig upplevelse! Med hela 100 mjuka stolar så kan vi garantera att du sjunker in i den optimala bio upplevelsen.',
+                            'stora_salongen.jpg',
+                            'Dolby Atmos',
+                            'Dolby Atmos är det bästa ljudsystemet i världen. Med en innovativt designad 3D-system så känns det som att man faktiskt är i filmen. Ljudnivån når 105 dB och vibrationerna känns i benen.',
+                            'dolby_atmos.jpg',
+                            'Popcorn & Dryck',
+                            'Njut av färskt popcorn och ett brett urval av drycker under föreställningen.',
+                            '3D-glasögon',
+                            'Högkvalitativa 3D-glasögon ingår för utvalda föreställningar.'
+                            ),
+                          (
+                             2, 'Lilla salongen', 8, 8,
+                             'En liten men ödmjuk salong. Det man tappar i storlek får man tillbaka i intensitet. Skräckfilmer har aldrig varit så läskiga och actionfilmer kan få en att rysa till.',
+                             'lilla_salongen.jpg',
+                             'AWP Onetap Sound System',
+                             'Designad år 2011 men ikonisk även nu. Ett ljudsystem som är beundrat av regissörer och ger det förväntade ljudet vid produktion.',
+                             'awp_sound.jpg',
+                             'Godis & Snacks',
+                             'Ett urval av godis, chips och läsk finns tillgängligt i foajén.',
+                             'Standardglasögon',
+                             'Bekväma standardglasögon för en tydlig upplevelse.'
+                              )
+                              ON DUPLICATE KEY UPDATE hall_name = hall_name
+                              ";
       command.ExecuteNonQuery();
+     
     }
 
     // Seed seats - Stora salongen
@@ -163,14 +202,16 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(74 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     1 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-                     UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s";
+                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s
+                     ON DUPLICATE KEY UPDATE seat_letter = seat_letter
+                     ";
       command.ExecuteNonQuery();
     }
 
@@ -181,14 +222,16 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(72 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     2 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s";
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s
+                     ON DUPLICATE KEY UPDATE seat_letter = seat_letter
+                     ";
       command.ExecuteNonQuery();
     }
 
@@ -425,8 +468,8 @@ public static class FilmvisarnaTables
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       command.CommandText = @"INSERT INTO ticket_prices (ticket_type_id, price, valid_from, valid_to) VALUES
-                (1, 160.00, '2025-01-01', '2026-12-31'),
-                (2, 95.00, '2025-01-01', '2026-12-31'),
+                (1, 140.00, '2025-01-01', '2026-12-31'),
+                (2, 80.00, '2025-01-01', '2026-12-31'),
                 (3, 120.00, '2025-01-01', '2026-12-31')";
       command.ExecuteNonQuery();
     }
