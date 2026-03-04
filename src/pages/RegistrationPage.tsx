@@ -3,11 +3,11 @@ import {Row , Col} from "react-bootstrap";
 import "/sass/_login.scss";
 import { useNavigate } from "react-router-dom";
 
-Registration.route = {
+RegistrationPage.route = {
   path: "/register",
 };
 
-export default function Registration (){
+export default function RegistrationPage (){
     const navigate = useNavigate();
     const [ageD, setAgeD] = useState("");
     const [ageM,setAgeM] = useState("");
@@ -15,18 +15,58 @@ export default function Registration (){
     const [email, setEmail] = useState("");
     const [pass,setPass] = useState("");
     const [repeatPass,setRepeatPass] = useState("");
-    const [userInput,setUserInput] = useState({age: false, email: false, pass: false, repeatPass: false});
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [userInput,setUserInput] = useState({age: false, email: false, pass: false, repeatPass: false, firstName: false, lastName: false});
 
     const validAge = ageD.length > 0 && ageM.length > 0 && ageY.length === 4;
     const validEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
     const validPass = pass.length >= 8;
     const validRepeatPass = repeatPass === pass && repeatPass.length > 0;
-    const allValid = validAge && validEmail && validPass && validRepeatPass;
+    const validFirstName = firstName.trim().length >= 2;      //.trim() tar bort mellanrum/whitespace i början och slutet
+    const validLastName = lastName.trim().length >= 2;
+    const allValid = validAge && validEmail && validPass && validRepeatPass && validFirstName && validLastName;
+    const [serverError, setServerError] = useState("");
+    const [loading, setLoading] = useState(false);   // State för att visa laddningsindikator medan API-anrop pågår tex visar Registrerar ist för Registrera
 
-    const registerButton = (): void => {
-        setUserInput({age: true, email: true, pass: true, repeatPass: true});
-        if (!allValid) return;
+    const registerButton = async (): Promise<void> => {
+        setUserInput({
+          age: true,
+          email: true,
+          pass: true,
+          repeatPass: true,
+          firstName: true,
+          lastName: true,
+        });
+        setServerError("");
+    if (!allValid) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email,
+          password: pass,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+          setServerError(data.error);
+        }
+      else {
+        navigate("/login");
+      }
     }
+    finally {
+      setLoading(false);
+    }
+};
 
 
     return (
@@ -36,6 +76,57 @@ export default function Registration (){
                     <h1 className="register-title">Bli Medlem Hos Oss</h1>
 
                     <div className="register-form">
+        {serverError && (
+                <Row>
+                  <Col>
+                    <p className="auth-fel server-error">{serverError}</p>
+                  </Col>
+                </Row>
+              )}
+
+            <Row>
+              <Col>
+                <label className="auth-label">Förnamn</label>
+                <div className="auth-input-wrap">
+                  <i className="bi bi-person auth-input-icon"></i>
+                  <input
+                    type="text"
+                    placeholder="Skriv in ditt förnamn"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    onBlur={() =>
+                      setUserInput((p) => ({ ...p, firstName: true }))
+                    }
+                    className={userInput.firstName && !validFirstName ? "fel" : ""}
+                  />
+                </div>
+                {userInput.firstName && !validFirstName && (
+                  <p className="auth-fel">Förnamnet måste vara minst 2 tecken.</p>
+                )}
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <label className="auth-label">Efternamn</label>
+                <div className="auth-input-wrap">
+                  <i className="bi bi-person auth-input-icon"></i>
+                  <input
+                    type="text"
+                    placeholder="Skriv in ditt efternamn"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    onBlur={() =>
+                      setUserInput((p) => ({ ...p, lastName: true }))
+                    }
+                    className={userInput.lastName && !validLastName ? "fel" : ""}
+                  />
+                </div>
+                {userInput.lastName && !validLastName && (
+                  <p className="auth-fel">Efternamnet måste vara minst 2 tecken.</p>
+                )}
+              </Col>
+            </Row>
 
                         <Row>
                             <Col>
@@ -138,8 +229,9 @@ export default function Registration (){
                                     className="register-submit-btn"
                                     onClick={registerButton}
                                     type="button"
+                                    disabled={loading}
                                 >
-                                    Registrera
+                                    {loading ? "Registrerar" :"Registrera"}
                                 </button>
                             </Col>
                         </Row>

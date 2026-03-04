@@ -15,12 +15,35 @@ export default function LoginPage(){
     const validEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
     const validPass = pass.length >= 8;
     const bothValid = validEmail && validPass;
+    const [serverError, setServerError] = useState("");         // Felmeddelande från backend
+    const [loading, setLoading] = useState(false);      
 
-    const loginButton = (): void =>{
-        setUserInput({email: true, pass: true});
+    const loginButton = async (): Promise<void> => {
+    setUserInput({ email: true, pass: true });
+    setServerError("");
 
-        if(!bothValid) return;
+    if (!bothValid) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setServerError(data.error);
+      } else {
+        navigate("/");
+      }
+    } 
+    finally {
+      setLoading(false);
     }
+  };
 
     return(
         <div className="login-page">
@@ -30,6 +53,14 @@ export default function LoginPage(){
                     <h1 className="login-title">Logga In</h1>
 
                     <div className="login-form">
+                    
+                    {serverError && (
+                    <Row>
+                        <Col>
+                            <p className="auth-fel server-error">{serverError}</p>
+                        </Col>
+                    </Row>
+                    )}
                         <Row>
                             <Col>
                                 <label className="auth-label">E-Post</label>
@@ -77,8 +108,9 @@ export default function LoginPage(){
                                     className="login-submit-btn"
                                     onClick={loginButton}
                                     type="button"
+                                    disabled={loading}
                                 >
-                                    Logga in
+                                    {loading ? "Loggar in..." : "Logga in"}
                                 </button>
                             </Col>
                         </Row>
