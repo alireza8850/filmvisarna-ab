@@ -1,9 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
+
+const MER_LANKAR = [
+    {text:"Nu på bio", href:"#"},
+    {text:"Kommande filmer", href:"#"},
+    {text:"Mat & Dryck", href:"#"},
+    {text:"Nyheter", href:"#"},
+    {text:"Kontakta oss", href:"#"},
+    {text:"Bli medlem", href:"#"},
+    {text:"Logga in", href:"#"},
+];
+
+
 const Header: React.FC = () => {
   // whether the navbar is expanded or not
   // (we use this to close it after a click/selection)
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const[dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
 
@@ -16,6 +32,25 @@ const Header: React.FC = () => {
     setMenuOpen(false);
     document.body.style.overflow = '';
   }
+
+useEffect(
+    ()=>
+    {          //när man klickar utanför, dropdown stängs
+
+        const clickOutside = (e: MouseEvent) =>
+        {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+            {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", clickOutside);
+        return () =>
+        {
+            document.removeEventListener("mousedown", clickOutside);
+            document.body.style.overflow = "";
+        }
+    }, []);
 
   return (
     <>
@@ -37,6 +72,35 @@ const Header: React.FC = () => {
                             <div className="d-flex gap-2">
                                 <button className="sign-button">BLI MEDLEM</button>
                                 <button className="sign-button" onClick={()=> navigate("/login")}>LOGGA IN</button>
+                            </div>
+                            <div className="mer-dropdown" ref={dropdownRef}>
+                                <button className={`mer-klass${dropdownOpen ? ' aktiv' : ''}`} 
+                                        onClick={()=> setDropdownOpen(prev => !prev)}>
+                                Mer 
+                                    <i className={`bi bi-chevron-${dropdownOpen ? 'up' : 'down'} ms-1`}></i>
+                                </button>
+                                {dropdownOpen && (
+                                        <div className="mer-panel" role="menu">
+                                            {MER_LANKAR.map(lank => (
+                                                <a
+                                                    key={lank.text}
+                                                    href={lank.href}
+                                                    className="mer-lank"
+                                                    onClick={() => setDropdownOpen(false)}
+                                                >
+                                                    {lank.text}
+                                                </a>
+                                            ))}
+                                            {/* Stäng-knapp */}
+                                            <button
+                                                className="mer-stang"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                <i className="bi bi-x"></i>
+                                            </button>
+                                        </div>
+                                    )}
+
                             </div>
                         </nav>
 
