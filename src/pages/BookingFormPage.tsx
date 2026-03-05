@@ -11,7 +11,7 @@ BookingFormPage.route = {
 
 export default function BookingFormPage() {
   const navigate = useNavigate();
-  const { film, showing, tickets, clearBooking } = useBooking();
+  const { film, showing, tickets,selectedSeats, clearBooking } = useBooking(); // Adding the selected seats to send them to backend/db // Fatima
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,12 +23,8 @@ export default function BookingFormPage() {
       </div>
     );
   }
+// Should remove this declartion / no longer needed / we fetch the chosen tickets on TicketPicker.tsx
 
-  const vuxenPrice = 160;
-  const barnPrice = 95;
-  const pensionarPrice = 120;
-
-  const totalPrice = (tickets.adult * vuxenPrice) + (tickets.child * barnPrice) + (tickets.senior * pensionarPrice);
 
   const handleBooking = async () => {
     if (!email) {
