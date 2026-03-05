@@ -166,7 +166,7 @@ public static class FilmvisarnaTables
                            food_name, food_description,
                            glasses_name, glasses_description) 
                           VALUES(
-                            1, 'Stora salongen', 10, 10,
+                            1, 'Stora salongen', 8, 10,
                             'Med en enorm sal får du en oförglömlig upplevelse! Med hela 100 mjuka stolar så kan vi garantera att du sjunker in i den optimala bio upplevelsen.',
                             'stora_salongen.jpg',
                             'Dolby Atmos',
@@ -178,7 +178,7 @@ public static class FilmvisarnaTables
                             'Högkvalitativa 3D-glasögon ingår för utvalda föreställningar.'
                             ),
                           (
-                             2, 'Lilla salongen', 8, 8,
+                             2, 'Lilla salongen', 6, 10,
                              'En liten men ödmjuk salong. Det man tappar i storlek får man tillbaka i intensitet. Skräckfilmer har aldrig varit så läskiga och actionfilmer kan få en att rysa till.',
                              'lilla_salongen.jpg',
                              'AWP Onetap Sound System',
