@@ -1,15 +1,24 @@
 import { useLoaderData } from "react-router-dom";
 import type { Hall } from "../interfaces/Hall";
 import hallLoader from "../utils/hallLoader";
-//import "../saas/hall.scss";
+import "/sass/_hall.scss";
 
-const IMG_BASE = "/images/halls/";
+const HALL_IMAGES: Record<number, { hallImg: string; audioImg: string }> = {
+  1: {
+    hallImg:  "/public/Hallimage/derks24-movie-theater-2502213_1920 (1).jpg",
+    audioImg: "/public/Hallimage/Dolby-Atmos-cinema-820x461.jpg",
+  },
+  2: {
+    hallImg:  "/public/Hallimage/pexels-tima-miroshnichenko-7991231.jpg",
+    audioImg: "/public/Hallimage/UBzraEVUo92gJKGtxgdCja-970-80.jpg.webp",
+  },
+};
 
 HallDesPage.route = {
   path: "/salonger",
   menuLabel: "Våra Salonger",
   index: 5,
-  loader: hallLoader
+  loader: hallLoader,
 };
 
 export default function HallDesPage() {
@@ -18,52 +27,54 @@ export default function HallDesPage() {
   return (
     <div className="hall-page">
 
+      {/* Page title */}
       <section className="hall-hero">
         <h1>Våra <span>Salonger</span></h1>
         <div className="hall-hero__line" />
       </section>
 
+      {/* Hall cards */}
       <div className="hall-list">
-        {halls.map((hall, index) => (
-          <div key={hall.id}>
-            <article className="hall-card">
+        {halls.map((hall, index) => {
+          const images = HALL_IMAGES[hall.id];
 
-              <img
-                className="hall-card__hero-img"
-                src={`${IMG_BASE}${hall.halls_image}`}
-                alt={hall.hall_name}
-                onError={(e) =>
-                  ((e.target as HTMLImageElement).style.display = "none")
-                }
-              />
+          return (
+            <div key={hall.id}>
+              <article className="hall-card">
 
-              <div className="hall-card__body">
-                <h2 className="hall-card__name">{hall.hall_name}</h2>
-                <p className="hall-card__description">{hall.hall_description}</p>
-              </div>
-
-              <div className="hall-card__audio">
+                {/* Hall image */}
                 <img
-                  className="hall-card__audio-img"
-                  src={`${IMG_BASE}${hall.audio_image}`}
-                  alt={hall.audio_name}
-                  onError={(e) =>
-                    ((e.target as HTMLImageElement).style.display = "none")
-                  }
+                  className="hall-card__hero-img"
+                  src={images?.hallImg}
+                  alt={hall.hall_name}
                 />
-                <h3 className="hall-card__audio-name">{hall.audio_name}</h3>
-                <p className="hall-card__audio-description">
-                  {hall.audio_description}
-                </p>
-              </div>
 
-             
+                {/* Name + description */}
+                <div className="hall-card__body">
+                  <h2 className="hall-card__name">{hall.hall_name}</h2>
+                  <p className="hall-card__description">{hall.hall_description}</p>
+                </div>
 
-            </article>
+                {/* Audio image + info */}
+                <div className="hall-card__audio">
+                  <img
+                    className="hall-card__audio-img"
+                    src={images?.audioImg}
+                    alt={hall.audio_name}
+                  />
+                  <h3 className="hall-card__audio-name">{hall.audio_name}</h3>
+                  <p className="hall-card__audio-description">
+                    {hall.audio_description}
+                  </p>
+                </div>
 
-            {index < halls.length - 1 && <div className="hall-divider" />}
-          </div>
-        ))}
+                
+              </article>
+
+              {index < halls.length - 1 && <div className="hall-divider" />}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
