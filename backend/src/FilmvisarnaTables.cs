@@ -156,10 +156,10 @@ public static class FilmvisarnaTables
     try
     {
       // Seed halls
-    command.CommandText = "SELECT COUNT(*) FROM halls";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO halls 
+      command.CommandText = "SELECT COUNT(*) FROM halls";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO halls 
                            (id, hall_name, total_rows, seats_per_row, 
                            hall_description, halls_image,
                            audio_name, audio_description, audio_image,
@@ -191,55 +191,57 @@ public static class FilmvisarnaTables
                               )
                               
                               ";
-      command.ExecuteNonQuery();
-     
-    }
+        command.ExecuteNonQuery();
 
-    // Seed seats - Stora salongen
-    command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 1";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
+      }
+
+      // Seed seats - Stora salongen
+      command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 1";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
                     CHAR(65 + s.seat_letter) AS seat_letter,
                     1 AS hall_id
                 FROM
-                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
                 CROSS JOIN
-                    (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s
+                    (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
+                     UNION ALL SELECT 8 UNION ALL SELECT 9) s
                      
                      ";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed seats - Lilla salongen
-    command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 2";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
+      // Seed seats - Lilla salongen
+      command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 2";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
                     CHAR(65 + s.seat_letter) AS seat_letter,
                     2 AS hall_id
                 FROM
                     (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
+                     UNION ALL SELECT 4 UNION ALL SELECT 5) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
+                     UNION ALL SELECT 8 UNION ALL SELECT 9) s
                      
                      ";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed films
-    command.CommandText = "SELECT COUNT(*) FROM films";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      var filmsData = new List<string>
+      // Seed films
+      command.CommandText = "SELECT COUNT(*) FROM films";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        var filmsData = new List<string>
             {
                 @"INSERT INTO films (title, duration_minutes, genre, release_year, age_limit, description, language, poster_url, trailer_url) VALUES
                 ('Avatar 3', 192, 'Science fiction', 2025, 12,'Den tredje delen i Avatar-sagan där konflikten på Pandora når nya nivåer och nya allianser formas.','Svenska', 'avatar3.jpg', 'https://www.youtube.com/watch?v=nb_fFj_0rq8&pp=ygUHYXZhdGFyMw%3D%3D')",
@@ -273,22 +275,22 @@ public static class FilmvisarnaTables
                 ('Lek med Alfons Åberg', 37, 'Barn, Animerat, Familj', 2026, 16,'Ett nytt lekfullt Bok-Filmspaket med Alfons Åberg. Det handlar om det alldeles underbara när pappa äntligen lägger vardagssysslorna åt sidan och följer med Alfons in i fantasins värld, om att leka osynligt med Viktor men också om det hemska i att bli oskyldigt anklagad för att vara tjuv. Vi får möta Alfons i Osynligt med Alfons, Där går TJUV-Alfons! och Flyg! Sa Alfons Åberg','Svenska', 'lek.jpg', 'https://www.youtube.com/watch?v=wWB5XP-abuI&pp=ygUbTGVrIG1lZCBBbGZvbnMgw4ViZXJnIG1vdmll')"
 
             };
-      foreach (var sql in filmsData)
-      {
-        command.CommandText = sql;
-        command.ExecuteNonQuery();
+        foreach (var sql in filmsData)
+        {
+          command.CommandText = sql;
+          command.ExecuteNonQuery();
+        }
       }
-    }
 
-    // Mark Avatar 3 as featured
-    command.CommandText = "UPDATE films SET is_featured = TRUE WHERE id = 1";
-    command.ExecuteNonQuery();
+      // Mark Avatar 3 as featured
+      command.CommandText = "UPDATE films SET is_featured = TRUE WHERE id = 1";
+      command.ExecuteNonQuery();
 
-    // Seed showings
-    command.CommandText = "SELECT COUNT(*) FROM showings";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO showings (film_id, hall_id, start_time) VALUES
+      // Seed showings
+      command.CommandText = "SELECT COUNT(*) FROM showings";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO showings (film_id, hall_id, start_time) VALUES
                 -- Avatar 3 (film 1)
                 (1, 1, CONCAT(CURDATE(), ' 10:00:00')),
                 (1, 1, CONCAT(CURDATE(), ' 13:30:00')),
@@ -449,64 +451,64 @@ public static class FilmvisarnaTables
                 (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), ' 11:00:00')),
                 (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 6 DAY), ' 10:00:00')),
                 (15, 2, CONCAT(DATE_ADD(CURDATE(), INTERVAL 7 DAY), ' 13:00:00'))";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed ticket types
-    command.CommandText = "SELECT COUNT(*) FROM ticket_types";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO ticket_types (ticket_type) VALUES
+      // Seed ticket types
+      command.CommandText = "SELECT COUNT(*) FROM ticket_types";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO ticket_types (ticket_type) VALUES
                 ('adult'),
                 ('child'),
                 ('senior')";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed ticket prices
-    command.CommandText = "SELECT COUNT(*) FROM ticket_prices";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO ticket_prices (ticket_type_id, price, valid_from, valid_to) VALUES
+      // Seed ticket prices
+      command.CommandText = "SELECT COUNT(*) FROM ticket_prices";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO ticket_prices (ticket_type_id, price, valid_from, valid_to) VALUES
                 (1, 140.00, '2025-01-01', '2026-12-31'),
                 (2, 80.00, '2025-01-01', '2026-12-31'),
                 (3, 120.00, '2025-01-01', '2026-12-31')";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed bookings
-    command.CommandText = "SELECT COUNT(*) FROM bookings";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
+      // Seed bookings
+      command.CommandText = "SELECT COUNT(*) FROM bookings";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
                 ('A7B2X9', 2, 1, 'confirmed', 320.00, 'neha@unesco.org', NULL),
                 ('B9B2X9', null, 2, 'confirmed', 320.00, 'arbaz@gmail.com', '2026-03-21 22:00:00'),
                 ('R5K8M1', 5, 3, 'reserved', 160.00, 'ali@google.com', '2026-03-01 15:45:00')";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed tickets
-    command.CommandText = "SELECT COUNT(*) FROM tickets";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+      // Seed tickets
+      command.CommandText = "SELECT COUNT(*) FROM tickets";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
                 SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'J'";
-      command.ExecuteNonQuery();
+        command.ExecuteNonQuery();
 
-      command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
                 SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'I'";
-      command.ExecuteNonQuery();
+        command.ExecuteNonQuery();
 
-      command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
                 SELECT 2, 3, id, 2 FROM seats WHERE hall_id = 2 AND row_index = 3 AND seat_letter = 'C'";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed actors
-    command.CommandText = "SELECT COUNT(*) FROM actors";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO actors (name) VALUES
+      // Seed actors
+      command.CommandText = "SELECT COUNT(*) FROM actors";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO actors (name) VALUES
                 ('Oskar Gyllenör'),
                 ('Zoe Saldaña'),
                 ('Jason Clarke'),
@@ -522,14 +524,14 @@ public static class FilmvisarnaTables
                 ('Shima Niavarani'),
                 ('Johan Rheborg'),
                 ('Tomas von Brömssen')";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
 
-    // Seed film_actors
-    command.CommandText = "SELECT COUNT(*) FROM film_actors";
-    if (Convert.ToInt32(command.ExecuteScalar()) == 0)
-    {
-      command.CommandText = @"INSERT INTO film_actors (film_id, actor_id) VALUES
+      // Seed film_actors
+      command.CommandText = "SELECT COUNT(*) FROM film_actors";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+      {
+        command.CommandText = @"INSERT INTO film_actors (film_id, actor_id) VALUES
                 (1, 1),
                 (1, 2),
                 (12, 4),
@@ -544,8 +546,8 @@ public static class FilmvisarnaTables
                 (11, 4),
                 (7, 9),
                 (7, 10)";
-      command.ExecuteNonQuery();
-    }
+        command.ExecuteNonQuery();
+      }
     }
     catch (Exception ex)
     {
