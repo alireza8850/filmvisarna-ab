@@ -1,4 +1,4 @@
-export default interface Showing {  
+export default interface Ticket {  
     id: number;
     booking_id: number;
     showing_id: number;

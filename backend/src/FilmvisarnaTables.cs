@@ -182,13 +182,15 @@ public static class FilmvisarnaTables
                              'En liten men ödmjuk salong. Det man tappar i storlek får man tillbaka i intensitet. Skräckfilmer har aldrig varit så läskiga och actionfilmer kan få en att rysa till.',
                              'lilla_salongen.jpg',
                              'AWP Onetap Sound System',
-                             'Designad i 2011 men ikonisk även nu. Ett ljudsystem som är beundrat av regissörer och ger det förväntade ljudet vid produktion.',
+                             'Designad år 2011 men ikonisk även nu. Ett ljudsystem som är beundrat av regissörer och ger det förväntade ljudet vid produktion.',
                              'awp_sound.jpg',
                              'Godis & Snacks',
                              'Ett urval av godis, chips och läsk finns tillgängligt i foajén.',
-                             'Standardglasgögon',
-                             'Bekväma standardglaögon för en tydlig upplevelse.'
-                              )";
+                             'Standardglasögon',
+                             'Bekväma standardglasögon för en tydlig upplevelse.'
+                              )
+                              
+                              ";
       command.ExecuteNonQuery();
      
     }
@@ -200,14 +202,16 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(74 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     1 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-                     UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s";
+                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) s
+                     
+                     ";
       command.ExecuteNonQuery();
     }
 
@@ -218,14 +222,16 @@ public static class FilmvisarnaTables
       command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
                 SELECT
                     r.row_index,
-                    CHAR(72 - s.seat_letter) AS seat_letter,
+                    CHAR(65 + s.seat_letter) AS seat_letter,
                     2 AS hall_id
                 FROM
-                    (SELECT 1 row_index UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8) r
+                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
                 CROSS JOIN
                     (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s";
+                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) s
+                     
+                     ";
       command.ExecuteNonQuery();
     }
 
@@ -462,8 +468,8 @@ public static class FilmvisarnaTables
     if (Convert.ToInt32(command.ExecuteScalar()) == 0)
     {
       command.CommandText = @"INSERT INTO ticket_prices (ticket_type_id, price, valid_from, valid_to) VALUES
-                (1, 160.00, '2025-01-01', '2026-12-31'),
-                (2, 95.00, '2025-01-01', '2026-12-31'),
+                (1, 140.00, '2025-01-01', '2026-12-31'),
+                (2, 80.00, '2025-01-01', '2026-12-31'),
                 (3, 120.00, '2025-01-01', '2026-12-31')";
       command.ExecuteNonQuery();
     }
