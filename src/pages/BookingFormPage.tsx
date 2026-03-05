@@ -79,7 +79,7 @@ export default function BookingFormPage() {
         body: JSON.stringify({
           // Send all the needed information to bd-booking / backend 
           showing_id: showing.id,
-          booking_email: email, // Just for now because we need to reset this to check if the user is not looged in
+          email: email, // Just for now because we need to reset this to check if the user is not looged in
           // user_id: user? user.id : null ==> next ==> booking_email: user? null: email
           tickets: ticketRequests,
           total_price: totalPrice
