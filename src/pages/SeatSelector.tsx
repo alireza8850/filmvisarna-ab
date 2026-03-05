@@ -100,7 +100,7 @@ function toggleSeat(seatId: number) {
   return (
     <div className="seat-page">
       <div className="screen">
-        <div className="screen-border">SCREEN</div>
+        <div className="screen-border">FILMDUK</div>
         <br />
         <div className="legend">
           <span className="legend-item available"></span> Tillgänglig
