@@ -166,7 +166,7 @@ public static class FilmvisarnaTables
                            food_name, food_description,
                            glasses_name, glasses_description) 
                           VALUES(
-                            1, 'Stora salongen', 8, 10,
+                            1, 'Stora salongen', 8, 12,
                             'Med en enorm sal får du en oförglömlig upplevelse! Med hela 100 mjuka stolar så kan vi garantera att du sjunker in i den optimala bio upplevelsen.',
                             'stora_salongen.jpg',
                             'Dolby Atmos',
@@ -178,7 +178,7 @@ public static class FilmvisarnaTables
                             'Högkvalitativa 3D-glasögon ingår för utvalda föreställningar.'
                             ),
                           (
-                             2, 'Lilla salongen', 6, 10,
+                             2, 'Lilla salongen', 6, 12,
                              'En liten men ödmjuk salong. Det man tappar i storlek får man tillbaka i intensitet. Skräckfilmer har aldrig varit så läskiga och actionfilmer kan få en att rysa till.',
                              'lilla_salongen.jpg',
                              'AWP Onetap Sound System',
@@ -199,18 +199,23 @@ public static class FilmvisarnaTables
       command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 1";
       if (Convert.ToInt32(command.ExecuteScalar()) == 0)
       {
-        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
-                SELECT
-                    r.row_index,
-                    CHAR(65 + s.seat_letter) AS seat_letter,
-                    1 AS hall_id
-                FROM
-                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) r
-                CROSS JOIN
-                    (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
-                     UNION ALL SELECT 8 UNION ALL SELECT 9) s
+        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id) VALUES
+                -- Row A (8 seats)
+                (0, 'A', 1), (0, 'B', 1), (0, 'C', 1), (0, 'D', 1), (0, 'E', 1), (0, 'F', 1), (0, 'G', 1), (0, 'H', 1),
+                -- Row B (9 seats)
+                (1, 'A', 1), (1, 'B', 1), (1, 'C', 1), (1, 'D', 1), (1, 'E', 1), (1, 'F', 1), (1, 'G', 1), (1, 'H', 1), (1, 'I', 1),
+                -- Row C (10 seats)
+                (2, 'A', 1), (2, 'B', 1), (2, 'C', 1), (2, 'D', 1), (2, 'E', 1), (2, 'F', 1), (2, 'G', 1), (2, 'H', 1), (2, 'I', 1), (2, 'J', 1),
+                -- Row D (10 seats)
+                (3, 'A', 1), (3, 'B', 1), (3, 'C', 1), (3, 'D', 1), (3, 'E', 1), (3, 'F', 1), (3, 'G', 1), (3, 'H', 1), (3, 'I', 1), (3, 'J', 1),
+                -- Row E (10 seats)
+                (4, 'A', 1), (4, 'B', 1), (4, 'C', 1), (4, 'D', 1), (4, 'E', 1), (4, 'F', 1), (4, 'G', 1), (4, 'H', 1), (4, 'I', 1), (4, 'J', 1),
+                -- Row F (10 seats)
+                (5, 'A', 1), (5, 'B', 1), (5, 'C', 1), (5, 'D', 1), (5, 'E', 1), (5, 'F', 1), (5, 'G', 1), (5, 'H', 1), (5, 'I', 1), (5, 'J', 1),
+                -- Row G (12 seats)
+                (6, 'A', 1), (6, 'B', 1), (6, 'C', 1), (6, 'D', 1), (6, 'E', 1), (6, 'F', 1), (6, 'G', 1), (6, 'H', 1), (6, 'I', 1), (6, 'J', 1), (6, 'K', 1), (6, 'L', 1),
+                -- Row H (12 seats)
+                (7, 'A', 1), (7, 'B', 1), (7, 'C', 1), (7, 'D', 1), (7, 'E', 1), (7, 'F', 1), (7, 'G', 1), (7, 'H', 1), (7, 'I', 1), (7, 'J', 1), (7, 'K', 1), (7, 'L', 1)
                      
                      ";
         command.ExecuteNonQuery();
@@ -220,19 +225,20 @@ public static class FilmvisarnaTables
       command.CommandText = "SELECT COUNT(*) FROM seats WHERE hall_id = 2";
       if (Convert.ToInt32(command.ExecuteScalar()) == 0)
       {
-        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id)
-                SELECT
-                    r.row_index,
-                    CHAR(65 + s.seat_letter) AS seat_letter,
-                    2 AS hall_id
-                FROM
-                    (SELECT 0 row_index UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5) r
-                CROSS JOIN
-                    (SELECT 0 seat_letter UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-                     UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
-                     UNION ALL SELECT 8 UNION ALL SELECT 9) s
-                     
+        command.CommandText = @"INSERT INTO seats (row_index, seat_letter, hall_id) VALUES
+              
+                -- Row A (6 seats)
+                (0, 'A', 2), (0, 'B', 2), (0, 'C', 2), (0, 'D', 2), (0, 'E', 2), (0, 'F', 2),
+                -- Row B (8 seats)
+                (1, 'A', 2), (1, 'B', 2), (1, 'C', 2), (1, 'D', 2), (1, 'E', 2), (1, 'F', 2), (1, 'G', 2), (1, 'H', 2),
+                -- Row C (9 seats)
+                (2, 'A', 2), (2, 'B', 2), (2, 'C', 2), (2, 'D', 2), (2, 'E', 2), (2, 'F', 2), (2, 'G', 2), (2, 'H', 2), (2, 'I', 2),
+                -- Row D (10 seats)
+                (3, 'A', 2), (3, 'B', 2), (3, 'C', 2), (3, 'D', 2), (3, 'E', 2), (3, 'F', 2), (3, 'G', 2), (3, 'H', 2), (3, 'I', 2), (3, 'J', 2),
+                -- Row E (10 seats)
+                (4, 'A', 2), (4, 'B', 2), (4, 'C', 2), (4, 'D', 2), (4, 'E', 2), (4, 'F', 2), (4, 'G', 2), (4, 'H', 2), (4, 'I', 2), (4, 'J', 2),
+                -- Row F (12 seats)
+                (5, 'A', 2), (5, 'B', 2), (5, 'C', 2), (5, 'D', 2), (5, 'E', 2), (5, 'F', 2), (5, 'G', 2), (5, 'H', 2), (5, 'I', 2), (5, 'J', 2), (5, 'K', 2), (5, 'L', 2)         
                      ";
         command.ExecuteNonQuery();
       }
