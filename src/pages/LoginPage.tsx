@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Row, Col} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../utils/UserContext";
 import "/sass/_login.scss";
 
 LoginPage.route = {
@@ -9,6 +10,7 @@ LoginPage.route = {
 export default function LoginPage(){
 
     const navigate = useNavigate();
+    const { login } = useUser();
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [userInput, setUserInput] = useState({email: false, pass: false});
@@ -29,6 +31,7 @@ export default function LoginPage(){
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password: pass }),
       });
 
@@ -37,10 +40,12 @@ export default function LoginPage(){
       if (data.error) {
         setServerError(data.error);
       } else {
+        login(data); // sätt användaren i context
         navigate("/");
       }
-    } 
-    finally {
+    } catch {
+      setServerError("Något gick fel. Försök igen.");
+    } finally {
       setLoading(false);
     }
   };
@@ -53,14 +58,13 @@ export default function LoginPage(){
                     <h1 className="login-title">Logga In</h1>
 
                     <div className="login-form">
-                    
-                    {serverError && (
-                    <Row>
-                        <Col>
-                            <p className="auth-fel server-error">{serverError}</p>
-                        </Col>
-                    </Row>
-                    )}
+                        {serverError && (
+                            <Row>
+                                <Col>
+                                    <p className="auth-fel">{serverError}</p>
+                                </Col>
+                            </Row>
+                        )}
                         <Row>
                             <Col>
                                 <label className="auth-label">E-Post</label>

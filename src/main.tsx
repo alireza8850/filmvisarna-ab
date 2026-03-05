@@ -7,15 +7,18 @@ import routes from "./routes";
 import App from "./App";
 import "../sass/style.css";
 import { BookingProvider } from "./utils/BookingContext";
+import { UserProvider } from "./utils/UserContext";
 
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
+      <UserProvider>
       <BookingProvider>
         <App />
       </BookingProvider>
+      </UserProvider>
     ),
     children: routes as RouteObject[],
     HydrateFallback: App,
