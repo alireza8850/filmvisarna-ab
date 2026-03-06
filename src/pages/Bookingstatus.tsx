@@ -22,14 +22,14 @@ async function fetchBookings() {
         return;
       }
       if (!res.ok) {
-        setError("Kunde inte hämta bokningar.");
+        setError("Du har inga bookingar just nu.");
         setBookings([]);
         return;
       }
       const data = (await res.json()) as Booking[];
       setBookings(Array.isArray(data) ? data : []);
     } catch {
-      setError("Kunde inte hämta bokningar.");
+      setError("Du har inga bookingar just nu.");
       setBookings([]);
     } finally {
       setLoading(false);
