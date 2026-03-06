@@ -158,6 +158,12 @@ public static class BookingRoutes
           seatId = seatId,
           ticketTypeId = ticketTypeId
         }, context);
+
+        // broadcast realtime seat update
+        if (seatId != null)
+        {
+          _ = SeatEventsRoutes.BroadcastSeatBooked((int)showingId, seatId.Value);
+        }
       }
       // Note: I need this function in order to fix the error 
       // 'object' does not contain a definition for 'ticket_type_id'
