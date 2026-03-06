@@ -63,4 +63,50 @@ useEffect(() => {
     } finally {
       setCancellingId(null);
     }
+    }
+    const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+  const formatTime = (iso: string) =>
+    new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
+
+  function statusLabel(b: Booking): string {
+    if (b.booking_status === "cancelled") return "Avbokad";
+    if (b.booking_status === "reserved")  return "Reserverad";
+    return "Bekräftad";
+  }
+
+  function statusClass(b: Booking): string {
+    if (b.booking_status === "cancelled") return "my-bookings__pill my-bookings__pill--cancelled";
+    if (b.booking_status === "reserved")  return "my-bookings__pill my-bookings__pill--reserved";
+    return "my-bookings__pill my-bookings__pill--confirmed";
+  }
+
+  function BookingRow({ booking }: { booking: Booking }) {
+    const showCancel =
+      booking.booking_status === "confirmed" || booking.booking_status === "reserved";
+
+    return (
+      <div className="my-bookings__row">
+        <div className="my-bookings__cell my-bookings__cell--number">#{booking.booking_number}</div>
+        <div className="my-bookings__cell my-bookings__cell--date">{formatDate(booking.start_time)}</div>
+        <div className="my-bookings__cell my-bookings__cell--time">{formatTime(booking.start_time)}</div>
+        <div className="my-bookings__cell my-bookings__cell--film">{booking.film_title}</div>
+        <div className="my-bookings__cell my-bookings__cell--hall">{booking.hall_name}</div>
+        <div className="my-bookings__cell my-bookings__cell--price">{booking.total_price}:-</div>
+        <div className="my-bookings__cell my-bookings__cell--action">
+          {showCancel ? (
+            <button
+              className="cancelation-page__btnAvboka"
+              onClick={() => handleCancel(booking)}
+              disabled={cancellingId === booking.id}
+            >
+              {cancellingId === booking.id ? "Avbokar..." : "Avboka"}
+            </button>
+          ) : (
+            <span className={statusClass(booking)}>{statusLabel(booking)}</span>
+          )}
+        </div>
+      </div>
+    );
   }
