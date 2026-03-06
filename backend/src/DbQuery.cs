@@ -162,7 +162,9 @@ public static class DbQuery
                 -- Booking cancelation
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings/cancel', 'true', 'Allow all user roles to cancel bookings'), 
                 -- Tickets (POSTing new tickets during booking)
-                ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets')
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets'),
+                -- SSE 
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates')
                 ;
             ";
       command.CommandText = aclData;
