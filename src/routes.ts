@@ -14,6 +14,7 @@ import ConfirmationPage from "./pages/ConfirmationPage.tsx";
 import BookingFormPage from "./pages/BookingFormPage.tsx";
 import CancellationPage from "./pages/CancellationPage.tsx";
 import SeatSelector from "./pages/SeatSelector.tsx";
+import MyBookingsPage from "./pages/Bookingstatus.tsx";
 
 interface Route {
   element: JSX.Element;
@@ -38,6 +39,7 @@ export default [
   BookingFormPage,
   CancellationPage,
   SeatSelector,
+  MyBookingsPage,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)
