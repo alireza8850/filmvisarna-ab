@@ -17,21 +17,20 @@ export default function ConfirmationPage() {
           Din bokning har bekräftats och en bekräftelse<br />
           samt kvitto har skickats till din e-post.
         </p>
-        <div className="cancelation-page__buttons">
-          <button
-            className="confirmation-page__button"
-            onClick={() => navigate("/my-bookings")}
-          >
-            Se mina bokningar
-          </button>
-          <button
+        <div className="cancelation-page__buttons"></div>
+        <button
+          className="confirmation-page__button"
+          onClick={() => navigate("/my-bookings")}
+        >
+          Se mina bokningar
+        </button>
+        <button
             className="cancelation-page__buttonHome"
             onClick={() => navigate("/")}
           >
             Gå till start sidan
           </button>
         </div>
-      </div>
     </article>
   );
 }
