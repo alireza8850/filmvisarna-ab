@@ -62,6 +62,15 @@ public static class DbQuery
     {
       Console.WriteLine("Error applying one-time ACL fix: " + ex.Message);
     }
+    var registerAclCheck = db.CreateCommand();
+    registerAclCheck.CommandText = "SELECT COUNT(*) FROM acl WHERE route = '/api/register' AND method = 'POST'";
+    if (Convert.ToInt32(registerAclCheck.ExecuteScalar()) == 0)
+    {
+        var fixCmd = db.CreateCommand();
+        fixCmd.CommandText = @"INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
+            ('visitor,user,staff,admin', 'POST', 'allow', '/api/register', 'true', 'Allow anyone to register')";
+        fixCmd.ExecuteNonQuery();
+    }
 
     db.Close();
   }
@@ -127,6 +136,7 @@ public static class DbQuery
                 ('visitor, user', 'GET', 'disallow', '/secret.html', 'true', 'No access to /secret.html for visitors and normal users'),
                 ('visitor,user, admin', 'GET', 'allow', '/api', 'false', 'Allow access to all routes not starting with /api'),
                 ('visitor', 'POST', 'allow', '/api/users', 'true', 'Allow registration as new user for visitors'),
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/register', 'true', 'Allow anyone to register'),
                 ('visitor, user,admin', '*', 'allow', '/api/login', 'true', 'Allow access to all login routes'),
                 ('visitor,user,admin', 'POST', 'allow', '/api/chat', 'true', 'Allow all user roles to access AI chat'),
                 ('admin', '*', 'allow', '/api/users', 'true', 'Allow admins to see and edit users'),
