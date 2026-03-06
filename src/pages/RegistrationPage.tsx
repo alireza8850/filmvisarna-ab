@@ -43,16 +43,18 @@ export default function RegistrationPage (){
 
     setLoading(true);
     try {
-      const res = await fetch("/api/users", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email,
-          password: pass,
-        }),
-      });
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email,
+        password: pass,
+        phoneNumber: "",
+         }),
+    });
 
       const data = await res.json();
 
@@ -62,9 +64,11 @@ export default function RegistrationPage (){
       else {
         navigate("/login");
       }
-    }
-    finally {
-      setLoading(false);
+    } catch (error) {
+        setServerError("Något gick fel. Försök igen.");
+        console.error(error);
+    } finally {
+        setLoading(false);
     }
 };
 
