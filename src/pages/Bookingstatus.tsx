@@ -6,6 +6,7 @@ Bookingstatus .route = {
   menuLabel: "Mina bokningar",
   index: 3,
 };
+
 export default function Bookingstatus() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,3 +85,66 @@ useEffect(() => {
   function BookingRow({ booking }: { booking: Booking }) {
     const showCancel =
       booking.booking_status === "confirmed" || booking.booking_status === "reserved";
+
+    return (
+      <div className="my-bookings__row">
+        <div className="my-bookings__cell my-bookings__cell--number">#{booking.booking_number}</div>
+        <div className="my-bookings__cell my-bookings__cell--date">{formatDate(booking.start_time)}</div>
+        <div className="my-bookings__cell my-bookings__cell--time">{formatTime(booking.start_time)}</div>
+        <div className="my-bookings__cell my-bookings__cell--film">{booking.film_title}</div>
+        <div className="my-bookings__cell my-bookings__cell--hall">{booking.hall_name}</div>
+        <div className="my-bookings__cell my-bookings__cell--price">{booking.total_price}:-</div>
+        <div className="my-bookings__cell my-bookings__cell--action">
+          {showCancel ? (
+            <button
+              className="cancelation-page__btnAvboka"
+              onClick={() => handleCancel(booking)}
+              disabled={cancellingId === booking.id}
+            >
+              {cancellingId === booking.id ? "Avbokar..." : "Avboka"}
+            </button>
+          ) : (
+            <span className={statusClass(booking)}>{statusLabel(booking)}</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <article className="container mt-4">
+
+      <h1 className="my-bookings__title">Mina Bokningar</h1>
+
+      {loading && <p className="text-white">Laddar bokningar...</p>}
+      {error && <p className="my-bookings__empty">{error}</p>}
+
+      {cancelMessage && (
+        <p className={`my-bookings__alert ${cancelMessage.ok ? "my-bookings__alert--ok" : "my-bookings__alert--error"}`}>
+          {cancelMessage.text}
+        </p>
+      )}
+
+      {!loading && !error && bookings.length === 0 && (
+        <p className="my-bookings__empty">Du har inga bokningar just nu.</p>
+      )}
+
+      {!loading && !error && bookings.length > 0 && (
+        <div className="my-bookings__table">
+          <div className="my-bookings__head">
+            <div className="my-bookings__cell my-bookings__cell--number">Bokningsnummer</div>
+            <div className="my-bookings__cell my-bookings__cell--date">Datum</div>
+            <div className="my-bookings__cell my-bookings__cell--time">Tid</div>
+            <div className="my-bookings__cell my-bookings__cell--film">Film</div>
+            <div className="my-bookings__cell my-bookings__cell--hall">Platser</div>
+            <div className="my-bookings__cell my-bookings__cell--price">Total pris</div>
+            <div className="my-bookings__cell my-bookings__cell--action">Avboka</div>
+          </div>
+          {bookings.map((b) => (
+            <BookingRow key={b.id} booking={b} />
+          ))}
+        </div>
+      )}
+
+    </article>
+  );
+}
