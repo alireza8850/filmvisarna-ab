@@ -167,12 +167,9 @@ export default function TicketPickerPage() {
           <div className="mt-5">
             <SeatSelector
               showing={showing}
-              film={film}
               halls={halls}
               seats={seats}
               tickets={tickets}
-              ticketTypes={ticketTypes}
-              ticketPrices={ticketPrices}
             />
           </div>
         )}
