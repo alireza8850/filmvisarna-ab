@@ -62,7 +62,7 @@ public static class LoginRoutes
       // If there is a user logged in already
       if (user != null)
       {
-        var already = new { error = "A user is already logged in." };
+        var already = new { error = "En användare är redan inloggad." };
         return RestResult.Parse(context, already);
       }
 
@@ -73,7 +73,7 @@ public static class LoginRoutes
           );
       if (dbUser == null)
       {
-        return RestResult.Parse(context, new { error = "No such user." });
+        return RestResult.Parse(context, new { error = "Ingen användare hittades." });
       }
 
       // If the password doesn't match
@@ -83,7 +83,7 @@ public static class LoginRoutes
           ))
       {
         return RestResult.Parse(context,
-                new { error = "Password mismatch." });
+                new { error = "Fel lösenord." });
       }
 
       // Add the user to the session, without password
