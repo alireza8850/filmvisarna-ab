@@ -46,6 +46,12 @@ export default function BookingFormPage() {
   const selectedSeatObjects = selectedSeats
     .map((id) => seats.find((s: Seat) => s.id === id))
     .filter((seat) : seat is Seat => seat !== undefined);
+
+    const ticketRows = [
+    { label: "Vuxen", count: tickets.adult, price: vuxenPrice },
+    { label: "Barn", count: tickets.child, price: barnPrice },
+    { label: "Pensionär", count: tickets.senior, price: pensionarPrice },
+    ].filter((t) => t.count > 0);
   
   const handleBooking = async () => {
     if (!email) {
@@ -141,94 +147,59 @@ export default function BookingFormPage() {
       <Row className="mb-3">
         <Col>
           <div className="card p-3">
-            <Row className="g-3 align-items-center">
-              {/* Left side: Film info */}
-              <Col>
-                {infoRows.map(({ etikett, varde }) => (
-                  <Row key={etikett} className="mb-2">
-                    <Col>
-                      <span className="film-info">{etikett}</span>
-                    </Col>
-                    <Col xs="auto">
-                      <span className="film-info-value">{varde}</span>
-                    </Col>
-                  </Row>
-                ))}
-              </Col>
 
-              {/* Right side: Film poster */}
-              <Col xs="auto">
-                <img
-                  src={"/images/" + film.poster_url}
-                  alt={film.title}
-                  style={{
-                    width: "200px",
-                    borderRadius: "8px",
-                  }}
-                />
-              </Col>
-            </Row>
+
+            <div className="poster-row">
+              <div className="info-block">
+            
+                {infoRows.map(({ etikett, varde }) => (
+                  <div key={etikett} className="info-row">
+                    <span className="film-info">{etikett}</span>
+                    <span className="film-info-value">{varde}</span>
+                  </div>
+                ))}
+              </div>
+              <img
+                src={"/images/" + film.poster_url}
+                alt={film.title}
+                className="poster" 
+              />
+            </div>
             <hr
               style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
             />{" "}
             {/*
             Chosen seats summary
               */}
-            <h4 className="seat-text">Valda platser</h4>
-            {selectedSeatObjects.map((seat) => (
-              <Row key={seat.id} className="mb-1">
-                <Col className="seat-text">Rad: {seat.row_index + 1}</Col>
-                <Col xs="auto" className="seat-text">
-                  Plats: {seat.seat_letter}
-                </Col>
-              </Row>
-            ))}
+            <span className="section-label">Valda platser</span>
+            <div className="seat-grid">
+              {selectedSeatObjects.map((seat) => (
+                <div key={seat.id} className="seat-row">
+                  <span className="seat-label">Rad: {seat.row_index + 1}</span>
+                  <span className="seat-value">Plats: {seat.seat_letter}</span>
+                </div>
+              ))}
+            </div>
             <hr
               style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
             />
-            <Row className="price-summery">
-              <Col>
-                <span className="summery-info">Vuxen x {tickets.adult}</span>
-              </Col>
-              <Col xs="auto">
-                <span className="summery-info-value">
-                  {tickets.adult * vuxenPrice} kr
-                </span>
-              </Col>
-            </Row>
-            <Row className="price-summery">
-              <Col>
-                <span className="summery-info">Barn x {tickets.child}</span>
-              </Col>
-              <Col xs="auto">
-                <span className="summery-info-value">
-                  {tickets.child * barnPrice} kr
-                </span>
-              </Col>
-            </Row>
-            <Row className="price-summery">
-              <Col>
-                <span className="summery-info">
-                  Pensionär x {tickets.senior}
-                </span>
-              </Col>
-              <Col xs="auto">
-                <span className="summery-info-value">
-                  {tickets.senior * pensionarPrice} kr
-                </span>
-              </Col>
-            </Row>
-            <Row
-              className="price-summery"
-              style={{ borderBottom: "none", paddingTop: "10px" }}
-            >
-              <Col>
-                <span className="summery-info">Total pris</span>
-              </Col>
-              <Col xs="auto">
-                <span className="summery-info-value">{totalPrice} kr</span>
-              </Col>
-            </Row>
+            
+            {ticketRows.map(({ label, count, price }) => (
+              <div key={label} className="price-row">
+                <span className="summery-info">{label} x {count}</span>
+                <span className="summery-info-value">{count * price} kr</span>
+              </div>
+            ))}
+            <div className="price-row">
+              <span className="summery-info">Antal biljetter:</span>
+              <span className="summery-info-value">{totalTickets}</span>
+            </div>
+
+            <div className="price-row last">
+              <span className="summery-info"><strong>Total pris:</strong></span>
+              <span className="summery-info-value"><strong>{totalPrice} kr</strong></span>
+            </div>
+
           </div>
         </Col>
       </Row>
