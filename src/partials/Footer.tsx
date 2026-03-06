@@ -158,9 +158,9 @@ export default function Footer() {
           fontSize: '14px'
         }}>
           <Link to="/salonger" style={{ color: 'inherit', textDecoration: 'none' }}>
-             Våra Salonger
+            Om oss
              </Link>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Om oss</a> >
+          
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Kontakta oss</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
