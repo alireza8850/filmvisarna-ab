@@ -5,12 +5,12 @@ import "/sass/_hall.scss";
 
 const HALL_IMAGES: Record<number, { hallImg: string; audioImg: string }> = {
   1: {
-    hallImg:  "/public/Hallimage/derks24-movie-theater-2502213_1920 (1).jpg",
-    audioImg: "/public/Hallimage/Dolby-Atmos-cinema-820x461.jpg",
+    hallImg:  "/public/Hallimage/bild 1.png",
+    audioImg: "/public/Hallimage/bild 2.png",
   },
   2: {
-    hallImg:  "/public/Hallimage/pexels-tima-miroshnichenko-7991231.jpg",
-    audioImg: "/public/Hallimage/UBzraEVUo92gJKGtxgdCja-970-80.jpg.webp",
+    hallImg:  "/public/Hallimage/bild 3.png",
+    audioImg: "/public/Hallimage/bild 4.png",
   },
 };
 
