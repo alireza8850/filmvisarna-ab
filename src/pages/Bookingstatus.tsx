@@ -1,4 +1,4 @@
-mport { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type Booking from "../interfaces/Booking";
 
 MyBookingsPage .route = {
