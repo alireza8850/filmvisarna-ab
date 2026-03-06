@@ -9,29 +9,27 @@ RegistrationPage.route = {
 
 export default function RegistrationPage (){
     const navigate = useNavigate();
-    const [ageD, setAgeD] = useState("");
-    const [ageM,setAgeM] = useState("");
-    const [ageY,setAgeY] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");
     const [pass,setPass] = useState("");
     const [repeatPass,setRepeatPass] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [userInput,setUserInput] = useState({age: false, email: false, pass: false, repeatPass: false, firstName: false, lastName: false});
+    const [userInput,setUserInput] = useState({phoneNumber: false, email: false, pass: false, repeatPass: false, firstName: false, lastName: false});
 
-    const validAge = ageD.length > 0 && ageM.length > 0 && ageY.length === 4;
+
     const validEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
     const validPass = pass.length >= 8;
     const validRepeatPass = repeatPass === pass && repeatPass.length > 0;
     const validFirstName = firstName.trim().length >= 2;      //.trim() tar bort mellanrum/whitespace i början och slutet
     const validLastName = lastName.trim().length >= 2;
-    const allValid = validAge && validEmail && validPass && validRepeatPass && validFirstName && validLastName;
+    const allValid = phoneNumber && validEmail && validPass && validRepeatPass && validFirstName && validLastName;
     const [serverError, setServerError] = useState("");
     const [loading, setLoading] = useState(false);   // State för att visa laddningsindikator medan API-anrop pågår tex visar Registrerar ist för Registrera
 
     const registerButton = async (): Promise<void> => {
         setUserInput({
-          age: true,
+          phoneNumber: true,
           email: true,
           pass: true,
           repeatPass: true,
@@ -52,7 +50,7 @@ export default function RegistrationPage (){
         lastName: lastName.trim(),
         email,
         password: pass,
-        phoneNumber: "",
+        phoneNumber: phoneNumber.trim(),
          }),
     });
 
@@ -134,36 +132,20 @@ export default function RegistrationPage (){
 
                         <Row>
                             <Col>
-                                <label className="auth-label">Ange Ålder</label>
-                                <div className="age-row">
+                                <label className="auth-label">Telefon nummer</label>
+                                <div className="auth-input-wrap">
+                                    <i className="bi bi-telephone auth-input-icon"></i>
                                     <input
                                         type="text"
-                                        maxLength={4}
-                                        placeholder="ÅÅÅÅ"
-                                        value={ageY}
-                                        onChange={e => setAgeY(e.target.value.replace(/\D/, ''))}
-                                        onBlur={() => setUserInput(p => ({ ...p, age: true }))}
+                                        maxLength={12}
+                                        placeholder="0712345678"
+                                        value={phoneNumber}
+                                        onChange={e => setPhoneNumber(e.target.value)}
+                                        onBlur={() => setUserInput(p => ({ ...p, phoneNumber: true }))}
                                     />
-                                    <input
-                                        type="text"
-                                        maxLength={2}
-                                        placeholder="MM"
-                                        value={ageM}
-                                        onChange={e => setAgeM(e.target.value.replace(/\D/, ''))}
-                                    />
-                                    <input
-                                        type="text"
-                                        maxLength={2}
-                                        placeholder="DD"
-                                        value={ageD}
-                                        onChange={e => setAgeD(e.target.value.replace(/\D/, ''))}
-                                    />
-                                    
                                     
                                 </div>
-                                {userInput.age && !validAge && (
-                                    <p className="auth-fel">Ange ett giltigt födelsedatum.</p>
-                                )}
+                                
                             </Col>
                         </Row>
 

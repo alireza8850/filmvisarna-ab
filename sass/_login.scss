@@ -137,22 +137,3 @@
 }
 
 
-.age-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
-
-    input {
-        width: 60px;
-        background-color: #0d0a3a;
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 4px;
-        color: #2a4cff;
-        font-size: 14px;
-        padding: 10px 8px;
-        text-align: center;
-        outline: none;
-
-        &::placeholder { color: rgba(255,255,255,0.3); }
-        }
-    }
