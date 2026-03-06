@@ -43,8 +43,8 @@ export default function SeatSelector({
   const hall = halls.find((h) => h.id === showing.hall_id);
   if (!hall) return <p>Kunde inte hitta salongen</p>;
 
-  const totalRows = hall.total_rows; // 8 or 10
-  const seatsPerRow = hall.seats_per_row; // t.e 10
+  const totalRows = hall.total_rows; 
+  const seatsPerRow = hall.seats_per_row; 
 
   // filter seats for this hall
   const hallSeats = seats.filter((s) => s.hall_id === hall.id);
@@ -100,7 +100,7 @@ function toggleSeat(seatId: number) {
   return (
     <div className="seat-page">
       <div className="screen">
-        <div className="screen-border">SCREEN</div>
+        <div className="screen-border">FILMDUK</div>
         <br />
         <div className="legend">
           <span className="legend-item available"></span> Tillgänglig
@@ -114,10 +114,15 @@ function toggleSeat(seatId: number) {
         {Array.from({ length: totalRows }).map((_, rowIndex) => {
           const rowSeats = seatsByRow[rowIndex] ?? [];
 
+          // 
+          const seatsBefore = Object.values(seatsByRow)
+            .slice(0, rowIndex)
+            .reduce((sum, row) => sum + row.length, 0);
+
           return (
             <div key={rowIndex} className="seat-row">
               <span className="row-number">{rowLetter(rowIndex)}</span>
-
+                
               <div className="row-seats">
                 {rowSeats.map((seat, index) => {
                   const isBooked = bookedSeatIds.has(seat.id);
@@ -125,23 +130,12 @@ function toggleSeat(seatId: number) {
 
                   const selectionLimitReached =
                     totalTickets > 0 && localSelected.length >= totalTickets;
-
-                  const isAisle = index === Math.floor(seatsPerRow / 2);
-
+                  
                   const seatNumber =
-                    (totalRows - 1 - rowIndex) * seatsPerRow + (seatsPerRow - seat.seatIndex);
-                  console.log({
-                    seatId: seat.id,
-                    isBooked,
-                    selectionLimitReached,
-                    totalTickets,
-                    localSelected: localSelected.length
-                  });
+                    seatsBefore + (rowSeats.length - seat.seatIndex);
 
                   return (
                     <React.Fragment key={seat.id}>
-                      {isAisle && <div className="aisle"></div>}
-
                       <button
                         disabled={isBooked || selectionLimitReached}
                         onClick={() => toggleSeat(seat.id)}

@@ -29,6 +29,7 @@ export default function TicketPickerPage() {
       ticketTypes: TicketType[];
       ticketPrices: TicketPrice[];
     };
+  
   const { setTickets } = useBooking();
 
   const [vuxen, setVuxen] = useState(0);
@@ -51,6 +52,25 @@ export default function TicketPickerPage() {
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
 
   const totalCount = vuxen + barn + pensionar;
+  const { selectedSeats } = useBooking(); 
+
+  const handleContinue = () => {
+    const totalTickets = vuxen + barn + pensionar;
+    // control that the chosen seats match the chosen tickets
+    if (selectedSeats.length !== totalTickets) {
+      alert("Du måste välja lika många platser som antal biljetter.");
+      return;
+    }
+    navigate("/bookingformPage", {
+      // Send the real prices to the BookingForm page in order to send them after the confirmation to db
+      state: {
+        vuxenPrice,
+        barnPrice,
+        pensionarPrice,
+        seats,
+      },
+    });
+  };
 
   return (
     <article className="ticket-picker container mt-4">
@@ -161,10 +181,7 @@ export default function TicketPickerPage() {
           <button
             className="slutfor-btn"
             disabled={totalCount === 0}
-            onClick={() => {
-              setTickets({ adult: vuxen, child: barn, senior: pensionar });
-              navigate("/bookingformpage");
-            }}
+            onClick={handleContinue}
           >
             Fortsätt
           </button>
