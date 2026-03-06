@@ -1,9 +1,12 @@
+using System.Collections.Concurrent;
+
 namespace WebApp;
 
 public static class SeatEventsRoutes
 {
   // List of open SSE connections
-  private static List<HttpResponse> connections = new();
+  // using dictionary in order to handle many connection at the same time
+  private static ConcurrentDictionary<int, List<HttpResponse>> connections = new ConcurrentDictionary<int, List<HttpResponse>>();
   public static void Start()
   { // SSE endpoint to keep the stream alive
     App.MapGet("/api/seats-sse/{showingId}", async (HttpContext context, int showingId) =>
@@ -12,14 +15,18 @@ public static class SeatEventsRoutes
       context.Response.Headers.Add("Cache-Control", "no-cache");
       context.Response.Headers.Add("Connection", "keep-alive");
 
-      // add the user to the list
-      connections.Add(context.Response);
+      // Create the connections for the show if they don't exist
+      var list = connections.GetOrAdd(showingId, _ => new List<HttpResponse>());
+      list.Add(context.Response);
 
-      // delete the user directly if the browser is closed
+      // Delete the connection on closing
       context.RequestAborted.Register(() =>
-      {
-        connections.Remove(context.Response);
-      });
+         {
+           if (connections.TryGetValue(showingId, out var conns))
+           {
+             conns.Remove(context.Response);
+           }
+         });
 
       // the live streaming loop/ every 15 seconds
       while (!context.RequestAborted.IsCancellationRequested)
@@ -31,7 +38,7 @@ public static class SeatEventsRoutes
     });
   }
 
-  // Send Data ==> convert showing_id + seat_id to JSON ==> connection  
+  // Send Data ==> convert showing_id + seat_id to JSON ==> the list  
   public static async Task BroadcastSeatBooked(int showingId, long seatId)
   {
     var json = System.Text.Json.JsonSerializer.Serialize(new
@@ -40,7 +47,10 @@ public static class SeatEventsRoutes
       seat_id = seatId
     });
 
-    foreach (var conn in connections.ToList())
+    if (!connections.TryGetValue(showingId, out var conns))
+      return;
+
+    foreach (var conn in conns.ToList())
     {
       try
       {
@@ -49,9 +59,9 @@ public static class SeatEventsRoutes
       }
       catch
       {
-        connections.Remove(conn);
+        conns.Remove(conn);
       }
-    }
 
+    }
   }
 }
