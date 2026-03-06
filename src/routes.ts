@@ -15,7 +15,7 @@ import BookingFormPage from "./pages/BookingFormPage.tsx";
 import CancellationPage from "./pages/CancellationPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import RegistrationPage from "./pages/RegistrationPage.tsx";
-import Bookingstatus from "./pages/Bookingstatus.tsx";;
+import Bookingstatus from "./pages/Bookingstatus.tsx";
 import SeatSelector from "./pages/SeatSelector.tsx";
 
 interface Route {
