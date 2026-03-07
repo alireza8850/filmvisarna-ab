@@ -99,16 +99,28 @@ export default function SeatSelector({
       try {
         const data = JSON.parse(event.data) as SeatBookedEvent;
 
-        if (data.showing_id === showing.id) {
+        if (data.seat_id !== undefined && data.showing_id === showing.id) {
           setLiveBookedSeats((prev) => {
             const updated = new Set(prev);
-            updated.add(data.seat_id);
+            updated.add(data.seat_id!);
             return updated;
           });
           // if is booked from another user
           setLocalSelected((prev) => prev.filter((id) => id !== data.seat_id));
         }
-      } catch {}
+
+        // released seats
+        if (data.released_seats !== undefined && data.showing_id === showing.id)
+        {
+          setLiveBookedSeats((prev) => {
+            const updated = new Set(prev);
+            data.released_seats!.forEach((id: number) => updated.delete(id));
+            return updated;
+          });
+        }
+      } catch (err) {
+        console.error("SSE parse error:", err);
+      }
     };
 
     return () => eventSource.close();
