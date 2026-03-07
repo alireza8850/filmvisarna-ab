@@ -71,7 +71,7 @@ useEffect(
                             <div className="d-flex gap-2 align-items-center">
                             {user ? (
                             <>
-                                <button className="user-icon" onClick={() => navigate("/konto")} title={user.firstName}>
+                                <button className="user-icon" onClick={() => navigate("/my-booking")} title={user.firstName}>
                                     <i className="bi bi-person-circle"></i>
                                 </button>
                                 <button className="sign-button" onClick={() => { logout(); navigate("/"); }}>
@@ -139,7 +139,8 @@ useEffect(
                         <div className="d-flex d-lg-none align-items-center gap-2">
                             <button
                                 className="user-icon"
-                                aria-label="Mitt konto"
+                              aria-label="Mitt konto"
+                            onClick={() => user ? navigate("/my-bookings") : navigate("/login")}
                             >
                                 <i className="bi bi-person-circle"></i>
                             </button>
@@ -191,15 +192,16 @@ useEffect(
                     <button className="auth-btn" onClick={()=> navigate("/login")}>LOGGA IN</button>
                     </>
                     )}
-                    {user && (
+                  {user && (
+                    <>
+                      <button className="auth-btn" onClick={() => { navigate("/my-bookings"); closeMenu(); }}>MINA BOKNINGAR</button>
                       <button className="auth-btn" onClick={() => { logout(); closeMenu(); }}>LOGGA UT</button>
+                    </>
                     )}
                 </div>
             </div>
-    
     </>
   )
-
 };
 
 export default Header;
