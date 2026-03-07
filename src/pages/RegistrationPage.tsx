@@ -237,8 +237,4 @@ export default function RegistrationPage (){
             </div>
         </div>
     );
-
-
-
-
 }
