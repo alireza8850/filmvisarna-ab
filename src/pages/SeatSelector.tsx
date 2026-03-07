@@ -180,9 +180,6 @@ export default function SeatSelector({
                   const selectionLimitReached =
                     totalTickets > 0 && localSelected.length >= totalTickets;
 
-                  const seatNumber =
-                    seatsBefore + (rowSeats.length - seat.seatIndex);
-
                   return (
                     <React.Fragment key={seat.id}>
                       <button
