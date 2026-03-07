@@ -71,7 +71,15 @@ public static class DbQuery
             ('visitor,user,staff,admin', 'POST', 'allow', '/api/register', 'true', 'Allow anyone to register')";
         fixCmd.ExecuteNonQuery();
     }
-
+     var myBookingsAclCheck = db.CreateCommand();
+    myBookingsAclCheck.CommandText = "SELECT COUNT(*) FROM acl WHERE route = '/api/bookings/my' AND method = 'GET'";
+    if (Convert.ToInt32(myBookingsAclCheck.ExecuteScalar()) == 0)
+    {
+      var fixCmd = db.CreateCommand();
+      fixCmd.CommandText = @"INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
+            ('user,staff,admin', 'GET', 'allow', '/api/bookings/my', 'true', 'Allow logged-in users to see their bookings')";
+      fixCmd.ExecuteNonQuery();
+    }
     db.Close();
   }
 

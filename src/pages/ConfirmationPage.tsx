@@ -17,7 +17,7 @@ export default function ConfirmationPage() {
           Din bokning har bekräftats och en bekräftelse<br />
           samt kvitto har skickats till din e-post.
         </p>
-        <div className="cancelation-page__buttons"></div>
+        <div className="cancelation-page__buttons">
         <button
           className="confirmation-page__button"
           onClick={() => navigate("/my-bookings")}
@@ -30,7 +30,8 @@ export default function ConfirmationPage() {
         >
             Gå till start sidan
       </button>
-      </div>
+        </div>
+        </div>
     </article>
   );
 }
