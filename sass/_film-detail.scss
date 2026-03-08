@@ -1,36 +1,86 @@
-
-.film-details {
-  color: #fff;
-}
-
-.film-details__poster {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  max-width: 200px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-.film-details__poster-w{
-  width: 100%;
-  min-width: 200px;
-  max-width: 950px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
 .film-details__title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  margin-top: -60px;
+    margin-bottom: 50px;
+    font-size: 60px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0, 0, 0, .65), 0 0 40px rgba(0, 0, 0, .45), 0 2px 4px rgba(0, 0, 0, .75);
   
+    @media (max-width: 800px) {
+      font-size: 50px;
+    }
+  
+    @media (max-width: 450px) {
+      font-size: 40px;
+    }
 }
-.film-details__description {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+
+.film-details__hero {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2rem;
+
+  .film-details__hero-img {
+    width: 100%;
+    object-fit: cover;
+    
+      display: block;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+    
+      aspect-ratio: 25/10;
+    
+      @media (max-width: 800px) {
+        aspect-ratio: 16/9;
+      }
+    
+      @media (max-width: 450px) {
+        aspect-ratio: 10/9;
+      }
+  }
+
+  .film-details__trailer-btn--overlay {
+    position: static;
+    bottom: 20px;
+    right: 20px;
+    background: #B80000;
+    color: #fff;
+    padding: 10px 22px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+
+    &:hover {
+      background: rgba(184, 0, 0, 1);
+    }
+
+    @media (max-width: 768px) {
+      bottom: 12px;
+      right: 12px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+  }
 }
+.film-details__description-section {
+  padding-inline: 1rem;
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 2rem;
+  }
+
+  .film-details__description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #e6e6e6;
+    margin-bottom: 1.2rem;
+    max-width: 900px;
+  }
+}
+
+// Oskar
 .film-details__showtime-box {
   aspect-ratio: 1 / 1;
   display: flex;
