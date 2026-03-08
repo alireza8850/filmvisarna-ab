@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import type Film from "../interfaces/Film";
 
 export default function HeroFilm({ film }: { film: Film }) {
+  const imageUrl = film.poster_url.startsWith('http') 
+    ? film.poster_url 
+    : "/images/" + film.poster_url;
+
   return (
     <Link to={`/films/${film.id}`} className="hero-film-link">
       <section className="hero-film">
@@ -10,7 +14,7 @@ export default function HeroFilm({ film }: { film: Film }) {
         <figure className="hero-media">
           <img
             className="hero-image"
-            src={"/images/" + film.poster_url}
+            src={imageUrl}
             alt={film.title}
           />
         </figure>

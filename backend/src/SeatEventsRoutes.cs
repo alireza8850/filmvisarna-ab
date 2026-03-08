@@ -11,9 +11,9 @@ public static class SeatEventsRoutes
   { // SSE endpoint to keep the stream alive
     App.MapGet("/api/seats-sse/{showingId}", async (HttpContext context, int showingId) =>
     {
-      context.Response.Headers.Add("Content-Type", "text/event-stream");
-      context.Response.Headers.Add("Cache-Control", "no-cache");
-      context.Response.Headers.Add("Connection", "keep-alive");
+      context.Response.Headers["Content-Type"] = "text/event-stream";
+      context.Response.Headers["Cache-Control"] = "no-cache";
+      context.Response.Headers["Connection"] = "keep-alive";
 
       // Create the connections for the show if they don't exist
       var list = connections.GetOrAdd(showingId, _ => new List<HttpResponse>());

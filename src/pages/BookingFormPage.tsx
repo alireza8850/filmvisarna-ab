@@ -137,6 +137,10 @@ export default function BookingFormPage() {
     { etikett: "Salong:", varde: showing.hall_name },
   ];
 
+  const imageUrl = film.poster_url?.startsWith('http') 
+    ? film.poster_url 
+    : "/images/" + film.poster_url;
+
   return (
     <div className="overview-page">
       <Row className="mb-4">
@@ -160,7 +164,7 @@ export default function BookingFormPage() {
                 ))}
               </div>
               <img
-                src={"/images/" + film.poster_url}
+                src={imageUrl}
                 alt={film.title}
                 className="poster" 
               />
