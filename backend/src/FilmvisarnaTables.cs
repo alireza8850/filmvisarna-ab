@@ -18,8 +18,8 @@ public static class FilmvisarnaTables
                 age_limit INT,
                 description TEXT,
                 language VARCHAR(100),
-                poster_url VARCHAR(500),
-                trailer_url VARCHAR(500),
+                poster_url VARCHAR(1000),
+                trailer_url VARCHAR(1000),
                 is_featured BOOLEAN DEFAULT FALSE,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP() NOT NULL
             );
@@ -121,9 +121,26 @@ public static class FilmvisarnaTables
                 FOREIGN KEY (actor_id) REFERENCES actors(id)
             );
 
-
-
-
+            -- booking_overview view
+            CREATE OR REPLACE VIEW booking_overview AS
+            SELECT 
+                b.id AS booking_id,
+                b.booking_number,
+                b.booking_status,
+                b.total_price,
+                b.booking_email,
+                b.created_at AS booked_at,
+                f.title AS film_title,
+                s.start_time AS showing_time,
+                h.hall_name,
+                u.firstName AS user_first_name,
+                u.lastName AS user_last_name,
+                (SELECT COUNT(*) FROM tickets t WHERE t.booking_id = b.id) AS ticket_count
+            FROM bookings b
+            JOIN showings s ON b.showing_id = s.id
+            JOIN films f ON s.film_id = f.id
+            JOIN halls h ON s.hall_id = h.id
+            LEFT JOIN users u ON b.user_id = u.id;
         ";
 
     // Execute each statement separately with error handling (because I am sick and tired of bugs)
@@ -486,28 +503,39 @@ public static class FilmvisarnaTables
       command.CommandText = "SELECT COUNT(*) FROM bookings";
       if (Convert.ToInt32(command.ExecuteScalar()) == 0)
       {
-        command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
-                ('A7B2X9', 2, 1, 'confirmed', 320.00, 'neha@unesco.org', NULL),
-                ('B9B2X9', null, 2, 'confirmed', 320.00, 'arbaz@gmail.com', '2026-03-21 22:00:00'),
-                ('R5K8M1', 5, 3, 'reserved', 160.00, 'ali@google.com', '2026-03-01 15:45:00')";
-        command.ExecuteNonQuery();
+        // Only seed bookings if the showings 1, 2, 3 still exist (to avoid FK failures)
+        command.CommandText = "SELECT COUNT(*) FROM showings WHERE id IN (1, 2, 3)";
+        if (Convert.ToInt32(command.ExecuteScalar()) >= 3) {
+            command.CommandText = @"INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email, expires_at) VALUES
+                    ('A7B2X9', 2, 1, 'confirmed', 320.00, 'neha@unesco.org', NULL),
+                    ('B9B2X9', null, 2, 'confirmed', 320.00, 'arbaz@gmail.com', '2026-03-21 22:00:00'),
+                    ('R5K8M1', 5, 3, 'reserved', 160.00, 'ali@google.com', '2026-03-01 15:45:00')";
+            command.ExecuteNonQuery();
+        }
       }
 
       // Seed tickets
       command.CommandText = "SELECT COUNT(*) FROM tickets";
       if (Convert.ToInt32(command.ExecuteScalar()) == 0)
       {
-        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
-                SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'J'";
-        command.ExecuteNonQuery();
+        // Only seed tickets if showings exist
+        command.CommandText = "SELECT COUNT(*) FROM showings WHERE id = 1";
+        if (Convert.ToInt32(command.ExecuteScalar()) > 0) {
+            command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+                    SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'J'";
+            command.ExecuteNonQuery();
 
-        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
-                SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'I'";
-        command.ExecuteNonQuery();
+            command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+                    SELECT 1, 1, id, 1 FROM seats WHERE hall_id = 1 AND row_index = 1 AND seat_letter = 'I'";
+            command.ExecuteNonQuery();
+        }
 
-        command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
-                SELECT 2, 3, id, 2 FROM seats WHERE hall_id = 2 AND row_index = 3 AND seat_letter = 'C'";
-        command.ExecuteNonQuery();
+        command.CommandText = "SELECT COUNT(*) FROM showings WHERE id = 3";
+        if (Convert.ToInt32(command.ExecuteScalar()) > 0) {
+            command.CommandText = @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+                    SELECT 2, 3, id, 2 FROM seats WHERE hall_id = 2 AND row_index = 3 AND seat_letter = 'C'";
+            command.ExecuteNonQuery();
+        }
       }
 
       // Seed actors

@@ -62,6 +62,10 @@ export default function FilmDetailsPage() {
     actors
   } = film;
 
+  const imageUrl = poster_url?.startsWith('http') 
+    ? poster_url 
+    : "/images/" + poster_url;
+
   return (
     <article className="film-details">
       <Row>
@@ -70,7 +74,7 @@ export default function FilmDetailsPage() {
           <span className="film-details__poster-and-trailer">
             <div className="film-details__poster-w">
               <Image
-              src={"/images/" + poster_url}
+              src={imageUrl}
               alt={"Poster image of the film " + title + "."}
             />
             </div> 

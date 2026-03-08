@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getMovieDetails, getImageUrl, type TMDBMovieDetails } from "../utils/tmdbService";
-import { Row, Col, Spinner, Alert, Accordion, Modal } from "react-bootstrap";
+import { Row, Col, Spinner, Alert, Accordion, Modal, Button } from "react-bootstrap";
 import Image from "../parts/Image";
 
 UpcomingMovieDetailsPage.route = {
@@ -10,8 +10,10 @@ UpcomingMovieDetailsPage.route = {
 
 export default function UpcomingMovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [movie, setMovie] = useState<TMDBMovieDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [releasing, setReleasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(() => {
@@ -33,6 +35,61 @@ export default function UpcomingMovieDetailsPage() {
     };
     fetchDetails();
   }, [id]);
+
+  const handleRelease = async () => {
+    if (!movie) return;
+    if (!window.confirm(`Vill du verkligen flytta "${movie.title}" till "Nu på bio"?\n\nDetta kommer att ta bort den äldsta filmen och skapa nya visningar för denna film.`)) return;
+
+    setReleasing(true);
+    try {
+      // Hämta åldersgräns och annat
+      const seRelease = movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE');
+      const ageLimitStr = seRelease?.release_dates[0]?.certification || "0";
+      const ageLimit = parseInt(ageLimitStr) || 0;
+
+      const payload = {
+        title: movie.title,
+        duration_minutes: movie.runtime,
+        genre: movie.genres.map(g => g.name).join(', '),
+        release_year: parseInt(movie.release_date.split('-')[0]),
+        age_limit: ageLimit,
+        description: movie.overview,
+        language: movie.spoken_languages[0]?.english_name || "Svenska",
+        poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "default.jpg",
+        trailer_url: movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key 
+          ? `https://www.youtube.com/watch?v=${movie.videos.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key}` 
+          : "",
+        actors: movie.credits?.cast.slice(0, 5).map(c => c.name) || []
+      };
+
+      const res = await fetch('/api/release-movie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        await res.json();
+        alert(`"${movie.title}" har nu flyttats till "Nu på bio"!`);
+        navigate('/');
+      } else {
+        const errorText = await res.text();
+        let errorData: any = {};
+        try {
+          errorData = JSON.parse(errorText);
+        } catch (e) {
+          console.error("Kunde inte parsa JSON-fel från servern:", errorText);
+        }
+        console.error("Release movie failed:", res.status, errorData);
+        throw new Error(`Server svarade med status ${res.status}: ${errorData.error || errorText || "Okänt fel"}`);
+      }
+    } catch (err: any) {
+      console.error("Catch block release movie:", err);
+      alert(`Ett fel uppstod när filmen skulle släppas: ${err.message}`);
+    } finally {
+      setReleasing(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -156,6 +213,17 @@ export default function UpcomingMovieDetailsPage() {
         <Col>
           <div className="film-details__no-showtimes text-center p-5 border rounded bg-light">
             <p className="mb-0">Filmen har premiär {movie.release_date}</p>
+            <div className="mt-4 pt-3 border-top">
+              <p className="text-muted small mb-3">Administratörsverktyg (Demo):</p>
+              <Button 
+                variant="outline-primary" 
+                onClick={handleRelease}
+                disabled={releasing}
+              >
+                {releasing ? <Spinner size="sm" animation="border" className="me-2" /> : null}
+                Flytta till "Nu på bio"
+              </Button>
+            </div>
           </div>
         </Col>
       </Row>

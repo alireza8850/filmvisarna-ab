@@ -30,9 +30,9 @@ export interface TMDBMovieDetails extends TMDBMovie {
   };
 }
 
-export const getUpcomingMovies = async (): Promise<TMDBMovie[]> => {
+export const getUpcomingMovies = async (page: number = 1): Promise<TMDBMovie[]> => {
   const response = await fetch(
-    `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=sv-SE&region=SE`
+    `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=sv-SE&region=SE&page=${page}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch upcoming movies");
