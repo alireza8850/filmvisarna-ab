@@ -70,8 +70,6 @@ export default function Bookingstatus() {
   useEffect(() => {
     fetchBookings();
   }, []);
-
-  // ✅ Check if cancellation is allowed (more than 2 hours before showing)
   function canCancel(startTime: string): boolean {
     const showingTime = new Date(startTime).getTime();
     const now = new Date().getTime();
