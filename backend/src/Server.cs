@@ -15,6 +15,7 @@ public static class Server
     AiChatRoutes.Start();
     FilmRoutes.Start();
     BookingRoutes.Start();
+    SeatEventsRoutes.Start();
     RestApi.Start();
     Session.Start();
     // Start the server on port 3001

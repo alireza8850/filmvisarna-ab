@@ -1,8 +1,9 @@
 
 import { Row, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useBooking } from "../utils/BookingContext";
+import type Seat from "../interfaces/Seat";
 import "/sass/-booking-form.scss";
 
 BookingFormPage.route = {
@@ -11,7 +12,16 @@ BookingFormPage.route = {
 
 export default function BookingFormPage() {
   const navigate = useNavigate();
-  const { film, showing, tickets, clearBooking } = useBooking();
+  // Prices + seats passed from TicketPickerPage
+  const location = useLocation();
+  const { vuxenPrice, barnPrice, pensionarPrice, seats } = location.state as {
+    vuxenPrice: number;
+    barnPrice: number;
+    pensionarPrice: number;
+    seats: Seat[];
+  };
+  // Booking context
+  const { film, showing, tickets, selectedSeats, clearBooking } = useBooking(); // Adding the selected seats to send them to backend/db // Fatima
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,38 +29,67 @@ export default function BookingFormPage() {
     return (
       <div className="container mt-5 text-center">
         <h2>Ingen bokning påbörjad</h2>
-        <button className="btn btn-primary mt-3" onClick={() => navigate("/")}>Gå till startsidan</button>
+        <button className="btn btn-primary mt-3" onClick={() => navigate("/")}>
+          Gå till startsidan
+        </button>
       </div>
     );
   }
+  // Should remove this declartion / no longer needed / we fetch the chosen tickets on TicketPicker.tsx
+  const totalPrice =
+    tickets.adult * vuxenPrice +
+    tickets.child * barnPrice +
+    tickets.senior * pensionarPrice;
 
-  const vuxenPrice = 160;
-  const barnPrice = 95;
-  const pensionarPrice = 120;
+  const totalTickets = tickets.adult + tickets.child + tickets.senior;
+  // Convert selected seat IDs → seat objects
+  const selectedSeatObjects = selectedSeats
+    .map((id) => seats.find((s: Seat) => s.id === id))
+    .filter((seat) : seat is Seat => seat !== undefined);
 
-  const totalPrice = (tickets.adult * vuxenPrice) + (tickets.child * barnPrice) + (tickets.senior * pensionarPrice);
-
+    const ticketRows = [
+    { label: "Vuxen", count: tickets.adult, price: vuxenPrice },
+    { label: "Barn", count: tickets.child, price: barnPrice },
+    { label: "Pensionär", count: tickets.senior, price: pensionarPrice },
+    ].filter((t) => t.count > 0);
+  
   const handleBooking = async () => {
     if (!email) {
       alert("Vänligen fyll i din e-postadress");
       return;
     }
-
+    // update the chosen seats
     setIsSubmitting(true);
     try {
       const ticketRequests = [];
-      for (let i = 0; i < tickets.adult; i++) ticketRequests.push({ ticket_type_id: 1, seat_id: null });
-      for (let i = 0; i < tickets.child; i++) ticketRequests.push({ ticket_type_id: 2, seat_id: null });
-      for (let i = 0; i < tickets.senior; i++) ticketRequests.push({ ticket_type_id: 3, seat_id: null });
+      let seatIndex = 0;
+      for (let i = 0; i < tickets.adult; i++)
+        ticketRequests.push({
+          ticket_type_id: 1,
+          seat_id: selectedSeats[seatIndex++],
+        });
+      for (let i = 0; i < tickets.child; i++)
+        ticketRequests.push({
+          ticket_type_id: 2,
+          seat_id: selectedSeats[seatIndex++],
+        });
+      for (let i = 0; i < tickets.senior; i++)
+        ticketRequests.push({
+          ticket_type_id: 3,
+          seat_id: selectedSeats[seatIndex++],
+        });
 
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          // Send all the needed information to bd-booking / backend 
           showing_id: showing.id,
-          email: email,
-          tickets: ticketRequests
-        })
+          email: email, // Just for now because we need to reset this to check if the user is not looged in
+          // user_id: user? user.id : null ==> next ==> booking_email: user? null: email
+          tickets: ticketRequests,
+          total_price: totalPrice
+        }),
       });
 
       if (response.ok) {
@@ -71,7 +110,12 @@ export default function BookingFormPage() {
   const formatTime = (dateTimeStr: string) => {
     try {
       const date = new Date(dateTimeStr);
-      return isNaN(date.getTime()) ? "N/A" : date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+      return isNaN(date.getTime())
+        ? "N/A"
+        : date.toLocaleTimeString("sv-SE", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
     } catch (e) {
       return "N/A";
     }
@@ -80,7 +124,7 @@ export default function BookingFormPage() {
   const formatDate = (dateTimeStr: string) => {
     try {
       const date = new Date(dateTimeStr);
-      return isNaN(date.getTime()) ? "N/A" : date.toLocaleDateString('sv-SE');
+      return isNaN(date.getTime()) ? "N/A" : date.toLocaleDateString("sv-SE");
     } catch (e) {
       return "N/A";
     }
@@ -103,34 +147,59 @@ export default function BookingFormPage() {
       <Row className="mb-3">
         <Col>
           <div className="card p-3">
-            <Row className="g-3">
-              <Col>
-                {infoRows.map(({ etikett, varde }) => (
-                  <Row key={etikett} className="mb-2">
-                    <Col><span className="film-info">{etikett}</span></Col>
-                    <Col xs="auto"><span className="film-info-value">{varde}</span></Col>
-                  </Row>
-                ))}
-              </Col>
-            </Row>
-            <hr style={{ borderColor: "var(--border-color)", margin: "12px 0" }} />
+
+
+            <div className="poster-row">
+              <div className="info-block">
             
-            <Row className="price-summery">
-              <Col><span className="summery-info">Vuxen x {tickets.adult}</span></Col>
-              <Col xs="auto"><span className="summery-info-value">{tickets.adult * vuxenPrice} kr</span></Col>
-            </Row>
-            <Row className="price-summery">
-              <Col><span className="summery-info">Barn x {tickets.child}</span></Col>
-              <Col xs="auto"><span className="summery-info-value">{tickets.child * barnPrice} kr</span></Col>
-            </Row>
-            <Row className="price-summery">
-              <Col><span className="summery-info">Pensionär x {tickets.senior}</span></Col>
-              <Col xs="auto"><span className="summery-info-value">{tickets.senior * pensionarPrice} kr</span></Col>
-            </Row>
-            <Row className="price-summery" style={{ borderBottom: "none", paddingTop: "10px" }}>
-              <Col><span className="summery-info">Total pris</span></Col>
-              <Col xs="auto"><span className="summery-info-value">{totalPrice} kr</span></Col>
-            </Row>
+                {infoRows.map(({ etikett, varde }) => (
+                  <div key={etikett} className="info-row">
+                    <span className="film-info">{etikett}</span>
+                    <span className="film-info-value">{varde}</span>
+                  </div>
+                ))}
+              </div>
+              <img
+                src={"/images/" + film.poster_url}
+                alt={film.title}
+                className="poster" 
+              />
+            </div>
+            <hr
+              style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
+            />{" "}
+            {/*
+            Chosen seats summary
+              */}
+            <span className="section-label">Valda platser</span>
+            <div className="seat-grid">
+              {selectedSeatObjects.map((seat) => (
+                <div key={seat.id} className="seat-row">
+                  <span className="seat-label">Rad: {seat.row_index + 1}</span>
+                  <span className="seat-value">Plats: {seat.seat_letter}</span>
+                </div>
+              ))}
+            </div>
+            <hr
+              style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
+            />
+            
+            {ticketRows.map(({ label, count, price }) => (
+              <div key={label} className="price-row">
+                <span className="summery-info">{label} x {count}</span>
+                <span className="summery-info-value">{count * price} kr</span>
+              </div>
+            ))}
+            <div className="price-row">
+              <span className="summery-info">Antal biljetter:</span>
+              <span className="summery-info-value">{totalTickets}</span>
+            </div>
+
+            <div className="price-row last">
+              <span className="summery-info"><strong>Total pris:</strong></span>
+              <span className="summery-info-value"><strong>{totalPrice} kr</strong></span>
+            </div>
+
           </div>
         </Col>
       </Row>
@@ -148,6 +217,12 @@ export default function BookingFormPage() {
               />
             </Col>
           </Row>
+          {/* OBS: messages*/}
+          <p className="obs">
+            <strong>OBS: Avbokning måste ske 2 timmar innan visningen.</strong>
+          </p>
+
+          <p className="betalning"><strong>Betalning sker på biografen.</strong></p>
           <Row className="mt-3 justify-content-end">
             <Col xs="auto">
               <button

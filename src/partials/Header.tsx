@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useUser } from "../utils/UserContext";
 
 const MER_LANKAR = [
     {text:"Nu på bio", href:"#"},
@@ -8,8 +8,6 @@ const MER_LANKAR = [
     {text:"Mat & Dryck", href:"#"},
     {text:"Nyheter", href:"#"},
     {text:"Kontakta oss", href:"#"},
-    {text:"Bli medlem", href:"#"},
-    {text:"Logga in", href:"#"},
 ];
 
 
@@ -22,6 +20,7 @@ const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
+  const { user, logout } = useUser();
 
   const openMenu = (): void => {                            //öppna menyn och lås scrollning
     setMenuOpen(true);
@@ -69,10 +68,23 @@ useEffect(
                                 <li><a href="#">NYHETER</a></li>
                             </ul>
                           
-                            <div className="d-flex gap-2">
-                                <button className="sign-button">BLI MEDLEM</button>
-                                <button className="sign-button">LOGGA IN</button>
-                            </div>
+                            <div className="d-flex gap-2 align-items-center">
+                            {user ? (
+                            <>
+                                <button className="user-icon" onClick={() => navigate("/konto")} title={user.firstName}>
+                                    <i className="bi bi-person-circle"></i>
+                                </button>
+                                <button className="sign-button" onClick={() => { logout(); navigate("/"); }}>
+                                    LOGGA UT
+                                </button>
+                            </>
+                            ) : (
+                            <>
+                                <button className="sign-button" onClick={() => navigate("/register")}>BLI MEDLEM</button>
+                                <button className="sign-button" onClick={() => navigate("/login")}>LOGGA IN</button>
+                            </>
+                            )}
+</div>
                             <div className="mer-dropdown" ref={dropdownRef}>
                                 <button className={`mer-klass${dropdownOpen ? ' aktiv' : ''}`} 
                                         onClick={()=> setDropdownOpen(prev => !prev)}>
@@ -91,6 +103,25 @@ useEffect(
                                                     {lank.text}
                                                 </a>
                                             ))}
+                                            
+                                            {user ? (
+                                                <button
+                                                    className="mer-lank"
+                                                    style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                                                    onClick={() => { logout(); navigate("/"); setDropdownOpen(false); }}
+                                                >
+                                                    Logga ut
+                                                </button>
+                                            ) : (
+                                                <>
+                                                    <a className="mer-lank" style={{ cursor: 'pointer' }} onClick={() => { navigate("/register"); setDropdownOpen(false); }}>
+                                                        Bli medlem
+                                                    </a>
+                                                    <a className="mer-lank" style={{ cursor: 'pointer' }} onClick={() => { navigate("/login"); setDropdownOpen(false); }}>
+                                                        Logga in
+                                                    </a>
+                                                </>
+                                            )}
                                             {/* Stäng-knapp */}
                                             <button
                                                 className="mer-stang"
@@ -154,8 +185,15 @@ useEffect(
 
                
                 <div className="d-flex flex-column gap-2 p-3">
-                    <button className="auth-btn">BLI MEDLEM</button>
-                    <button className="auth-btn">LOGGA IN</button>
+                    {!user && (
+                    <>
+                    <button className="auth-btn" onClick={()=> navigate("/register")}>BLI MEDLEM</button>
+                    <button className="auth-btn" onClick={()=> navigate("/login")}>LOGGA IN</button>
+                    </>
+                    )}
+                    {user && (
+                      <button className="auth-btn" onClick={() => { logout(); closeMenu(); }}>LOGGA UT</button>
+                    )}
                 </div>
             </div>
     

@@ -20,25 +20,86 @@
 .film-info{
     color: white;
     white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.3;
+    min-width: 70px;
 }
 .film-info-value{
     color: white;
+    font-size: 14px;
+    line-height: 1.3;
+}
+.poster-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.price-summery{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgb(36, 36, 36);
+.info-block { flex: 1; }
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 55px;
+  margin-bottom: 14px;    
 }
 
-.summery-info{
-    color: white;
+.poster {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
-.summery-info-value{
-    color: white;
+
+.section-label {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
 }
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 7px 12px;
+}
+.seat-label {
+  color: #aaa;
+  font-size: 13px;
+}
+.seat-value {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.price-row {
+  display: flex;
+  gap: 55px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #2a2a2a;
+  &.last {
+    border-bottom: none;
+    padding-top: 10px;
+  }
+}
+
+.summery-info { color: white; font-size: 14px; width: 70px;}
+.summery-info-value { color: white; font-size: 14px; }
+
 .email-input{
     background-color: white;
     color: black;
@@ -54,4 +115,10 @@
     border-radius: 5px;
     border: none;
 
+}
+.obs{
+    color: yellow;
+}
+.betalning{
+    color: white;
 }
