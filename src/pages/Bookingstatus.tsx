@@ -114,7 +114,7 @@ export default function Bookingstatus() {
     if (status === "cancelled") return "Avbokad";
     if (status === "reserved")  return "Reserverad";
     if (status === "expired")   return "Utgången";
-    return "Bekräftad";
+    return "Visad";
   }
 
   function statusClass(status: string): string {
