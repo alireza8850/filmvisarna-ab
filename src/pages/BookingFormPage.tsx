@@ -169,7 +169,7 @@ export default function BookingFormPage() {
             Chosen seats summary
               */}
             <span className="section-label">Valda platser</span>
-            <div className="seat-grid">
+            <div className="ticket-list">
               {selectedSeatObjects.map((seat) => {
 
               // change row_idex to a letter
@@ -198,9 +198,17 @@ export default function BookingFormPage() {
                 const seatNumber = seatsBefore + (rowSeats.length - seatIndex);
 
                 return (
-                  <div key={seat.id} className="seat-row">
-                    <span className="seat-label">Rad: {rowLetter}</span>
-                    <span className="seat-value">Plats: {seatNumber}</span>
+                  <div key={seat.id} className="ticket-card">
+                    
+                    <span className="ticket-row-text">Rad: </span>
+                    <span className="tickets"></span>
+                    <span className="ticket-seat-text">Plats: </span>
+
+                    <div>
+                      <span className="ticket-row">{rowLetter}</span>
+                      <span className="ticket-values"></span>
+                      <span className="ticket-seat">{seatNumber}</span>
+                    </div>
                   </div>
                 );
               })}
