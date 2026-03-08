@@ -183,7 +183,7 @@ export default function SeatSelector({
                   return (
                     <React.Fragment key={seat.id}>
                       <button
-                        disabled={isBooked || selectionLimitReached}
+                        disabled={isBooked || (selectionLimitReached && !isSelected)}
                         onClick={() => toggleSeat(seat.id)}
                         className={[
                           "seat",
