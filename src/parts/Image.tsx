@@ -6,8 +6,7 @@ export default function Image(props: any) {
   const [{ bwImages }] = useStateContext();
   props = { ...props };
   props.className =
-    (props.className || "") +
-    " img-fluid w-100 border border-1 border-primary rounded mb-3" +
+    (props.className || "") +" h-100 w-100 border border-1 border-primary rounded mb-3" +
     (bwImages ? " bw" : "");
   return <img {...props} />;
 }
