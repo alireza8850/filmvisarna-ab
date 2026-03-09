@@ -62,13 +62,40 @@ export default function FilmDetailsPage() {
     actors
   } = film;
 
+  const imageUrl = poster_url?.startsWith('http') 
+    ? poster_url 
+    : "/images/" + poster_url;
+
   return (
     <article className="film-details">
-      {/* Title */}
-      <header>
-        <h1 className="film-details__title">{title}</h1>
-      </header>
-      {/* Hero image */}
+
+      <Row>
+        <Col>
+          <h2 className="film-details__title">{title}</h2>
+          <span className="film-details__poster-and-trailer">
+            <div className="film-details__poster-w">
+              <Image
+              src={imageUrl}
+              alt={"Poster image of the film " + title + "."}
+            />
+            </div> 
+            {film.trailer_url && (
+              <button
+                className="film-details__trailer-btn"
+                onClick={() => setShowTrailerModal(true)}
+              >
+                Se Trailer
+              </button>
+            )}
+          </span>
+
+          {description?.split("\n").map((x, i) => (
+            <p className="film-details__description" key={i}>
+              {x}
+            </p>
+          ))}
+        </Col>
+      </Row>
 
       <section className="film-details__hero">
         <Image

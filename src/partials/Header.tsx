@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../utils/UserContext";
 
 const MER_LANKAR = [
-    {text:"Nu på bio", href:"#"},
-    {text:"Kommande filmer", href:"#"},
+    {text:"Nu på bio", href:"/"},
+    {text:"Kommande filmer", href:"/upcoming"},
     {text:"Mat & Dryck", href:"#"},
     {text:"Nyheter", href:"#"},
     {text:"Kontakta oss", href:"#"},
@@ -62,8 +62,8 @@ useEffect(
                         <nav className="desktop-nav d-none d-lg-flex align-items-center ms-auto gap-3">    {/* dold som standard och visas på lg(desktop)*/}
 
                             <ul className="nav-links list-unstyled d-flex gap-3 mb-0">
-                                <li><a href="#">NU PÅ BIO</a></li>
-                                <li><a href="#">KOMMANDE FILMER</a></li>
+                                <li><a onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>NU PÅ BIO</a></li>
+                                <li><a onClick={() => navigate("/upcoming")} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
                                 <li><a href="#">MAT &amp; DRYCK</a></li>
                                 <li><a href="#">NYHETER</a></li>
                             </ul>
@@ -71,7 +71,7 @@ useEffect(
                             <div className="d-flex gap-2 align-items-center">
                             {user ? (
                             <>
-                                <button className="user-icon" onClick={() => navigate("/konto")} title={user.firstName}>
+                                <button className="user-icon" onClick={() => navigate("/my-bookings")} title={user.firstName}>
                                     <i className="bi bi-person-circle"></i>
                                 </button>
                                 <button className="sign-button" onClick={() => { logout(); navigate("/"); }}>
@@ -138,9 +138,7 @@ useEffect(
                     
                         <div className="d-flex d-lg-none align-items-center gap-2">
                             <button
-                                className="user-icon"
-                                aria-label="Mitt konto"
-                            >
+                                className="user-icon" aria-label="Mitt konto"onClick={() => user ? navigate("/my-bookings") : navigate("/login")}>
                                 <i className="bi bi-person-circle"></i>
                             </button>
                             <button
@@ -176,8 +174,8 @@ useEffect(
                 
                 <nav className="mobile-nav">
                     <ul>
-                        <li><a href="#" className="active">PÅ BION</a></li>
-                        <li><a href="#">KOMMANDE FILMER</a></li>
+                        <li><a onClick={() => { navigate("/"); closeMenu(); }} style={{ cursor: 'pointer' }}>PÅ BION</a></li>
+                        <li><a onClick={() => { navigate("/upcoming"); closeMenu(); }} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
                         <li><a href="#">MAT &amp; DRYCK</a></li>
                         <li><a href="#">NYHETER</a></li>
                     </ul>

@@ -1,0 +1,113 @@
+.my-bookings__title {
+  color: #fff;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-bookings__empty {
+  color: #e5a00d;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.my-bookings__table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.5rem;
+}
+
+.my-bookings__head {
+  display: flex;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #adb5bd;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.my-bookings__row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.95rem;
+  color: #fff;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.my-bookings__cell {
+  &--number { flex: 1.8; font-weight: 700; letter-spacing: 1px; }
+  &--date   { flex: 1.2; }
+  &--time   { flex: 0.6; }
+  &--film   { flex: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  &--hall   { flex: 1; }
+  &--price  { flex: 0.8; }
+  &--action { flex: 1; display: flex; align-items: center; }
+}
+
+.my-bookings__cancel-btn {
+  background: #b80000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #d32f2f;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Status pills
+.my-bookings__pill {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  &--confirmed {
+    background: rgba(0, 180, 80, 0.2);
+    color: #00c853;
+  }
+
+  &--reserved {
+    background: rgba(150, 150, 150, 0.2);
+    color: #adb5bd;
+  }
+  &--cancelled {
+    background: rgba(184, 0, 0, 0.25);
+    color: #ff6b6b;
+  }
+}
+
+.my-bookings__alert {
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+
+  &--ok    { background: rgba(0, 180, 80, 0.1); color: #00c853; }
+  &--error { background: rgba(184, 0, 0, 0.2); color: #ff6b6b; }
+}

@@ -3,13 +3,17 @@ import type Film from "../interfaces/Film";
 
 
 export default function FilmCard({ film }: { film: Film }) {
+  const imageUrl = film.poster_url.startsWith('http') 
+    ? film.poster_url 
+    : "/images/" + film.poster_url;
+
   return (
     <div className="film-card">
       <Link className="film-card__link" to={`/films/${film.id}`}>
         <div className="film-card__image-wrapper">
           <img
             className="film-card__image"
-            src={"/images/" + film.poster_url}
+            src={imageUrl}
             alt={film.title}
           />
         </div>
@@ -20,4 +24,4 @@ export default function FilmCard({ film }: { film: Film }) {
       </Link>
     </div>
   );
-} 
+}

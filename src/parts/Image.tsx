@@ -7,9 +7,7 @@ export default function Image(props: any) {
   props = { ...props };
   props.className =
     (props.className || "") +
-    // Bootstrap specific classes
-    ' className="img-fluid w-100 border border-1 border-primary rounded mb-3' +
-    // Class for black and white
+    " img-fluid w-100 border border-1 border-primary rounded mb-3" +
     (bwImages ? " bw" : "");
   return <img {...props} />;
 }

@@ -71,7 +71,15 @@ public static class DbQuery
             ('visitor,user,staff,admin', 'POST', 'allow', '/api/register', 'true', 'Allow anyone to register')";
         fixCmd.ExecuteNonQuery();
     }
-
+     var myBookingsAclCheck = db.CreateCommand();
+    myBookingsAclCheck.CommandText = "SELECT COUNT(*) FROM acl WHERE route = '/api/bookings/my' AND method = 'GET'";
+    if (Convert.ToInt32(myBookingsAclCheck.ExecuteScalar()) == 0)
+    {
+      var fixCmd = db.CreateCommand();
+      fixCmd.CommandText = @"INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
+            ('user,staff,admin', 'GET', 'allow', '/api/bookings/my', 'true', 'Allow logged-in users to see their bookings')";
+      fixCmd.ExecuteNonQuery();
+    }
     db.Close();
   }
 
@@ -163,6 +171,8 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/bookings/cancel', 'true', 'Allow all user roles to cancel bookings'), 
                 -- Tickets (POSTing new tickets during booking)
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets'),
+                -- Release movie
+                ('visitor,user,staff,admin', 'POST', 'allow', '/api/release-movie', 'true', 'Allow anyone to release a movie'),
                 -- SSE 
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates')
                 ;

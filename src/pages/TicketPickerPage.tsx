@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
@@ -19,7 +19,7 @@ TicketPickerPage.route = {
 
 export default function TicketPickerPage() {
   const navigate = useNavigate();
-  const { film, showing, halls, seats, tickets, ticketTypes, ticketPrices } =
+  const { film, showing, halls, seats, tickets, ticketPrices } =
     useLoaderData() as {
       film: Film;
       showing: Showing;
