@@ -19,7 +19,7 @@ import UpcomingMoviesPage from "./pages/UpcomingMoviesPage.tsx";
 import UpcomingMovieDetailsPage from "./pages/UpcomingMovieDetailsPage.tsx";
 
 import SeatSelector from "./pages/SeatSelector.tsx";
-
+import Bookingstatus from "./pages/Bookingstatus.tsx";
 interface Route {
   element: JSX.Element;
   path: string;
@@ -47,6 +47,7 @@ export default [
   UpcomingMoviesPage,
   UpcomingMovieDetailsPage,
   SeatSelector,
+  Bookingstatus,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)

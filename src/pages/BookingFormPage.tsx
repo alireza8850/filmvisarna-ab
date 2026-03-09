@@ -93,6 +93,7 @@ export default function BookingFormPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
         clearBooking();
         navigate("/confirmation");
       } else {
