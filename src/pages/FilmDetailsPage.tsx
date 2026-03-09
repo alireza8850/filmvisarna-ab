@@ -70,17 +70,10 @@ export default function FilmDetailsPage() {
 
   return (
     <article className="film-details">
-<<<<<<< feat/practice-SCSS
 
-      <Row>
-        <Col>
-          <h2 className="film-details__title">{title}</h2>
-          <span className="film-details__poster-and-trailer">
-=======
       <Row className="justify-content-center">
         <Col xs={12}>
           <div className="film-details__poster-and-trailer position-relative">
->>>>>>> main
             <div className="film-details__poster-w">
               <img
                 src={imageUrl}
@@ -108,22 +101,6 @@ export default function FilmDetailsPage() {
           ))}
         </Col>
       </Row>
-
-      <section className="film-details__hero">
-        <Image
-          className="film-detail__hero-img"
-          src={"/images/" + poster_url}
-          alt={"Poster image of the film " + title + "."}
-        />
-        {film.trailer_url && (
-          <button
-            className="film-details__trailer-btn film-details__trailer-btn--overlay"
-            onClick={() => setShowTrailerModal(true)}
-          >
-            SE TRAILER
-          </button>
-        )}
-      </section>
 
       {/* DESCRIPTION */}
       <section className="film-details__description-section">
