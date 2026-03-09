@@ -22,6 +22,7 @@ public static class AiChatRoutes
       {
         var body = JSON.Parse(bodyJson.ToString());
         var messages = (Arr)body.messages;
+        
 
         if (messages == null)
         {

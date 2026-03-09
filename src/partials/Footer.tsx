@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 export default function Footer() {
   return (
     <footer style={{
@@ -158,7 +159,7 @@ export default function Footer() {
         }}>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Om oss</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Kontakta oss</a>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
+          <Link to="/ai-chat" style={{ color: 'inherit', textDecoration: 'none' }}>🤖 AI Chatbot</Link> 
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
         </div>
       </div>
