@@ -64,4 +64,30 @@ public static class SeatEventsRoutes
 
     }
   }
+
+  // Release seats after cancelation
+  public static async Task BroadcastSeatsReleased(int showingId, long[] seatIds)
+  {
+    var json = System.Text.Json.JsonSerializer.Serialize(new
+    {
+      showing_id = showingId,
+      released_seats = seatIds
+    });
+
+    if (!connections.TryGetValue(showingId, out var conns))
+      return;
+
+    foreach (var conn in conns.ToList())
+    {
+      try
+      {
+        await conn.WriteAsync($"data:{json}\n\n");
+        await conn.Body.FlushAsync();
+      }
+      catch
+      {
+        conns.Remove(conn);
+      }
+    }
+  }
 }
