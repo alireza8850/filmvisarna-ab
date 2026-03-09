@@ -14,56 +14,7 @@
     }
 }
 
-<<<<<<< feat/practice-SCSS
-.film-details__hero {
-  position: relative;
-  width: 100%;
-  margin-bottom: 2rem;
 
-  .film-details__hero-img {
-    width: 100%;
-    object-fit: cover;
-    
-      display: block;
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-    
-      aspect-ratio: 25/10;
-    
-      @media (max-width: 800px) {
-        aspect-ratio: 16/9;
-      }
-    
-      @media (max-width: 450px) {
-        aspect-ratio: 10/9;
-      }
-  }
-
-  .film-details__trailer-btn--overlay {
-    position: static;
-    bottom: 20px;
-    right: 20px;
-    background: #B80000;
-    color: #fff;
-    padding: 10px 22px;
-    font-size: 1.1rem;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s ease;
-
-    &:hover {
-      background: rgba(184, 0, 0, 1);
-    }
-
-    @media (max-width: 768px) {
-      bottom: 12px;
-      right: 12px;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-    }
-  }
-=======
 .film-details__poster-and-trailer {
   display: flex;
   flex-direction: column;
@@ -92,7 +43,7 @@
   font-weight: 700;
   margin-bottom: 1rem;
   
->>>>>>> main
+
 }
 .film-details__description-section {
   padding-inline: 1rem;
