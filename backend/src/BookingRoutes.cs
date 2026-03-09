@@ -156,25 +156,7 @@ public static class BookingRoutes
       var seatIdsArray = seatIds.ToArray();
 
       // 2- check if all chosen seats are available
-      if (seatIdsArray.Length > 0)
-      {
-        var takenSeats = SQLQuery(
-            "SELECT seat_id FROM tickets WHERE showing_id = @showingId AND seat_id IN @seatIds",
-            new { showingId, seatIds = seatIdsArray },
-            context
-        );
-        Console.WriteLine("TYPE = " + takenSeats.GetType());
-        if (takenSeats.Count() > 0)
-        {
-          return RestResult.Parse(context, new
-          {
-            error = "En eller flera platser är redan bokade."
-          });
-        }
-
-
-
-      }
+      
 
       // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
