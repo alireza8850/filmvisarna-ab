@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Serif+Display:ital@0;1&display=swap');
+
+//Variables
+$bg:            #0a0a0f;
+$bg-card:       #111116;
+$border:        #1e1e2a;
+$accent:        #f59e0b;
+$white:         #ffffff;
+$text-muted:    #cccccc;
+$text-dim:      #666672;
+$text-faint:    #3a3a50;
+$font-serif:    'DM Serif Display', serif;
+$font-sans:     'DM Sans', 'Helvetica Neue', sans-serif;
+$ease:          0.3s ease;
+
+// Reset 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// Page Wrapper 
+.contactoss-page {
+  min-height: 100vh;
+  background: $bg;
+  font-family: $font-sans;
+  color: $white;
+  position: relative;
+  overflow: hidden;
+}
+
+//  Background Glow 
+.contactoss-page__glow {
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba($accent, 0.05) 0%, transparent 68%);
+  pointer-events: none;
+  top: -180px;
+  right: -220px;
+  z-index: 0;
+}
+
+// Top Accent Bar
+.contactoss-page__topbar {
+  height: 3px;
+  background: linear-gradient(90deg, #12121e 0%, $accent 50%, #12121e 100%);
+}
+
+//  Inner Content
+.contactoss-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 72px 40px 100px;
+
+  @media (max-width: 640px) {
+    padding: 48px 24px 72px;
+  }
+}
+
+// Fade-up Animation 
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+
+  &--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &--d1 { transition-delay: 0.05s; }
+  &--d2 { transition-delay: 0.18s; }
+  &--d3 { transition-delay: 0.32s; }
+}
+
+// Page Header
+.contactoss-header {
+  margin-bottom: 64px;
+
+  &__eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: $accent;
+    margin-bottom: 18px;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: clamp(36px, 5.5vw, 62px);
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+
+    em {
+      font-style: italic;
+      color: $accent;
+    }
+  }
+
+  &__rule {
+    width: 36px;
+    height: 2px;
+    background: $accent;
+    margin: 24px 0 20px;
+  }
+
+  &__sub {
+    color: $text-dim;
+    font-size: 14px;
+    font-weight: 300;
+    max-width: 400px;
+    line-height: 1.75;
+  }
+}
+
+// Two-Column Layout 
+.contactoss-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 72px;
+  align-items: start;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+    gap: 52px;
+  }
+}
+
+//  Contact Form 
+.contactoss-form {
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 28px;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__field {
+    margin-bottom: 30px;
+  }
+
+  &__label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $text-dim;
+    margin-bottom: 6px;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid $border;
+    padding: 10px 0;
+    color: $white;
+    font-family: $font-sans;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    outline: none;
+    transition: border-color $ease;
+
+    &::placeholder {
+      color: $text-faint;
+    }
+
+    &:focus {
+      border-color: $accent;
+    }
+  }
+
+  &__textarea {
+    resize: none;
+  }
+
+  &__submit {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid $accent;
+    color: $accent;
+    padding: 13px 44px;
+    font-family: $font-sans;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color $ease;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: $accent;
+      transform: translateX(-101%);
+      transition: transform 0.32s ease;
+    }
+
+    &:hover {
+      color: $bg;
+
+      &::before {
+        transform: translateX(0);
+      }
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+//  Success State
+.contactoss-success {
+  text-align: center;
+  padding: 56px 16px;
+
+  &__circle {
+    width: 60px;
+    height: 60px;
+    border: 1.5px solid $accent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 22px;
+    animation: popIn 0.45s ease forwards;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  &__body {
+    color: $text-dim;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.75;
+  }
+
+  &__back {
+    margin-top: 28px;
+    background: none;
+    border: none;
+    color: $accent;
+    font-family: $font-sans;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+//  Info Panel 
+.contactoss-info {
+  border-left: 1px solid $border;
+  padding-left: 48px;
+
+  @media (max-width: 860px) {
+    border-left: none;
+    border-top: 1px solid $border;
+    padding-left: 0;
+    padding-top: 48px;
+  }
+}
+
+//Info Block 
+.info-block {
+  margin-bottom: 44px;
+
+  &:last-child { margin-bottom: 0; }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: $bg-card;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $text-dim;
+  }
+
+  &__link {
+    color: $text-muted;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 300;
+    display: block;
+    transition: color $ease;
+
+    &:hover { color: $accent; }
+
+    & + & { margin-top: 4px; }
+  }
+
+  &__hint {
+    display: block;
+    color: #2e2e40;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  &__address {
+    color: $text-muted;
+    font-size: 14px;
+    font-weight: 300;
+    font-style: normal;
+    line-height: 1.85;
+  }
+}

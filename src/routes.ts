@@ -17,7 +17,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import RegistrationPage from "./pages/RegistrationPage.tsx";
 import UpcomingMoviesPage from "./pages/UpcomingMoviesPage.tsx";
 import UpcomingMovieDetailsPage from "./pages/UpcomingMovieDetailsPage.tsx";
-
+import ContactOssPage from "./pages/contactOssPage.tsx";
 import SeatSelector from "./pages/SeatSelector.tsx";
 import Bookingstatus from "./pages/Bookingstatus.tsx";
 interface Route {
