@@ -2,6 +2,7 @@ import type Film from "../interfaces/Film";
 import { Row, Col, Accordion, Modal } from "react-bootstrap";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
+import { useStateContext } from "../utils/useStateObject";
 import NotFoundPage from "./NotFoundPage";
 import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
@@ -17,6 +18,7 @@ FilmDetailsPage.route = {
 
 export default function FilmDetailsPage() {
   const navigate = useNavigate();
+  const [{ bwImages }] = useStateContext();
   const { film, showings: allShowings } = useLoaderData() as { film: Film, showings: any[] };
   const { setFilm, setShowing } = useBooking();
   const [selectedShowingId, setSelectedShowingId] = useState<number | null>(null);
@@ -68,27 +70,37 @@ export default function FilmDetailsPage() {
 
   return (
     <article className="film-details">
+<<<<<<< feat/practice-SCSS
 
       <Row>
         <Col>
           <h2 className="film-details__title">{title}</h2>
           <span className="film-details__poster-and-trailer">
+=======
+      <Row className="justify-content-center">
+        <Col xs={12}>
+          <div className="film-details__poster-and-trailer position-relative">
+>>>>>>> main
             <div className="film-details__poster-w">
-              <Image
-              src={imageUrl}
-              alt={"Poster image of the film " + title + "."}
-            />
-            </div> 
+              <img
+                src={imageUrl}
+                className={"film-details__poster" + (bwImages ? " bw" : "")}
+                alt={"Poster image of the film " + title + "."}
+              />
+            </div>
             {film.trailer_url && (
               <button
-                className="film-details__trailer-btn"
+                className="film-details__trailer-btn mb-3"
                 onClick={() => setShowTrailerModal(true)}
               >
                 Se Trailer
               </button>
             )}
-          </span>
+          </div>
+        </Col>
 
+        <Col xs={12}>
+          <h2 className="film-details__title">{title}</h2>
           {description?.split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>
               {x}

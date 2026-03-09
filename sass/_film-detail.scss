@@ -14,6 +14,7 @@
     }
 }
 
+<<<<<<< feat/practice-SCSS
 .film-details__hero {
   position: relative;
   width: 100%;
@@ -62,6 +63,36 @@
       font-size: 0.9rem;
     }
   }
+=======
+.film-details__poster-and-trailer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.film-details__poster {
+  display: block;
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  margin-bottom: 0 !important; // override Image component's mb-3
+  object-fit: contain !important;
+}
+.film-details__poster-w{
+  width: 50%;
+  max-width: 300px;
+  margin: 0 auto 1.5rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.film-details__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  
+>>>>>>> main
 }
 .film-details__description-section {
   padding-inline: 1rem;
