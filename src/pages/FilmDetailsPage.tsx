@@ -70,9 +70,17 @@ export default function FilmDetailsPage() {
 
   return (
     <article className="film-details">
+<<<<<<< feat/practice-SCSS
+
+      <Row>
+        <Col>
+          <h2 className="film-details__title">{title}</h2>
+          <span className="film-details__poster-and-trailer">
+=======
       <Row className="justify-content-center">
         <Col xs={12}>
           <div className="film-details__poster-and-trailer position-relative">
+>>>>>>> main
             <div className="film-details__poster-w">
               <img
                 src={imageUrl}
@@ -101,55 +109,82 @@ export default function FilmDetailsPage() {
         </Col>
       </Row>
 
+      <section className="film-details__hero">
+        <Image
+          className="film-detail__hero-img"
+          src={"/images/" + poster_url}
+          alt={"Poster image of the film " + title + "."}
+        />
+        {film.trailer_url && (
+          <button
+            className="film-details__trailer-btn film-details__trailer-btn--overlay"
+            onClick={() => setShowTrailerModal(true)}
+          >
+            SE TRAILER
+          </button>
+        )}
+      </section>
 
-        <Accordion className="film-details__accordion mt-4" defaultActiveKey="0">
-          <Accordion.Item eventKey="0" className="film-details__accordion-item">
-            <Accordion.Header className="film-details__accordion-header">
-              Film Specifikationer
-            </Accordion.Header>
-            <Accordion.Body className="film-details__accordion-body">
-              <div className="film-details__spec-list">
-                <div className="film-details__spec-item">
-                  <strong>Åldersgräns:</strong> {age_limit} år
-                </div>
-                <div className="film-details__spec-item">
-                  <strong>Premiär:</strong> {release_year}
-                </div>
-                <div className="film-details__spec-item">
-                  <strong>Speltid:</strong> {duration_minutes} minuter
-                </div>
-                <div className="film-details__spec-item">
-                  <strong>Skådespelare:</strong> {actors && actors.length > 0 ? actors.join(', ') : 'Inga skådespelare tillgängliga'}
-                </div>
-                <div className="film-details__spec-item">
-                  <strong>Språk:</strong> {language}
-                </div>
-                <div className="film-details__spec-item">
-                  <strong>Genre:</strong> {genre}
-                </div>
-                
+      {/* DESCRIPTION */}
+      <section className="film-details__description-section">
+        {description?.split("\n").map((x, i) => (
+          <p className="film-details__description" key={i}>
+            {x}
+          </p>
+        ))}
+      </section>
+
+      <Accordion className="film-details__accordion mt-4" defaultActiveKey="0">
+        <Accordion.Item eventKey="0" className="film-details__accordion-item">
+          <Accordion.Header className="film-details__accordion-header">
+            Film Specifikationer
+          </Accordion.Header>
+          <Accordion.Body className="film-details__accordion-body">
+            <div className="film-details__spec-list">
+              <div className="film-details__spec-item">
+                <strong>Åldersgräns:</strong> {age_limit} år
               </div>
-            </Accordion.Body>
+              <div className="film-details__spec-item">
+                <strong>Premiär:</strong> {release_year}
+              </div>
+              <div className="film-details__spec-item">
+                <strong>Speltid:</strong> {duration_minutes} minuter
+              </div>
+              <div className="film-details__spec-item">
+                <strong>Skådespelare:</strong>{" "}
+                {actors && actors.length > 0
+                  ? actors.join(", ")
+                  : "Inga skådespelare tillgängliga"}
+              </div>
+              <div className="film-details__spec-item">
+                <strong>Språk:</strong> {language}
+              </div>
+              <div className="film-details__spec-item">
+                <strong>Genre:</strong> {genre}
+              </div>
+            </div>
+          </Accordion.Body>
         </Accordion.Item>
       </Accordion>
 
-
-        <div className="film-details__date-filter mt-4">
-          <label htmlFor="date-filter" className="film-details__date-filter-label">
-            Välj datum
-          </label>
-          <input
-            type="date"
-            id="date-filter"
-            className="film-details__date-filter-input"
-            value={selectedDate}
-            onChange={(e) => {
-              setSelectedDate(e.target.value);
-              setSelectedShowingId(null); // Reset selected showing when date changes
-            }}
-          />
-        </div>
-
+      <div className="film-details__date-filter mt-4">
+        <label
+          htmlFor="date-filter"
+          className="film-details__date-filter-label"
+        >
+          Välj datum
+        </label>
+        <input
+          type="date"
+          id="date-filter"
+          className="film-details__date-filter-input"
+          value={selectedDate}
+          onChange={(e) => {
+            setSelectedDate(e.target.value);
+            setSelectedShowingId(null); // Reset selected showing when date changes
+          }}
+        />
+      </div>
 
       <Row className="mt-3">
         <div className="film-details__legend">
@@ -170,54 +205,75 @@ export default function FilmDetailsPage() {
         </div>
       </Row>
 
-
-        <Row className="film-details__showtimes">
-          {showtimes.length > 0 ? (
-            <>
-              <Col xs={12}>
-                <h4 className="film-details__showtimes-date-title mb-4">
-                  Visningar {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}
-                </h4>
-              </Col>
-              {showtimes.map((showtime: any) => (
-                <Col xs={6} sm={4} md={3} key={showtime.id} className="mb-3">
-                  <div
-                    className={`film-details__showtime-box border rounded p-3 text-center ${selectedShowingId === showtime.id ? 'film-details__showtime-box--selected' : ''}`}
-                    onClick={() => setSelectedShowingId(showtime.id)}
-                  >
-                    <div className="film-details__showtime-time">
-                      {new Date(showtime.start_time).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                    <div className="film-details__showtime-hall">
-                      {showtime.hall_name}
-                    </div>
-                  </div>
-                </Col>
-              ))}
-            </>
-          ) : (
-            <Col>
-              <div className="film-details__no-showtimes text-center p-5 border rounded bg-light">
-                <p className="mb-0">Tyvärr finns det inga visningar för {new Date(selectedDate).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}.</p>
-                <p className="text-muted small mt-2">Prova att välja ett annat datum i kalendern ovan.</p>
-              </div>
+      <Row className="film-details__showtimes">
+        {showtimes.length > 0 ? (
+          <>
+            <Col xs={12}>
+              <h4 className="film-details__showtimes-date-title mb-4">
+                Visningar{" "}
+                {new Date(selectedDate).toLocaleDateString("sv-SE", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </h4>
             </Col>
-          )}
-        </Row>
-
+            {showtimes.map((showtime: any) => (
+              <Col xs={6} sm={4} md={3} key={showtime.id} className="mb-3">
+                <div
+                  className={`film-details__showtime-box border rounded p-3 text-center ${selectedShowingId === showtime.id ? "film-details__showtime-box--selected" : ""}`}
+                  onClick={() => setSelectedShowingId(showtime.id)}
+                >
+                  <div className="film-details__showtime-time">
+                    {new Date(showtime.start_time).toLocaleTimeString("sv-SE", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                  <div className="film-details__showtime-hall">
+                    {showtime.hall_name}
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </>
+        ) : (
+          <Col>
+            <div className="film-details__no-showtimes text-center p-5 border rounded bg-light">
+              <p className="mb-0">
+                Tyvärr finns det inga visningar för{" "}
+                {new Date(selectedDate).toLocaleDateString("sv-SE", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+                .
+              </p>
+              <p className="text-muted small mt-2">
+                Prova att välja ett annat datum i kalendern ovan.
+              </p>
+            </div>
+          </Col>
+        )}
+      </Row>
 
       <div className="film-details__continue-btn-wrapper">
-        <button className="film-details__continue-btn"
-        disabled={!selectedShowingId}
-        onClick={() => {
-          const selectedShowing = Array.isArray(allShowings) ? allShowings.find((s: any) => s.id === selectedShowingId) : null;
-          if (selectedShowing) {
-            setFilm(film);
-            setShowing(selectedShowing);
-            navigate(`/booking/${selectedShowingId}/tickets`);
-          }
-        }}
-        >Gå vidare</button>
+        <button
+          className="film-details__continue-btn"
+          disabled={!selectedShowingId}
+          onClick={() => {
+            const selectedShowing = Array.isArray(allShowings)
+              ? allShowings.find((s: any) => s.id === selectedShowingId)
+              : null;
+            if (selectedShowing) {
+              setFilm(film);
+              setShowing(selectedShowing);
+              navigate(`/booking/${selectedShowingId}/tickets`);
+            }
+          }}
+        >
+          Gå vidare
+        </button>
       </div>
 
       {/* Trailer Modal */}

@@ -152,11 +152,8 @@ export default function BookingFormPage() {
       <Row className="mb-3">
         <Col>
           <div className="card p-3">
-
-
             <div className="poster-row">
               <div className="info-block">
-            
                 {infoRows.map(({ etikett, varde }) => (
                   <div key={etikett} className="info-row">
                     <span className="film-info">{etikett}</span>
@@ -167,7 +164,7 @@ export default function BookingFormPage() {
               <img
                 src={imageUrl}
                 alt={film.title}
-                className="poster" 
+                className="poster"
               />
             </div>
             <hr
@@ -177,21 +174,58 @@ export default function BookingFormPage() {
             Chosen seats summary
               */}
             <span className="section-label">Valda platser</span>
-            <div className="seat-grid">
-              {selectedSeatObjects.map((seat) => (
-                <div key={seat.id} className="seat-row">
-                  <span className="seat-label">Rad: {seat.row_index + 1}</span>
-                  <span className="seat-value">Plats: {seat.seat_letter}</span>
-                </div>
-              ))}
+            <div className="ticket-list">
+              {selectedSeatObjects.map((seat) => {
+
+              // change row_idex to a letter
+                const rowLetter = String.fromCharCode(
+                  "A".charCodeAt(0) + seat.row_index,
+                );
+
+                // count seatIndex / number
+                const seatIndex =
+                  seat.seat_letter.charCodeAt(0) - "A".charCodeAt(0);
+
+                // how many seats before
+                const seatsBefore = seats.filter(
+                  (s) =>
+                    s.hall_id === seat.hall_id && s.row_index < seat.row_index,
+                ).length;
+
+                // how many seats on this row
+                const rowSeats = seats.filter(
+                  (s) =>
+                    s.hall_id === seat.hall_id &&
+                    s.row_index === seat.row_index,
+                );
+
+                // count the seatNumber
+                const seatNumber = seatsBefore + (rowSeats.length - seatIndex);
+
+                return (
+                  <div key={seat.id} className="ticket-card">
+                    
+                    <span className="ticket-row-text">Rad: </span>
+                    <span className="tickets"></span>
+                    <span className="ticket-seat-text">Plats: </span>
+
+                    <div>
+                      <span className="ticket-row">{rowLetter}</span>
+                      <span className="ticket-values"></span>
+                      <span className="ticket-seat">{seatNumber}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <hr
               style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
             />
-            
             {ticketRows.map(({ label, count, price }) => (
               <div key={label} className="price-row">
-                <span className="summery-info">{label} x {count}</span>
+                <span className="summery-info">
+                  {label} x {count}
+                </span>
                 <span className="summery-info-value">{count * price} kr</span>
               </div>
             ))}
@@ -199,12 +233,14 @@ export default function BookingFormPage() {
               <span className="summery-info">Antal biljetter:</span>
               <span className="summery-info-value">{totalTickets}</span>
             </div>
-
             <div className="price-row last">
-              <span className="summery-info"><strong>Total pris:</strong></span>
-              <span className="summery-info-value"><strong>{totalPrice} kr</strong></span>
+              <span className="summery-info">
+                <strong>Total pris:</strong>
+              </span>
+              <span className="summery-info-value">
+                <strong>{totalPrice} kr</strong>
+              </span>
             </div>
-
           </div>
         </Col>
       </Row>
@@ -227,7 +263,9 @@ export default function BookingFormPage() {
             <strong>OBS: Avbokning måste ske 2 timmar innan visningen.</strong>
           </p>
 
-          <p className="betalning"><strong>Betalning sker på biografen.</strong></p>
+          <p className="betalning">
+            <strong>Betalning sker på biografen.</strong>
+          </p>
           <Row className="mt-3 justify-content-end">
             <Col xs="auto">
               <button

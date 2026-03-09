@@ -75,7 +75,7 @@ export default function TicketPickerPage() {
   return (
     <article className="ticket-picker container mt-4">
       {/* Title */}
-      <h2 className="ticket-picker__title">{film.title} Välj biljetter</h2>
+      <h2 className="ticket-picker__title">{film.title} - ({showing.start_time})</h2>
 
       {/* Ticket Box */}
       <section className="ticketBox">

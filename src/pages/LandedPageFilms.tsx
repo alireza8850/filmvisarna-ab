@@ -23,7 +23,14 @@ export default function LandedPageFilms() {
   const [selectedFilter, setSelectedFilter] = useState("Alla");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const availableFilters = [
-    "Alla", "Idag", "Kommande","Romance", "Barn & Familj", "Sci-Fi", "Thriller", "Klassiker"
+    "Alla",
+    "Idag",
+    "Kommande",
+    "Romance",
+    "Barn & Familj",
+    "Science fiction",
+    "Thriller",
+    "Klassiker",
   ];
 
 async function GetFilms() {
