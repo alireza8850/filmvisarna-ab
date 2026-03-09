@@ -6,7 +6,6 @@ const MER_LANKAR = [
     {text:"Nu på bio", href:"/"},
     {text:"Kommande filmer", href:"/upcoming"},
     {text:"Mat & Dryck", href:"#"},
-    {text:"Nyheter", href:"#"},
     {text:"Kontakta oss", href:"#"},
 ];
 
@@ -65,7 +64,6 @@ useEffect(
                                 <li><a onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>NU PÅ BIO</a></li>
                                 <li><a onClick={() => navigate("/upcoming")} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
                                 <li><a href="#">MAT &amp; DRYCK</a></li>
-                                <li><a href="#">NYHETER</a></li>
                             </ul>
                           
                             <div className="d-flex gap-2 align-items-center">
@@ -177,7 +175,6 @@ useEffect(
                         <li><a onClick={() => { navigate("/"); closeMenu(); }} style={{ cursor: 'pointer' }}>PÅ BION</a></li>
                         <li><a onClick={() => { navigate("/upcoming"); closeMenu(); }} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
                         <li><a href="#">MAT &amp; DRYCK</a></li>
-                        <li><a href="#">NYHETER</a></li>
                     </ul>
                 </nav>
 
