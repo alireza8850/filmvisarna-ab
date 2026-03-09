@@ -7,4 +7,7 @@ export default interface Booking {
   total_price: number;
   created_at: Date;
   expires_at: Date;
+  hall_name: string;
+  film_title: string;
+  start_time: string;
 }
