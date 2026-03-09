@@ -225,11 +225,8 @@ export default function ContactOssPage() {
                   <div className="info-block__icon"><IconEmail /></div>
                   <span className="info-block__tag">E-post</span>
                 </div>
-                <a href="mailto:info@filmvisarna.se" className="info-block__link">
-                  info@filmvisarna.se
-                </a>
                 <a href="mailto:support@filmvisarna.se" className="info-block__link">
-                  support@filmvisarna.se
+                  fatima738086@gmail.com
                 </a>
               </div>
 
