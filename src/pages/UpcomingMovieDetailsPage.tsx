@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMovieDetails, getImageUrl, type TMDBMovieDetails } from "../utils/tmdbService";
+import { useStateContext } from "../utils/useStateObject";
 import { Row, Col, Spinner, Alert, Accordion, Modal, Button } from "react-bootstrap";
-import Image from "../parts/Image";
 
 UpcomingMovieDetailsPage.route = {
   path: "/upcoming/:id",
@@ -11,13 +11,14 @@ UpcomingMovieDetailsPage.route = {
 export default function UpcomingMovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [{ bwImages }] = useStateContext();
   const [movie, setMovie] = useState<TMDBMovieDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [releasing, setReleasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(() => {
-    return new Date().toLocaleDateString('sv-SE');
+    return new Date().toISOString().split('T')[0];
   });
 
   useEffect(() => {
@@ -117,33 +118,38 @@ export default function UpcomingMovieDetailsPage() {
 
   return (
     <article className="film-details">
-      <Row>
-        <Col>
-          <h2 className="film-details__title">{movie.title}</h2>
-          <span className="film-details__poster-and-trailer">
-            <div className="film-details__poster-w">
-              <Image
-                src={getImageUrl(movie.poster_path)}
-                alt={"Poster image of the film " + movie.title + "."}
-              />
-            </div>
-            {trailerKey && (
-              <button
-                className="film-details__trailer-btn"
-                onClick={() => setShowTrailerModal(true)}
-              >
-                Se Trailer
-              </button>
-            )}
-          </span>
+    <Row className="film-details__main-row">
+      <Col md={5} lg={4}>
+        <div className="film-details__poster-and-trailer position-relative">
+          <div className="film-details__poster-w">
+            <img
+              src={getImageUrl(movie.poster_path)}
+              className={"film-details__poster" + (bwImages ? " bw" : "")}
+              alt={"Poster image of the film " + movie.title + "."}
+            />
+          </div>
+          {trailerKey && (
+            <button
+              className="film-details__trailer-btn"
+              onClick={() => setShowTrailerModal(true)}
+            >
+              Se Trailer
+            </button>
+          )}
+        </div>
+      </Col>
 
+      <Col md={7} lg={8}>
+        <h2 className="film-details__main-title">{movie.title}</h2>
+        <section className="film-details__description-section">
           {movie.overview?.split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>
               {x}
             </p>
           ))}
-        </Col>
-      </Row>
+        </section>
+      </Col>
+    </Row>
 
       <Accordion className="film-details__accordion mt-4" defaultActiveKey="0">
         <Accordion.Item eventKey="0" className="film-details__accordion-item">
@@ -184,6 +190,13 @@ export default function UpcomingMovieDetailsPage() {
           id="date-filter"
           className="film-details__date-filter-input"
           value={selectedDate}
+          onClick={(e) => {
+            try {
+              (e.target as HTMLInputElement).showPicker();
+            } catch (err) {
+              console.error("Picker not supported", err);
+            }
+          }}
           onChange={(e) => {
             setSelectedDate(e.target.value);
           }}

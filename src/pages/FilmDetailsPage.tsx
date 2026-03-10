@@ -4,7 +4,6 @@ import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import { useStateContext } from "../utils/useStateObject";
 import NotFoundPage from "./NotFoundPage";
-import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
 import { useBooking } from "../utils/BookingContext";
 
@@ -25,7 +24,7 @@ export default function FilmDetailsPage() {
 
   // Default to today's date (YYYY-MM-DD)
   const [selectedDate, setSelectedDate] = useState<string>(() => {
-    return new Date().toLocaleDateString('sv-SE');
+    return new Date().toISOString().split('T')[0];
   });
   const [showTrailerModal, setShowTrailerModal] = useState(false);
 
@@ -71,45 +70,38 @@ export default function FilmDetailsPage() {
   return (
     <article className="film-details">
 
-      <Row className="justify-content-center">
-        <Col xs={12}>
-          <div className="film-details__poster-and-trailer position-relative">
-            <div className="film-details__poster-w">
-              <img
-                src={imageUrl}
-                className={"film-details__poster" + (bwImages ? " bw" : "")}
-                alt={"Poster image of the film " + title + "."}
-              />
-            </div>
-            {film.trailer_url && (
-              <button
-                className="film-details__trailer-btn mb-3"
-                onClick={() => setShowTrailerModal(true)}
-              >
-                Se Trailer
-              </button>
-            )}
+    <Row className="film-details__main-row">
+      <Col md={5} lg={4}>
+        <div className="film-details__poster-and-trailer position-relative">
+          <div className="film-details__poster-w">
+            <img
+              src={imageUrl}
+              className={"film-details__poster" + (bwImages ? " bw" : "")}
+              alt={"Poster image of the film " + title + "."}
+            />
           </div>
-        </Col>
+          {film.trailer_url && (
+            <button
+              className="film-details__trailer-btn"
+              onClick={() => setShowTrailerModal(true)}
+            >
+              Se Trailer
+            </button>
+          )}
+        </div>
+      </Col>
 
-        <Col xs={12}>
-          <h2 className="film-details__title">{title}</h2>
+      <Col md={7} lg={8}>
+        <h2 className="film-details__main-title">{title}</h2>
+        <section className="film-details__description-section">
           {description?.split("\n").map((x, i) => (
             <p className="film-details__description" key={i}>
               {x}
             </p>
           ))}
-        </Col>
-      </Row>
-
-      {/* DESCRIPTION */}
-      <section className="film-details__description-section">
-        {description?.split("\n").map((x, i) => (
-          <p className="film-details__description" key={i}>
-            {x}
-          </p>
-        ))}
-      </section>
+        </section>
+      </Col>
+    </Row>
 
       <Accordion className="film-details__accordion mt-4" defaultActiveKey="0">
         <Accordion.Item eventKey="0" className="film-details__accordion-item">
@@ -156,6 +148,13 @@ export default function FilmDetailsPage() {
           id="date-filter"
           className="film-details__date-filter-input"
           value={selectedDate}
+          onClick={(e) => {
+            try {
+              (e.target as HTMLInputElement).showPicker();
+            } catch (err) {
+              console.error("Picker not supported", err);
+            }
+          }}
           onChange={(e) => {
             setSelectedDate(e.target.value);
             setSelectedShowingId(null); // Reset selected showing when date changes

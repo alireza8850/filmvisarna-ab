@@ -14,20 +14,19 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <UserProvider>
-      <BookingProvider>
-        <App />
-      </BookingProvider>
-      </UserProvider>
+      <App />
     ),
     children: routes as RouteObject[],
-    HydrateFallback: App,
   },
 ]);
 
 // Create the React root element
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <BookingProvider>
+        <RouterProvider router={router} />
+      </BookingProvider>
+    </UserProvider>
   </StrictMode>,
 );

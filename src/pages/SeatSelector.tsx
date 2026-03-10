@@ -31,7 +31,7 @@ export default function SeatSelector({
   const totalTickets = tickets.adult + tickets.child + tickets.senior;
 
   // find hall
-  const hall = halls.find((h) => h.id === showing.hall_id);
+  const hall = halls?.find((h) => h.id === showing.hall_id);
   if (!hall) return <p>Kunde inte hitta salongen</p>;
 
   const totalRows = hall.total_rows;

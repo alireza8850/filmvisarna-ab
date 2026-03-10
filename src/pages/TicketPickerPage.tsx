@@ -20,7 +20,7 @@ TicketPickerPage.route = {
 export default function TicketPickerPage() {
   const navigate = useNavigate();
   const { film, showing, halls, seats, tickets, ticketPrices } =
-    useLoaderData() as {
+    (useLoaderData() || {}) as {
       film: Film;
       showing: Showing;
       halls: Hall[];
@@ -29,6 +29,10 @@ export default function TicketPickerPage() {
       ticketTypes: TicketType[];
       ticketPrices: TicketPrice[];
     };
+
+  if (!halls || !showing || !film || !ticketPrices) {
+    return <p>Laddar bokningsdata...</p>;
+  }
   
   const { setTickets } = useBooking();
 
