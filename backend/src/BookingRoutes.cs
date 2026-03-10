@@ -208,7 +208,7 @@ public static class BookingRoutes
 
           if (seatId != null)
           {
-            _ = SeatEventsRoutes.BroadcastSeatBooked((int)showingId, seatId.Value);
+            _ = SeatEventsRoutes.BroadcastSeatsBooked((int)showingId, seatId.Value);
           }
         }
       }
