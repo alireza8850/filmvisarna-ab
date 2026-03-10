@@ -178,7 +178,7 @@ public static class BookingRoutes
           VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice, @bookingEmail)
       ";
       var insertResult = SQLQueryOne(insertBookingSql,
-      new { bookingNumber, user, showingId, totalPrice, bookingEmail = emailToSend },
+      new { bookingNumber, userId = user?.id, showingId, totalPrice, bookingEmail = emailToSend },
        context);
 
       if (insertResult == null || insertResult.error != null)
