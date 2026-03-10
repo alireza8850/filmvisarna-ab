@@ -38,6 +38,31 @@ public static class BookingRoutes
       return RestResult.Parse(context, showings);
     });
 
+    // GET /api/bookings/my
+    App.MapGet("/api/bookings/my", (HttpContext context) =>
+    {
+      var user = Session.Get(context, "user");
+      if (user == null)
+      {
+        context.Response.StatusCode = 401;
+        return RestResult.Parse(context, new { error = "Unauthorized" });
+      }
+
+      var sql = @"
+          SELECT b.id, b.booking_number, b.booking_status, b.total_price,
+                 f.title as film_title, s.start_time
+          FROM bookings b
+          JOIN showings s ON b.showing_id = s.id
+          JOIN films f ON s.film_id = f.id
+          WHERE b.user_id = @userId
+          ORDER BY b.created_at DESC
+      ";
+
+      var bookings = SQLQuery(sql, new { userId = user.id }, context);
+      return RestResult.Parse(context, bookings);
+    });
+
+
     // POST /api/bookings
     App.MapPost("/api/bookings", (HttpContext context, JsonElement bodyJson) =>
     {
@@ -50,7 +75,7 @@ public static class BookingRoutes
 
       if (showingId == null || tickets == null)
       {
-        return RestResult.Parse(context, new { error = "Missing required fields: showing_id, tickets." });
+        return RestResult.Parse(context, new { error = "Obligatoriska fält saknas." });
       }
       //Get User/id if logged in optional
       int? userId = Session.Get(context, "user")?.id;
@@ -97,10 +122,53 @@ public static class BookingRoutes
 
       if (showing == null || showing.error != null)
       {
-        return RestResult.Parse(context, new { error = "Showing not found." });
+        return RestResult.Parse(context, new { error = "Visningen kunde inte hittas." });
       }
 
-      // Calculate total price by summing up individual ticket prices
+      /* handle double-booking otherwise one seat or more */
+      // Extract seat IDs
+      // 1- get all the needed seats
+      var seatIds = new List<long>();
+
+      foreach (var t in tickets)
+      {
+        var ticket = (dynamic)t;
+
+        if (ticket.seat_id != null)
+        {
+          seatIds.Add((long)ticket.seat_id);
+        }
+      }
+
+      var seatIdsArray = seatIds.ToArray();
+
+      // 2- check if all chosen seats are still available (safe version)
+      // Check double-booking BEFORE creating booking
+
+      foreach (var seatId in seatIdsArray)
+      {
+        var existing = SQLQueryOne(
+            @"
+            SELECT seat_id 
+            FROM tickets 
+            WHERE showing_id = @showingId
+              AND seat_id = @seatId
+            LIMIT 1
+        ",
+            new { showingId, seatId },
+            context
+        );
+
+        if (existing != null && existing.seat_id != null)
+        {
+          return RestResult.Parse(context, new
+          {
+            error = "En eller flera platser är redan bokade."
+          });
+        }
+      }
+
+      // 3) Calculate total price by summing up individual ticket prices
       decimal totalPrice = 0;
       foreach (dynamic ticket in tickets)
       {
@@ -128,79 +196,53 @@ public static class BookingRoutes
       // Insert booking
       var insertBookingSql = @"
           INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email)
-          VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice, @email)
+          VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice, @bookingEmail)
       ";
-      var insertResult = SQLQueryOne(insertBookingSql, new { bookingNumber, userId, showingId, totalPrice, email = emailToSend }, context);
+      var insertResult = SQLQueryOne(insertBookingSql,
+      new { bookingNumber, userId = user?.id, showingId, totalPrice, bookingEmail = emailToSend },
+       context);
 
       if (insertResult == null || insertResult.error != null)
       {
-        return RestResult.Parse(context, new { error = "Failed to create booking." });
-      }
-
-      var bookingId = insertResult.lastInsertId != null ? (long)insertResult.lastInsertId : 0;
-      if (bookingId == 0)
-      {
-        return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
-      }
-
-      /* handle double-booking otherwise one seat or more */
-      // 1- get all the needed seats
-      var seatIds = new List<long>();
-
-      foreach (var t in tickets)
-      {
-        var ticket = (dynamic)t;
-
-        if (ticket.seat_id != null)
-        {
-          seatIds.Add((long)ticket.seat_id);
-        }
+        return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
 
       var seatIdsArray = seatIds.ToArray();
 
       // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
-      // Insert tickets
       try
       {
-        foreach (var ticket in tickets)
+        foreach (var t in tickets)
         {
-          // Check if seat_id is provided, otherwise use NULL
-          var seatId = ticket.seat_id != null ? (long?)ticket.seat_id : null;
-          var ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
+          var ticket = (dynamic)t;
+          long? seatId = ticket.seat_id != null ? (long?)ticket.seat_id : null;
+          long ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
           if (ticketTypeId == 0) continue;
 
-          var ticketSql = @"
-            INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
-            VALUES (@bookingId, @showingId, @seatId, @ticketTypeId)
-        ";
-          SQLQuery(ticketSql, new
-          {
-            bookingId,
-            showingId,
-            seatId = seatId,
-            ticketTypeId = ticketTypeId
-          }, context);
+          SQLQuery(
+              @"INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
+                          VALUES (@bookingId, @showingId, @seatId, @ticketTypeId)",
+              new { bookingId, showingId, seatId, ticketTypeId },
+              context
+          );
 
-          // broadcast realtime seat update
           if (seatId != null)
           {
-            _ = SeatEventsRoutes.BroadcastSeatBooked((int)showingId, seatId.Value);
+            _ = SeatEventsRoutes.BroadcastSeatsBooked((int)showingId, seatId.Value);
           }
         }
       }
       catch (Exception ex)
       {
+        Console.WriteLine("Ticket insert error: " + ex.Message);
+
         if (ex.Message.Contains("UNIQUE"))
         {
-          return RestResult.Parse(context, new
-          {
-            error = "Platsen blev precis bokad av en annan användare."
-          });
+          return RestResult.Parse(context, new { error = "Platsen blev precis bokad av en annan användare." });
         }
 
-        throw;
+        return RestResult.Parse(context, new { error = "Ett oväntat fel inträffade vid bokningen." });
       }
 
       // Build ticket lines for email body
@@ -393,6 +435,9 @@ public static class BookingRoutes
 
       return RestResult.Parse(context, new { message = "Bokningen har avbokats." });
     });
+
+
+
 
   }
 
