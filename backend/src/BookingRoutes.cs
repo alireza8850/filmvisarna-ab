@@ -207,8 +207,9 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
 
-      long bookingId = (long)insertResult.id;
-
+      var seatIdsArray = seatIds.ToArray(); //I did a change (I think but reverted it back. If it starts failing we might need to 
+      //go back to long bookingId = (long)insertResult.id;
+      
       // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
       try
