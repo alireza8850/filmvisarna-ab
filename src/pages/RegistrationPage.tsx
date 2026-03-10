@@ -99,10 +99,10 @@ export default function RegistrationPage (){
                     onBlur={() =>
                       setUserInput((p) => ({ ...p, firstName: true }))
                     }
-                    className={userInput.firstName && !validFirstName ? "fel" : ""}
+                    className={userInput.firstName && firstName.length > 0 && !validFirstName ? "fel" : ""}
                   />
                 </div>
-                {userInput.firstName && !validFirstName && (
+                {userInput.firstName && firstName.length > 0 && !validFirstName && (
                   <p className="auth-fel">Förnamnet måste vara minst 2 tecken.</p>
                 )}
               </Col>
@@ -121,10 +121,10 @@ export default function RegistrationPage (){
                     onBlur={() =>
                       setUserInput((p) => ({ ...p, lastName: true }))
                     }
-                    className={userInput.lastName && !validLastName ? "fel" : ""}
+                    className={userInput.lastName && lastName.length > 0 && !validLastName ? "fel" : ""}
                   />
                 </div>
-                {userInput.lastName && !validLastName && (
+                {userInput.lastName && lastName.length > 0 && !validLastName && (
                   <p className="auth-fel">Efternamnet måste vara minst 2 tecken.</p>
                 )}
               </Col>
@@ -160,10 +160,10 @@ export default function RegistrationPage (){
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
                                         onBlur={() => setUserInput(p => ({ ...p, email: true }))}
-                                        className={userInput.email && !validEmail ? 'fel' : ''}
+                                        className={userInput.email && email.length > 0 && !validEmail ? 'fel' : ''}
                                     />
                                 </div>
-                                {userInput.email && !validEmail && (
+                                {userInput.email && email.length > 0 && !validEmail && (
                                     <p className="auth-fel">Ange en giltig e-postadress.</p>
                                 )}
                             </Col>
@@ -180,10 +180,10 @@ export default function RegistrationPage (){
                                         value={pass}
                                         onChange={e => setPass(e.target.value)}
                                         onBlur={() => setUserInput(p => ({ ...p, pass: true }))}
-                                        className={userInput.pass && !validPass ? 'fel' : ''}
+                                        className={userInput.pass && pass.length > 0 && !validPass ? 'fel' : ''}
                                     />
                                 </div>
-                                {userInput.pass && !validPass && (
+                                {userInput.pass && pass.length > 0 && !validPass && (
                                     <p className="auth-fel">Lösenordet måste vara minst 8 tecken.</p>
                                 )}
                             </Col>
@@ -200,10 +200,10 @@ export default function RegistrationPage (){
                                         value={repeatPass}
                                         onChange={e => setRepeatPass(e.target.value)}
                                         onBlur={() => setUserInput(p => ({ ...p, repeatPass: true }))}
-                                        className={userInput.repeatPass && !validRepeatPass ? 'fel' : ''}
+                                        className={userInput.repeatPass && repeatPass.length > 0 && !validRepeatPass ? 'fel' : ''}
                                     />
                                 </div>
-                                {userInput.repeatPass && !validRepeatPass && (
+                                {userInput.repeatPass && repeatPass.length > 0 && !validRepeatPass && (
                                     <p className="auth-fel">Lösenorden matchar inte.</p>
                                 )}
                             </Col>

@@ -76,10 +76,10 @@ export default function LoginPage(){
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
                                         onBlur={() => setUserInput(p => ({ ...p, email: true }))}
-                                        className={userInput.email && !validEmail ? 'fel' : ''}
+                                        className={userInput.email && email.length > 0 && !validEmail ? 'fel' : ''}
                                     />
                                 </div>
-                                {userInput.email && !validEmail && (
+                                {userInput.email && email.length > 0 && !validEmail && (
                                     <p className="auth-fel">Ange en giltig e-post adress.</p>
                                 )}
                             </Col>
@@ -97,10 +97,10 @@ export default function LoginPage(){
                                         value={pass}
                                         onChange={e => setPass(e.target.value)}
                                         onBlur={() => setUserInput(p => ({ ...p, pass: true }))}
-                                        className={userInput.pass && !validPass ? 'fel' : ''}
+                                        className={userInput.pass && pass.length > 0 && !validPass ? 'fel' : ''}
                                     />
                                 </div>
-                                {userInput.pass && !validPass && (
+                                {userInput.pass && pass.length > 0 && !validPass && (
                                     <p className="auth-fel">Lösenordet måste vara minst 8 tecken.</p>
                                 )}
                             </Col>

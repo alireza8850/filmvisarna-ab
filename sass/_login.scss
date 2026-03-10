@@ -24,11 +24,20 @@
     text-align: center;
     margin-bottom: 28px;
     text-transform: uppercase;
+
+    @media (min-width: 768px) {
+        font-size: 40px;
+        margin-bottom: 48px;
+    }
 }
 
 .login-form, .register-form {
     width: 100%;
     max-width: 420px;
+
+    @media (min-width: 768px) {
+        max-width: 650px;
+    }
 }
 
 
@@ -38,6 +47,11 @@
     color: white;
     margin-bottom: 6px;
     font-weight: 500;
+
+    @media (min-width: 768px) {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
 }
 
 
@@ -45,14 +59,23 @@
     position: relative;
     margin-bottom: 18px;
 
+    @media (min-width: 768px) {
+        margin-bottom: 24px;
+    }
+
     .auth-input-icon {
         position: absolute;
         left: 12px;
         top: 50%;
         transform: translateY(-50%);
-        color: #2a4cff;
+        color: #99e1c3;
         font-size: 15px;
         pointer-events: none;
+
+        @media (min-width: 768px) {
+            font-size: 20px;
+            left: 18px;
+        }
     }
 
     input {
@@ -60,23 +83,29 @@
         background-color: #0d0a3a;
         border: 1px solid rgba(255,255,255,0.2);
         border-radius: 8px;
-        color: #2a4cff;
+        color: #139fe4;
         font-size: 14px;
         padding: 10px 12px 10px 36px;
         outline: none;
-        transition: border-color;
+        transition: border-color 0.2s ease;
+
+        @media (min-width: 768px) {
+            font-size: 20px;
+            padding: 18px 20px 18px 56px;
+            border-radius: 14px;
+        }
 
         &::placeholder { color: rgba(255,255,255,0.25); }
 
         &:focus {
-            border-color: #2a4cff;
-            box-shadow: 0 0 0 2px rgba(#2a4cff, 0.2);
+            border-color: #00aaff;
+        box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.2);
         }
 
         // Felstatus
         &.fel {
             border-color: #b80000;
-            &:focus { box-shadow: 0 0 0 2px rgba(#b80000, 0.2); }
+            &:focus { box-shadow: 0 0 0 2px rgba(184, 0, 0, 0.2); }
         }
     }
 }
@@ -85,7 +114,7 @@
 
 
 .auth-fel {
-    color: lighten(#b80000, 20%);
+    color: #f03333; // lighten(#b80000, 20%) equivalent
     font-size: 15px;
     margin-top: -14px;
     margin-bottom: 12px;
@@ -107,13 +136,20 @@
 .login-submit-btn, .register-submit-btn{
     font-size: 14px;
     padding: 11px;
-    background-color: #2a4cff;
+    background-color: #00aaff;
     color: white;
     width: 100%;
     border-radius: 20px;       
     font-weight: 700;
     letter-spacing: 0.04em;
     margin-top: 8px;
+
+    @media (min-width: 768px) {
+        font-size: 22px;
+        padding: 20px;
+        border-radius: 40px;
+        margin-top: 24px;
+    }
 }
 
 
@@ -121,7 +157,12 @@
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
-    color: #2a4cff;
+    color: #00aaff;
+
+    @media (min-width: 768px) {
+        font-size: 20px;
+        margin-top: 40px;
+    }
 
     a, button {
         color: white;
@@ -132,7 +173,11 @@
         font-size: 14px;
         padding: 0;
 
-        &:hover {color:white 20%}
+        @media (min-width: 768px) {
+            font-size: 20px;
+        }
+
+        &:hover {color: rgba(white, 0.8);}
     }
 }
 
