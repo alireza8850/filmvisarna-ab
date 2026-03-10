@@ -155,8 +155,30 @@ public static class BookingRoutes
 
       var seatIdsArray = seatIds.ToArray();
 
-      // 2- check if all chosen seats are available
-      
+      // 2- check if all chosen seats are still available (safe version)
+
+      foreach (var seatId in seatIdsArray)
+      {
+        var existing = SQLQueryOne(
+            @"
+            SELECT seat_id 
+            FROM tickets 
+            WHERE showing_id = @showingId
+              AND seat_id = @seatId
+            LIMIT 1
+        ",
+            new { showingId, seatId },
+            context
+        );
+
+        if (existing != null && existing.seat_id != null)
+        {
+          return RestResult.Parse(context, new
+          {
+            error = "En eller flera platser är redan bokade."
+          });
+        }
+      }
 
       // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
