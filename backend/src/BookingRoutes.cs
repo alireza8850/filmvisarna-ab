@@ -207,7 +207,7 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
 
-      var seatIdsArray = seatIds.ToArray();
+      long bookingId = (long)insertResult.id;
 
       // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
