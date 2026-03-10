@@ -52,6 +52,7 @@ public static class BookingRoutes
       {
         return RestResult.Parse(context, new { error = "Missing required fields: showing_id, tickets." });
       }
+      //Get User/id if logged in optional
       int? userId = Session.Get(context, "user")?.id;
       var user = Session.Get(context, "user");
 
