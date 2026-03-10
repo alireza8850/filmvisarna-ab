@@ -290,9 +290,8 @@ public static class BookingRoutes
       }
 
       var sql = @"
-       SELECT b.id, b.booking_number, b.user_id, b.showing_id,
-       b.booking_status, b.total_price, b.created_at, b.expires_at,
-       f.title as film_title, s.start_time
+          SELECT b.id, b.booking_number, b.booking_status, b.total_price,
+                 f.title as film_title, s.start_time
           FROM bookings b
           JOIN showings s ON b.showing_id = s.id
           JOIN films f ON s.film_id = f.id
