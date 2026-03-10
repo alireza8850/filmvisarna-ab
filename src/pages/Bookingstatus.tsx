@@ -69,18 +69,6 @@ export default function Bookingstatus() {
 
   useEffect(() => {
     fetchBookings();
-
-    // Refresh every 15 seconds
-    const interval = setInterval(fetchBookings, 15000);
-
-    // Refresh when tab gets focus
-    const onFocus = () => fetchBookings();
-    window.addEventListener("focus", onFocus);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("focus", onFocus);
-    };
   }, []);
   function canCancel(startTime: string): boolean {
     const showingTime = new Date(startTime).getTime();
@@ -126,7 +114,7 @@ export default function Bookingstatus() {
     if (status === "cancelled") return "Avbokad";
     if (status === "reserved")  return "Reserverad";
     if (status === "expired")   return "Utgången";
-    return "Bekräftad";
+    return "Visad";
   }
 
   function statusClass(status: string): string {
@@ -179,7 +167,6 @@ export default function Bookingstatus() {
                 <div className="my-bookings__cell my-bookings__cell--price">{b.total_price}:-</div>
                 <div className="my-bookings__cell my-bookings__cell--action">
                   {allowCancel ? (
-                    // More than 2 hours away → show Avboka button
                     <button
                       className="my-bookings__cancel-btn"
                       onClick={() => handleCancel(b)}
@@ -188,7 +175,6 @@ export default function Bookingstatus() {
                       {cancellingId === b.id ? "Avbokar..." : "Avboka"}
                     </button>
                   ) : (
-                    // Less than 2 hours away OR already cancelled → show status pill
                     <span className={statusClass(b.booking_status)}>
                       {statusLabel(b.booking_status)}
                     </span>

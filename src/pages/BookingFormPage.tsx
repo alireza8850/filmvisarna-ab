@@ -82,7 +82,6 @@ export default function BookingFormPage() {
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
           // Send all the needed information to bd-booking / backend 
           showing_id: showing.id,
