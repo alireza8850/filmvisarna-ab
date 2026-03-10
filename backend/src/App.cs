@@ -5,9 +5,9 @@ Globals = Obj(new
   detailedAclDebug = false,
   aclOn = true,
   isSpa = true,
-  port = args[0],
+  port = args.Length > 0 ? args[0] : "3000",
   serverName = "Minimal API Backend",
-  frontendPath = args[1],
+  frontendPath = args.Length > 1 ? args[1] : "../dist",
   sessionLifeTimeHours = 2
 });
 

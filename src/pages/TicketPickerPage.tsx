@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
@@ -19,7 +19,7 @@ TicketPickerPage.route = {
 
 export default function TicketPickerPage() {
   const navigate = useNavigate();
-  const { film, showing, halls, seats, tickets, ticketTypes, ticketPrices } =
+  const { film, showing, halls, seats, tickets, ticketPrices } =
     useLoaderData() as {
       film: Film;
       showing: Showing;
@@ -29,6 +29,7 @@ export default function TicketPickerPage() {
       ticketTypes: TicketType[];
       ticketPrices: TicketPrice[];
     };
+  
   const { setTickets } = useBooking();
 
   const [vuxen, setVuxen] = useState(0);
@@ -51,11 +52,30 @@ export default function TicketPickerPage() {
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
 
   const totalCount = vuxen + barn + pensionar;
+  const { selectedSeats } = useBooking(); 
+
+  const handleContinue = () => {
+    const totalTickets = vuxen + barn + pensionar;
+    // control that the chosen seats match the chosen tickets
+    if (selectedSeats.length !== totalTickets) {
+      alert("Du måste välja lika många platser som antal biljetter.");
+      return;
+    }
+    navigate("/bookingformPage", {
+      // Send the real prices to the BookingForm page in order to send them after the confirmation to db
+      state: {
+        vuxenPrice,
+        barnPrice,
+        pensionarPrice,
+        seats,
+      },
+    });
+  };
 
   return (
     <article className="ticket-picker container mt-4">
       {/* Title */}
-      <h2 className="ticket-picker__title">{film.title} Välj biljetter</h2>
+      <h2 className="ticket-picker__title">{film.title} - ({showing.start_time})</h2>
 
       {/* Ticket Box */}
       <section className="ticketBox">
@@ -147,12 +167,9 @@ export default function TicketPickerPage() {
           <div className="mt-5">
             <SeatSelector
               showing={showing}
-              film={film}
               halls={halls}
               seats={seats}
               tickets={tickets}
-              ticketTypes={ticketTypes}
-              ticketPrices={ticketPrices}
             />
           </div>
         )}
@@ -161,10 +178,7 @@ export default function TicketPickerPage() {
           <button
             className="slutfor-btn"
             disabled={totalCount === 0}
-            onClick={() => {
-              setTickets({ adult: vuxen, child: barn, senior: pensionar });
-              navigate("/bookingformpage");
-            }}
+            onClick={handleContinue}
           >
             Fortsätt
           </button>

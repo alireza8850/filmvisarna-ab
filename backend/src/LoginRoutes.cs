@@ -9,6 +9,51 @@ public static class LoginRoutes
 
   public static void Start()
   {
+        App.MapPost("/api/register", (HttpContext context, JsonElement bodyJson) =>
+    {
+      var body = JSON.Parse(bodyJson.ToString());
+
+      // validering
+      if (string.IsNullOrWhiteSpace((string)body.email) ||
+          string.IsNullOrWhiteSpace((string)body.password) ||
+          string.IsNullOrWhiteSpace((string)body.firstName) ||
+          string.IsNullOrWhiteSpace((string)body.lastName))
+      {
+        return RestResult.Parse(context, new { error = "Ogiltig information." });
+      }
+
+      // kollar om email redan finns 
+      var existingUser = SQLQueryOne(
+              "SELECT id FROM users WHERE email = @email",
+              new { body.email }
+          );
+      if (existingUser != null)
+      {
+        return RestResult.Parse(context, new { error = "Email redan finns." });
+      }
+
+      // Hantera password encryption 
+      var parsed = ReqBodyParse("users", body);
+      var columns = parsed.insertColumns;
+      var values = parsed.insertValues;
+      var sql = $"INSERT INTO users({columns}) VALUES({values})";
+      
+      try
+      {
+        var result = SQLQueryOne(sql, parsed.body, context);
+
+        if (result.HasKey("error"))
+        {
+          return RestResult.Parse(context, result);
+        }
+
+        return RestResult.Parse(context, new { message = "Ditt konto har registrerats." });
+      }
+      catch (Exception ex)
+      {
+        return RestResult.Parse(context, new { error = ex.Message });
+      }
+    });
     App.MapPost("/api/login", (HttpContext context, JsonElement bodyJson) =>
     {
       var user = GetUser(context);
@@ -17,7 +62,7 @@ public static class LoginRoutes
       // If there is a user logged in already
       if (user != null)
       {
-        var already = new { error = "A user is already logged in." };
+        var already = new { error = "En användare är redan inloggad." };
         return RestResult.Parse(context, already);
       }
 
@@ -28,7 +73,7 @@ public static class LoginRoutes
           );
       if (dbUser == null)
       {
-        return RestResult.Parse(context, new { error = "No such user." });
+        return RestResult.Parse(context, new { error = "Ingen användare hittades." });
       }
 
       // If the password doesn't match
@@ -38,7 +83,7 @@ public static class LoginRoutes
           ))
       {
         return RestResult.Parse(context,
-                new { error = "Password mismatch." });
+                new { error = "Fel lösenord." });
       }
 
       // Add the user to the session, without password

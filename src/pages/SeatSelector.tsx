@@ -4,10 +4,8 @@ import type Seat from "../interfaces/Seat";
 import type Hall from "../interfaces/Hall";
 import type Showing from "../interfaces/Showing";
 import type Ticket from "../interfaces/Ticket";
-import type Film from "../interfaces/Film";
-import type TicketType from "../interfaces/TicketType";
-import type TicketPrice from "../interfaces/TicketPrice";
 import bookingLoader from "../utils/bookingLoader";
+import type SeatBookedEvent from "../interfaces/SeatBookedEvent";
 
 SeatSelector.route = {
   path: "/booking/:showingId/tickets",
@@ -15,25 +13,18 @@ SeatSelector.route = {
   loader: bookingLoader,
 };
 
-
 type SeatSelectorProps = {
   showing: Showing;
-  film: Film;
   halls: Hall[];
   seats: Seat[];
   tickets: Ticket[];
-  ticketTypes: TicketType[];
-  ticketPrices: TicketPrice[];
 };
 
 export default function SeatSelector({
   showing,
-  film,
   halls,
   seats,
   tickets: soldTickets,
-  ticketTypes,
-  ticketPrices,
 }: SeatSelectorProps) {
   const { tickets, selectedSeats, setSelectedSeats } = useBooking();
 
@@ -43,8 +34,7 @@ export default function SeatSelector({
   const hall = halls.find((h) => h.id === showing.hall_id);
   if (!hall) return <p>Kunde inte hitta salongen</p>;
 
-  const totalRows = hall.total_rows; // 8 or 10
-  const seatsPerRow = hall.seats_per_row; // t.e 10
+  const totalRows = hall.total_rows;
 
   // filter seats for this hall
   const hallSeats = seats.filter((s) => s.hall_id === hall.id);
@@ -54,6 +44,14 @@ export default function SeatSelector({
     ...s,
     seatIndex: s.seat_letter.charCodeAt(0) - "A".charCodeAt(0),
   }));
+
+  // click-sound
+  const playClick = () => {
+    const audio = new Audio("/public/sounds/mouse-click.mp3");
+    audio.currentTime = 0;
+    audio.volume = 0.2;
+    audio.play().catch(() => {});
+  };
 
   // booked seats
   const bookedSeatIds = new Set(
@@ -79,20 +77,69 @@ export default function SeatSelector({
 
   const [localSelected, setLocalSelected] = useState<number[]>(selectedSeats);
 
+  const [liveBookedSeats, setLiveBookedSeats] = useState<Set<number>>(
+    new Set(),
+  );
+
   useEffect(() => {
     setSelectedSeats(localSelected);
   }, [localSelected]);
 
-function toggleSeat(seatId: number) {
-  if (bookedSeatIds.has(seatId)) return;
+  // update the seats if the show is changed
+  useEffect(() => {
+    setLiveBookedSeats(new Set());
+  }, [showing.id]);
 
-  if (localSelected.includes(seatId)) {
-    setLocalSelected(localSelected.filter((id) => id !== seatId));
-  } else {
-    if (totalTickets > 0 && localSelected.length >= totalTickets) return;
-    setLocalSelected([...localSelected, seatId]);
+  // SSE listener
+  useEffect(() => {
+    const url = `/api/seats-sse/${showing.id}`;
+    const eventSource = new EventSource(url);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data) as SeatBookedEvent;
+
+        if (data.seat_id !== undefined && data.showing_id === showing.id) {
+          setLiveBookedSeats((prev) => {
+            const updated = new Set(prev);
+            updated.add(data.seat_id!);
+            return updated;
+          });
+          // if is booked from another user
+          setLocalSelected((prev) => prev.filter((id) => id !== data.seat_id));
+        }
+
+        // released seats
+        if (data.released_seats !== undefined && data.showing_id === showing.id)
+        {
+          setLiveBookedSeats((prev) => {
+            const updated = new Set(prev);
+            data.released_seats!.forEach((id: number) => updated.delete(id));
+            return updated;
+          });
+        }
+      } catch (err) {
+        console.error("SSE parse error:", err);
+      }
+    };
+
+    return () => eventSource.close();
+  }, [showing.id]);
+
+  function toggleSeat(seatId: number) {
+    if (bookedSeatIds.has(seatId)) return;
+    // live update
+    if (liveBookedSeats.has(seatId)) return;
+    // call click-sound function
+    playClick();
+
+    if (localSelected.includes(seatId)) {
+      setLocalSelected(localSelected.filter((id) => id !== seatId));
+    } else {
+      if (totalTickets > 0 && localSelected.length >= totalTickets) return;
+      setLocalSelected([...localSelected, seatId]);
+    }
   }
-}
 
   const rowLetter = (index: number) =>
     String.fromCharCode("A".charCodeAt(0) + index);
@@ -100,7 +147,7 @@ function toggleSeat(seatId: number) {
   return (
     <div className="seat-page">
       <div className="screen">
-        <div className="screen-border">SCREEN</div>
+        <div className="screen-border">FILMDUK / SCREEN</div>
         <br />
         <div className="legend">
           <span className="legend-item available"></span> Tillgänglig
@@ -114,36 +161,29 @@ function toggleSeat(seatId: number) {
         {Array.from({ length: totalRows }).map((_, rowIndex) => {
           const rowSeats = seatsByRow[rowIndex] ?? [];
 
+          //
+          const seatsBefore = Object.values(seatsByRow)
+            .slice(0, rowIndex)
+            .reduce((sum, row) => sum + row.length, 0);
+
           return (
             <div key={rowIndex} className="seat-row">
               <span className="row-number">{rowLetter(rowIndex)}</span>
 
               <div className="row-seats">
-                {rowSeats.map((seat, index) => {
-                  const isBooked = bookedSeatIds.has(seat.id);
+                {rowSeats.map((seat) => {
+                  const isBooked =
+                    bookedSeatIds.has(seat.id) || liveBookedSeats.has(seat.id);
+
                   const isSelected = localSelected.includes(seat.id);
 
                   const selectionLimitReached =
                     totalTickets > 0 && localSelected.length >= totalTickets;
 
-                  const isAisle = index === Math.floor(seatsPerRow / 2);
-
-                  const seatNumber =
-                    (totalRows - 1 - rowIndex) * seatsPerRow + (seatsPerRow - seat.seatIndex);
-                  console.log({
-                    seatId: seat.id,
-                    isBooked,
-                    selectionLimitReached,
-                    totalTickets,
-                    localSelected: localSelected.length
-                  });
-
                   return (
                     <React.Fragment key={seat.id}>
-                      {isAisle && <div className="aisle"></div>}
-
                       <button
-                        disabled={isBooked || selectionLimitReached}
+                        disabled={isBooked || (selectionLimitReached && !isSelected)}
                         onClick={() => toggleSeat(seat.id)}
                         className={[
                           "seat",
@@ -156,7 +196,45 @@ function toggleSeat(seatId: number) {
                           .filter(Boolean)
                           .join(" ")}
                       >
-                        {seatNumber}
+                        <svg className="seat-vip" viewBox="0 0 90 90">
+                          <path
+                            className="vip-back"
+                            d="M20 15 Q45 0 70 15 L70 45 Q45 60 20 45 Z"
+                          />
+
+                          <path
+                            className="vip-base"
+                            d="M15 45 Q45 65 75 45 L75 65 Q45 80 15 65 Z"
+                          />
+
+                          <rect
+                            x="8"
+                            y="38"
+                            width="12"
+                            height="38"
+                            rx="8"
+                            ry="8"
+                            className="vip-arm"
+                          />
+                          <rect
+                            x="70"
+                            y="38"
+                            width="12"
+                            height="38"
+                            rx="8"
+                            ry="8"
+                            className="vip-arm"
+                          />
+                          <rect
+                            x="28"
+                            y="68"
+                            width="34"
+                            height="10"
+                            rx="5"
+                            ry="5"
+                            className="vip-foot"
+                          />
+                        </svg>
                       </button>
                     </React.Fragment>
                   );

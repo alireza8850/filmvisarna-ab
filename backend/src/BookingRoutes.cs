@@ -136,28 +136,70 @@ public static class BookingRoutes
       var bookingId = insertResult.lastInsertId != null ? (long)insertResult.lastInsertId : 0;
       if (bookingId == 0)
       {
-          return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
+        return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
       }
 
-      // Insert tickets
-      foreach (var ticket in tickets)
-      {
-        // Check if seat_id is provided, otherwise use NULL
-        var seatId = ticket.seat_id != null ? (long?)ticket.seat_id : null;
-        var ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
-        if (ticketTypeId == 0) continue;
+      /* handle double-booking otherwise one seat or more */
+      // 1- get all the needed seats
+      var seatIds = new List<long>();
 
-        var ticketSql = @"
+      foreach (var t in tickets)
+      {
+        var ticket = (dynamic)t;
+
+        if (ticket.seat_id != null)
+        {
+          seatIds.Add((long)ticket.seat_id);
+        }
+      }
+
+      var seatIdsArray = seatIds.ToArray();
+
+      // 2- check if all chosen seats are available
+      
+
+      // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
+
+      // Insert tickets
+      try
+      {
+        foreach (var ticket in tickets)
+        {
+          // Check if seat_id is provided, otherwise use NULL
+          var seatId = ticket.seat_id != null ? (long?)ticket.seat_id : null;
+          var ticketTypeId = ticket.ticket_type_id != null ? (long)ticket.ticket_type_id : 0;
+          if (ticketTypeId == 0) continue;
+
+          var ticketSql = @"
             INSERT INTO tickets (booking_id, showing_id, seat_id, ticket_type_id)
             VALUES (@bookingId, @showingId, @seatId, @ticketTypeId)
         ";
-        SQLQuery(ticketSql, new
+          SQLQuery(ticketSql, new
+          {
+            bookingId,
+            showingId,
+            seatId = seatId,
+            ticketTypeId = ticketTypeId
+          }, context);
+
+          // broadcast realtime seat update
+          if (seatId != null)
+          {
+            _ = SeatEventsRoutes.BroadcastSeatBooked((int)showingId, seatId.Value);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        if (ex.Message.Contains("UNIQUE"))
         {
-          bookingId,
-          showingId,
-          seatId = seatId,
-          ticketTypeId = ticketTypeId
-        }, context);
+          return RestResult.Parse(context, new
+          {
+            error = "Platsen blev precis bokad av en annan användare."
+          });
+        }
+
+        throw;
       }
       // Note: I need this function in order to fix the error 
       // 'object' does not contain a definition for 'ticket_type_id'
@@ -178,7 +220,7 @@ public static class BookingRoutes
           _ => "Biljett"
         };
         ticketLines.Add($"<li>{label}</li>");
-      } 
+      }
       string ticketLinesHtml = string.Join("\n", ticketLines);
 
       // Build confirmation email
@@ -215,13 +257,13 @@ public static class BookingRoutes
       // Send confirmation email (if email is provided)
       try
       {
-       EmailService.SendEmail(emailToSend, "Bokningsbekräftelse", htmlBody);
+        EmailService.SendEmail(emailToSend, "Bokningsbekräftelse", htmlBody);
       }
       catch (Exception ex)
       {
         // Log email sending failure, but do not fail the booking process
         Console.WriteLine($"Kunde inte skicka bekräftelsemail: {ex.Message}");
-      } 
+      }
 
       // Return success response
       context.Response.StatusCode = 201;
@@ -321,11 +363,39 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Avbokning måste ske minst 2 timmar innan visningen." });
       }
       // Cancel the booking and associated tickets
-      // Update booking status to 'cancelled'
+
+      // bring all seats of the booking 
+      var seats = SQLQuery(
+          "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
+          new { bookingId = booking.id }
+      );
+
+      var releasedSeatIds = new List<long>();
+      foreach (var s in seats)
+      {
+        releasedSeatIds.Add((long)s.seat_id);
+      }
+
+      // Release seats
+      SQLQuery(
+          "DELETE FROM tickets WHERE booking_id = @bookingId",
+          new { bookingId = booking.id }
+      );
+
+      // Update booking-status
       SQLQuery(
         "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
         new { bookingId = booking.id }
       );
+
+      // Send SSE-event to all clients
+      if (releasedSeatIds.Count > 0)
+      {
+        _ = SeatEventsRoutes.BroadcastSeatsReleased(
+            (int)booking.showing_id,
+            releasedSeatIds.ToArray()
+        );
+      }
 
       return RestResult.Parse(context, new { message = "Bokningen har avbokats." });
     });

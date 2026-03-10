@@ -30,7 +30,7 @@ export default function ProductDetailsPage() {
             src={"/images/products/" + id + ".jpg"}
             alt={"Product image of the product " + name + "."}
           />
-          {description.split("\n").map((x, i) => (
+          {description.split("\n").map((x: string, i: number) => (
             <p key={i}>{x}</p>
           ))}
         </Col>
