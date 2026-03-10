@@ -77,17 +77,37 @@ public static class BookingRoutes
       {
         return RestResult.Parse(context, new { error = "Obligatoriska fält saknas." });
       }
-
-      // Get user_id if logged in (optional)
+      //Get User/id if logged in optional
+      int? userId = Session.Get(context, "user")?.id;
       var user = Session.Get(context, "user");
-      // Get email if the user is logged in
-      string emailToSend = user != null ? (string)user.email : email;
 
-      if (string.IsNullOrWhiteSpace(emailToSend))
+      string emailToSend;
+      if (user != null)
       {
-        return RestResult.Parse(context, new { error = "E-postadress är obligatorisk." });
+        emailToSend = (string)user.email;
+      }
+      else
+      {
+        if (body.email == null || body.email == "")
+        {
+          return RestResult.Parse(context, new { error = "E-postadress är obligatorisk för besökare" });
+        }
+        emailToSend = (string)body.email;
       }
 
+      // If visitor email matches an existing user → link booking to that user
+      if (userId == null)
+      {
+        var existingUser = SQLQueryOne(
+          "SELECT id FROM users WHERE email = @email",
+          new { email = emailToSend },
+          context
+        );
+        if (existingUser != null && existingUser.id != null)
+        {
+          userId = (int)existingUser.id;
+        }
+      }
 
       // Fetch showing details
       var showingSql = @"
@@ -171,8 +191,9 @@ public static class BookingRoutes
 
       // Generate unique booking number
       var bookingNumber = GenerateBookingNumber();
+      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
 
-      // 4) Insert booking
+      // Insert booking
       var insertBookingSql = @"
           INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email)
           VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice, @bookingEmail)
@@ -186,9 +207,9 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
 
-      long bookingId = insertResult.lastInsertId;
+      var seatIdsArray = seatIds.ToArray();
 
-      // 5) Insert tickets + SSE
+      // 3- try / catch in order to handle the UNIQUE constraint showing_id and seat_id 
 
       try
       {
@@ -224,10 +245,7 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Ett oväntat fel inträffade vid bokningen." });
       }
 
-      // 6) Send confirmation email
-      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
       // Build ticket lines for email body
-
       var ticketLines = new List<string>();
       foreach (var ticket in tickets)
       {
@@ -277,7 +295,7 @@ public static class BookingRoutes
         <p>Välkommen till vårt biograf och trevlig filmupplevelse!</p>
       ";
 
-
+      // Send confirmation email
       try
       {
         EmailService.SendEmail(emailToSend, "Bokningsbekräftelse", htmlBody);
@@ -301,8 +319,31 @@ public static class BookingRoutes
         total_price = totalPrice
       });
     });
+    App.MapGet("/api/bookings/my", (HttpContext context) =>
+    {
+      var user = Session.Get(context, "user");
+      if (user == null)
+      {
+        context.Response.StatusCode = 401;
+        return RestResult.Parse(context, new { error = "Unauthorized" });
+      }
 
-    // POST /api/bookings/cancel
+      var sql = @"
+          SELECT b.id, b.booking_number, b.user_id, b.showing_id,
+                 b.booking_status, b.total_price, b.created_at, b.expires_at,
+                 f.title as film_title, s.start_time
+          FROM bookings b
+          JOIN showings s ON b.showing_id = s.id
+          JOIN films f ON s.film_id = f.id
+          WHERE b.user_id = @userId
+             OR b.booking_email = @userEmail
+          ORDER BY b.created_at DESC
+      ";
+
+      var bookings = SQLQuery(sql, new { userId = user.id, userEmail = user.email }, context);
+      return RestResult.Parse(context, bookings);
+    });
+
     // POST /api/bookings/cancel
     App.MapPost("/api/bookings/cancel", (HttpContext context, JsonElement bodyJson) =>
     {
@@ -320,22 +361,20 @@ public static class BookingRoutes
         "SELECT * FROM bookings WHERE booking_number = @booking_number",
         new { booking_number = bookingNumber }
       );
-      // Check if booking exists and is not already canceled
+
       if (booking == null)
       {
         return RestResult.Parse(context, new { error = "Ingen bokning hittades med det angivna bokningsnumret." });
       }
-      // Check if the booking is already cancelled
+
       if ((string)booking.booking_status == "cancelled")
       {
         return RestResult.Parse(context, new { error = "Bokningen är redan avbokad." });
       }
 
-      // check if logged-in user?
       var user = Session.Get(context, "user");
       if (user != null)
       {
-        // verify owner via user_id
         if ((long?)booking.user_id != (long)user.id)
         {
           return RestResult.Parse(context, new { error = "Du har inte behörighet att avboka denna boking." });
@@ -343,31 +382,28 @@ public static class BookingRoutes
       }
       else
       {
-        // visitor ==> verify email storedin booking_email
         string bookingEmail = (string)booking.booking_email;
         if (bookingEmail != email)
         {
           return RestResult.Parse(context, new { error = "E-post matchar inte bokningens email." });
         }
       }
-      // Check if the showing is more than 2 hours away
+
       var showing = SQLQueryOne(
         "SELECT * FROM showings WHERE id = @id",
         new { id = booking.showing_id }
       );
       DateTime startTime = DateTime.Parse((string)showing.start_time);
 
-      // Avbokning måste ske minst 2 timmar innan visningen
       if (DateTime.Now > startTime.AddHours(-2))
       {
         return RestResult.Parse(context, new { error = "Avbokning måste ske minst 2 timmar innan visningen." });
       }
-      // Cancel the booking and associated tickets
 
       // bring all seats of the booking 
       var seats = SQLQuery(
-          "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
-          new { bookingId = booking.id }
+        "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
+        new { bookingId = booking.id }
       );
 
       var releasedSeatIds = new List<long>();
@@ -378,11 +414,11 @@ public static class BookingRoutes
 
       // Release seats
       SQLQuery(
-          "DELETE FROM tickets WHERE booking_id = @bookingId",
-          new { bookingId = booking.id }
+        "DELETE FROM tickets WHERE booking_id = @bookingId",
+        new { bookingId = booking.id }
       );
 
-      // Update booking-status
+      // Update booking status
       SQLQuery(
         "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
         new { bookingId = booking.id }
@@ -392,8 +428,8 @@ public static class BookingRoutes
       if (releasedSeatIds.Count > 0)
       {
         _ = SeatEventsRoutes.BroadcastSeatsReleased(
-            (int)booking.showing_id,
-            releasedSeatIds.ToArray()
+          (int)booking.showing_id,
+          releasedSeatIds.ToArray()
         );
       }
 
