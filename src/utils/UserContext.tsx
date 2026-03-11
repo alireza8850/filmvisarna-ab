@@ -43,7 +43,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
       if (response.ok) {
         const userData = await response.json();
-        setUser(userData);
+        if (userData && userData.error) {
+          setUser(null);
+        } else {
+          setUser(userData);
+        }
       } else {
         setUser(null);
       }
