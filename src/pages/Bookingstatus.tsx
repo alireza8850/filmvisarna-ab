@@ -30,7 +30,16 @@ export default function Bookingstatus() {
       }
       const data = (await res.json()) as Booking[];
       const list = Array.isArray(data) ? data : [];
-      setBookings(list);
+
+      const normalized = list.map((b: any) => ({
+        ...b,
+        tickets:
+          typeof b.tickets === "string"
+            ? JSON.parse(b.tickets)
+            : (b.tickets ?? []),
+      }));
+
+      setBookings(normalized);
 
       // Fetch seats for each booking
       const seatMap: Record<number, string> = {};
