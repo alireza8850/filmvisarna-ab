@@ -20,6 +20,15 @@
   display: block;
   text-decoration: none;
   color: inherit;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.01);
+
+    .hero-trailer-btn {
+      background: #b02a37;
+    }
+  }
 }
 
 .hero-overlay {
@@ -55,11 +64,7 @@
   border-radius: 8px;
   text-decoration: none;
   text-transform: uppercase;
-
-  &:hover {
-    background: #b02a37;
-    color: #fff;
-  }
+  transition: background 0.2s ease;
 }
 
 .hero-genre {
