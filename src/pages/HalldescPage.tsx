@@ -27,53 +27,53 @@ export default function HallDesPage() {
 
   return (
     <div className="hall-page">
-
       <section className="hall-hero">
         <h1>Våra <span>Salonger</span></h1>
         <div className="hall-hero__line" />
       </section>
 
       <div className="hall-list">
-        {halls.map((hall, index) => (
-          <div key={hall.id}>
-            <article className="hall-card">
+        {halls.map((hall, index) => {
+          const images = HALL_IMAGES[hall.id];
+          return (
+            <div key={hall.id}>
+              <article className="hall-card">
 
-              <img
-                className="hall-card__hero-img"
-                src={`${IMG_BASE}${hall.halls_image}`}
-                alt={hall.hall_name}
-                onError={(e) =>
-                  ((e.target as HTMLImageElement).style.display = "none")
-                }
-              />
-
-              <div className="hall-card__body">
-                <h2 className="hall-card__name">{hall.hall_name}</h2>
-                <p className="hall-card__description">{hall.hall_description}</p>
-              </div>
-
-              <div className="hall-card__audio">
                 <img
-                  className="hall-card__audio-img"
-                  src={`${IMG_BASE}${hall.audio_image}`}
-                  alt={hall.audio_name}
+                  className="hall-card__hero-img"
+                  src={images?.hallImg}
+                  alt={hall.hall_name}
                   onError={(e) =>
                     ((e.target as HTMLImageElement).style.display = "none")
                   }
                 />
-                <h3 className="hall-card__audio-name">{hall.audio_name}</h3>
-                <p className="hall-card__audio-description">
-                  {hall.audio_description}
-                </p>
-              </div>
 
-             
+                <div className="hall-card__body">
+                  <h2 className="hall-card__name">{hall.hall_name}</h2>
+                  <p className="hall-card__description">{hall.hall_description}</p>
+                </div>
 
-            </article>
+                <div className="hall-card__audio">
+                  <img
+                    className="hall-card__audio-img"
+                    src={images?.audioImg}
+                    alt={hall.audio_name}
+                    onError={(e) =>
+                      ((e.target as HTMLImageElement).style.display = "none")
+                    }
+                  />
+                  <h3 className="hall-card__audio-name">{hall.audio_name}</h3>
+                  <p className="hall-card__audio-description">
+                    {hall.audio_description}
+                  </p>
+                </div>
 
-            {index < halls.length - 1 && <div className="hall-divider" />}
-          </div>
-        ))}
+              </article>
+
+              {index < halls.length - 1 && <div className="hall-divider" />}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
