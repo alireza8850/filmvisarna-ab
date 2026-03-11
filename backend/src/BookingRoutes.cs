@@ -48,19 +48,34 @@ public static class BookingRoutes
         return RestResult.Parse(context, new { error = "Unauthorized" });
       }
 
-      var sql = @"
-          SELECT b.id, b.booking_number, b.booking_status, b.total_price,
-                 f.title as film_title, s.start_time
-          FROM bookings b
-          JOIN showings s ON b.showing_id = s.id
-          JOIN films f ON s.film_id = f.id
-          WHERE b.user_id = @userId
-          ORDER BY b.created_at DESC
-      ";
+      var sql = @"  
+    SELECT   
+        b.id,  
+        b.booking_number,  
+        b.booking_status,  
+        b.total_price,  
+        f.title AS film_title,  
+        s.start_time,  
+        (  
+            SELECT JSON_ARRAYAGG(JSON_OBJECT(  
+                'seat_id', t.seat_id,  
+                'ticket_type_id', t.ticket_type_id  
+            ))  
+            FROM tickets t  
+            WHERE t.booking_id = b.id  
+        ) AS tickets  
+    FROM bookings b  
+    JOIN showings s ON b.showing_id = s.id  
+    JOIN films f ON s.film_id = f.id  
+    WHERE b.user_id = @userId  
+    ORDER BY b.created_at DESC  
+";
 
       var bookings = SQLQuery(sql, new { userId = user.id }, context);
       return RestResult.Parse(context, bookings);
+
     });
+
 
 
     // POST /api/bookings
