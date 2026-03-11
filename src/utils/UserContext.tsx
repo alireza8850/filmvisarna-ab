@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
 interface User {
@@ -19,6 +19,8 @@ const UserContext = createContext<UserContextType | undefined>(undefined);      
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+
+  const hasFetched = useRef(false);
 
   const login = (userData: User) => {        // uppdaterar user_state med inloggningsdata 
     setUser(userData);
@@ -54,6 +56,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {         //säkerställer att vi kollar inloggningsstatus när vi startar sidan
+  if (hasFetched.current) return; // kollar om det är true ,avbryter, om loginstatus redan hämtat
+  hasFetched.current = true; //sätt till true så att inte köra igen
     checkLoginStatus();
   }, []);
 

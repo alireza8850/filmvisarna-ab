@@ -23,11 +23,9 @@ export default function HeroFilm({ film }: { film: Film }) {
             <h1 className="hero-title">{film.title}</h1>
             <br />
             <span className="btn-sections">
-              {/* --- The button will be shown as a red button with white text --- */}
-              <Link className="hero-trailer-btn" to={`/films/${film.id}`}>
+              <span className="hero-trailer-btn">
                 Trailer
-              </Link>
-              {/* --- We will show the genre as a badge, the title as a heading and a button to watch the trailer --- */}
+              </span>
               <span className="hero-genre">{film.genre}</span>
             </span>
           </div>
