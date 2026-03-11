@@ -1,19 +1,28 @@
-.film-details__title {
-  margin-top: -60px;
-    margin-bottom: 50px;
-    font-size: 60px;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(0, 0, 0, .65), 0 0 40px rgba(0, 0, 0, .45), 0 2px 4px rgba(0, 0, 0, .75);
-  
-    @media (max-width: 800px) {
-      font-size: 50px;
-    }
-  
-    @media (max-width: 450px) {
-      font-size: 40px;
-    }
+.film-details {
+  margin-top: 2rem;
+  margin-bottom: 4rem;
 }
 
+.film-details__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0, 0, 0, .65), 0 0 40px rgba(0, 0, 0, .45), 0 2px 4px rgba(0, 0, 0, .75);
+
+  @media (min-width: 768px) {
+    font-size: 3.5rem;
+  }
+
+  @media (max-width: 800px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 450px) {
+    font-size: 2.5rem;
+  }
+}
 
 .film-details__poster-and-trailer {
   display: flex;
@@ -22,43 +31,41 @@
   margin-bottom: 2rem;
 }
 
+.film-details__poster-w {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 1.5rem auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+}
+
 .film-details__poster {
   display: block;
   width: 100%;
   height: auto !important;
-  aspect-ratio: auto !important;
-  margin-bottom: 0 !important; // override Image component's mb-3
-  object-fit: contain !important;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
 }
-.film-details__poster-w{
-  width: 50%;
-  max-width: 300px;
-  margin: 0 auto 1.5rem auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-.film-details__title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  
 
-}
-.film-details__description-section {
-  padding-inline: 1rem;
+.film-details__description-container {
   margin-bottom: 2rem;
 
-  @media (min-width: 768px) {
-    padding-inline: 2rem;
-  }
-
   .film-details__description {
-    font-size: 1.1rem;
-    line-height: 1.7;
+    font-size: 1.15rem;
+    line-height: 1.8;
     color: #e6e6e6;
     margin-bottom: 1.2rem;
-    max-width: 900px;
+    max-width: 850px;
+    
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 }
 

@@ -117,9 +117,9 @@ export default function UpcomingMovieDetailsPage() {
   const actors = movie.credits?.cast.slice(0, 5).map(c => c.name).join(', ') || "Inga skådespelare tillgängliga";
 
   return (
-    <article className="film-details">
-      <Row className="justify-content-center">
-        <Col xs={12}>
+    <article className="film-details container">
+      <Row className="justify-content-center align-items-start">
+        <Col xs={12} md={5} lg={4}>
           <div className="film-details__poster-and-trailer position-relative">
             <div className="film-details__poster-w">
               <img
@@ -139,13 +139,15 @@ export default function UpcomingMovieDetailsPage() {
           </div>
         </Col>
 
-        <Col xs={12}>
+        <Col xs={12} md={7} lg={8}>
           <h2 className="film-details__title">{movie.title}</h2>
-          {movie.overview?.split("\n").map((x, i) => (
-            <p className="film-details__description" key={i}>
-              {x}
-            </p>
-          ))}
+          <div className="film-details__description-container">
+            {movie.overview?.split("\n").map((x, i) => (
+              <p className="film-details__description" key={i}>
+                {x}
+              </p>
+            ))}
+          </div>
         </Col>
       </Row>
 
