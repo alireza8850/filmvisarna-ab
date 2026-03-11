@@ -1,4 +1,4 @@
-export interface Hall {
+export default interface Hall {
   id: number;
   hall_name: string;
   hall_description: string;
