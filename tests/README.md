@@ -32,5 +32,16 @@ npm test tests/api
 - `tests/api/auth.test.ts`: Tests registration and login endpoints.
 - `tests/api/films.test.ts`: Tests film retrieval endpoints.
 
-## 3. Recommended Future Steps (E2E)
-Playwright
+## 3. End-to-End Tests (Playwright)
+These tests use **Playwright** to test the entire application flow as a real user, including navigation, booking, and seat selection across real browsers.
+
+### How to run:
+Ensure the backend is running at `http://localhost:3000`.
+The frontend will run at `http://localhost:5173` during tests.
+Then run:
+```bash
+npm run test:e2e
+```
+
+### Key tests:
+- `tests/e2e/booking.spec.ts`: Simulates a complete user journey from selecting a film to completing a booking.

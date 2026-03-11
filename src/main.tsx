@@ -35,18 +35,14 @@ const router = createBrowserRouter([
 // Create the React root element
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
-
-
-// Create the React root element for cookies
-createRoot(document.querySelector("#root")!).render(
-  <StrictMode>
     <CookieProvider>
-      <RouterProvider router={router} />
-      <CookieBanner />
-      <CookieSettingsModal />
+      <UserProvider>
+        <BookingProvider>
+          <RouterProvider router={router} />
+          <CookieBanner />
+          <CookieSettingsModal />
+        </BookingProvider>
+      </UserProvider>
     </CookieProvider>
   </StrictMode>,
 );

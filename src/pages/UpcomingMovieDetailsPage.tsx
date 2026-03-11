@@ -44,7 +44,7 @@ export default function UpcomingMovieDetailsPage() {
     setReleasing(true);
     try {
       // Hämta åldersgräns och annat
-      const seRelease = movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE');
+      const seRelease = Array.isArray(movie.release_dates?.results) ? movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE') : null;
       const ageLimitStr = seRelease?.release_dates[0]?.certification || "0";
       const ageLimit = parseInt(ageLimitStr) || 0;
 
@@ -57,8 +57,8 @@ export default function UpcomingMovieDetailsPage() {
         description: movie.overview,
         language: movie.spoken_languages[0]?.english_name || "Svenska",
         poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "default.jpg",
-        trailer_url: movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key 
-          ? `https://www.youtube.com/watch?v=${movie.videos.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key}` 
+        trailer_url: movie.videos?.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key 
+          ? `https://www.youtube.com/watch?v=${movie.videos?.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key}` 
           : "",
         actors: movie.credits?.cast.slice(0, 5).map(c => c.name) || []
       };
@@ -108,11 +108,11 @@ export default function UpcomingMovieDetailsPage() {
     );
   }
 
-  const trailer = movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer');
+  const trailer = Array.isArray(movie.videos?.results) ? movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer') : null;
   const trailerKey = trailer?.key;
 
   // Hämta åldersgräns för Sverige (SE) om tillgängligt
-  const seRelease = movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE');
+  const seRelease = Array.isArray(movie.release_dates?.results) ? movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE') : null;
   const ageLimit = seRelease?.release_dates[0]?.certification || "Ej angivet";
   const actors = movie.credits?.cast.slice(0, 5).map(c => c.name).join(', ') || "Inga skådespelare tillgängliga";
 
