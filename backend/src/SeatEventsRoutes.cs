@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text.Json;
 
 namespace WebApp;
 
@@ -6,7 +7,7 @@ public static class SeatEventsRoutes
 {
   // List of open SSE connections
   // using dictionary in order to handle many connection at the same time
-  private static ConcurrentDictionary<int, List<HttpResponse>> connections = new ConcurrentDictionary<int, List<HttpResponse>>();
+  private static ConcurrentDictionary<int, ConcurrentDictionary<Guid, HttpResponse>> connections = new ConcurrentDictionary<int, ConcurrentDictionary<Guid, HttpResponse>>();
   public static void Start()
   { // SSE endpoint to keep the stream alive
     App.MapGet("/api/seats-sse/{showingId}", async (HttpContext context, int showingId) =>
@@ -15,31 +16,50 @@ public static class SeatEventsRoutes
       context.Response.Headers["Cache-Control"] = "no-cache";
       context.Response.Headers["Connection"] = "keep-alive";
 
+      // create a unique connection id
+      var connectionId = Guid.NewGuid();
+
       // Create the connections for the show if they don't exist
-      var list = connections.GetOrAdd(showingId, _ => new List<HttpResponse>());
-      list.Add(context.Response);
+      // get or create showing connections
+      var showConnections = connections.GetOrAdd(
+          showingId,
+          _ => new ConcurrentDictionary<Guid, HttpResponse>()
+      );
+
+      showConnections[connectionId] = context.Response;
+
+      Console.WriteLine($"SSE connected: showing {showingId}, connection {connectionId}");
 
       // Delete the connection on closing
       context.RequestAborted.Register(() =>
          {
            if (connections.TryGetValue(showingId, out var conns))
            {
-             conns.Remove(context.Response);
+             conns.TryRemove(connectionId, out _);
+             Console.WriteLine($"SSE disconnected: showing {showingId}, connection {connectionId}");
            }
          });
 
       // the live streaming loop/ every 15 seconds
       while (!context.RequestAborted.IsCancellationRequested)
       {
-        await context.Response.WriteAsync(": keepalive\n\n");
-        await context.Response.Body.FlushAsync();
-        await Task.Delay(15000);
+        try
+        {
+          await context.Response.WriteAsync(": keepalive\n\n");
+          await context.Response.Body.FlushAsync();
+          await Task.Delay(15000);
+        }
+        catch
+        {
+          break;
+        }
       }
     });
   }
 
-  // Send Data ==> convert showing_id + seat_id to JSON ==> the list  
-  public static async Task BroadcastSeatBooked(int showingId, long seatId)
+  // Send Data ==> convert showing_id + seat_id to JSON ==> the list 
+  // Broadcast seat booked 
+  public static async Task BroadcastSeatsBooked(int showingId, long seatId)
   {
     var json = System.Text.Json.JsonSerializer.Serialize(new
     {
@@ -50,22 +70,27 @@ public static class SeatEventsRoutes
     if (!connections.TryGetValue(showingId, out var conns))
       return;
 
-    foreach (var conn in conns.ToList())
+    foreach (var conn in conns.ToArray())
     {
       try
       {
-        await conn.WriteAsync($"data:{json}\n\n");
-        await conn.Body.FlushAsync();
+        await conn.Value.WriteAsync($"event: seatsBooked\n");
+        await conn.Value.WriteAsync($"data: {json}\n\n");
+        await conn.Value.Body.FlushAsync();
       }
       catch
       {
-        conns.Remove(conn);
+        conns.TryRemove(conn.Key, out _);
       }
 
     }
+
+    Console.WriteLine($"Broadcast seatsBooked: showing {showingId}, seat {seatId}");
+
   }
 
   // Release seats after cancelation
+  // Broadcast seats released
   public static async Task BroadcastSeatsReleased(int showingId, long[] seatIds)
   {
     var json = System.Text.Json.JsonSerializer.Serialize(new
@@ -77,17 +102,19 @@ public static class SeatEventsRoutes
     if (!connections.TryGetValue(showingId, out var conns))
       return;
 
-    foreach (var conn in conns.ToList())
+    foreach (var conn in conns.ToArray())
     {
       try
       {
-        await conn.WriteAsync($"data:{json}\n\n");
-        await conn.Body.FlushAsync();
+        await conn.Value.WriteAsync($"event: seatsReleased\n");
+        await conn.Value.WriteAsync($"data: {json}\n\n");
+        await conn.Value.Body.FlushAsync();
       }
       catch
       {
-        conns.Remove(conn);
+        conns.TryRemove(conn.Key, out _);
       }
     }
+    Console.WriteLine($"Broadcast seatsReleased: showing {showingId}");
   }
 }

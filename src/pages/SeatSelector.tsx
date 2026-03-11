@@ -95,33 +95,33 @@ export default function SeatSelector({
     const url = `/api/seats-sse/${showing.id}`;
     const eventSource = new EventSource(url);
 
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data) as SeatBookedEvent;
+    // seat booked
+    eventSource.addEventListener("seatsBooked", (event) => {
+      const data = JSON.parse((event as MessageEvent).data) as SeatBookedEvent;
 
-        if (data.seat_id !== undefined && data.showing_id === showing.id) {
-          setLiveBookedSeats((prev) => {
-            const updated = new Set(prev);
-            updated.add(data.seat_id!);
-            return updated;
-          });
-          // if is booked from another user
-          setLocalSelected((prev) => prev.filter((id) => id !== data.seat_id));
-        }
+      if (data.seat_id !== undefined && data.showing_id === showing.id) {
+        setLiveBookedSeats((prev) => {
+          const updated = new Set(prev);
+          updated.add(data.seat_id!);
+          return updated;
+        });
 
-        // released seats
-        if (data.released_seats !== undefined && data.showing_id === showing.id)
-        {
-          setLiveBookedSeats((prev) => {
-            const updated = new Set(prev);
-            data.released_seats!.forEach((id: number) => updated.delete(id));
-            return updated;
-          });
-        }
-      } catch (err) {
-        console.error("SSE parse error:", err);
+        setLocalSelected((prev) => prev.filter((id) => id !== data.seat_id));
       }
-    };
+    });
+
+    // seats released
+    eventSource.addEventListener("seatsReleased", (event) => {
+      const data = JSON.parse((event as MessageEvent).data) as SeatBookedEvent;
+
+      if (data.released_seats !== undefined && data.showing_id === showing.id) {
+        setLiveBookedSeats((prev) => {
+          const updated = new Set(prev);
+          data.released_seats!.forEach((id: number) => updated.delete(id));
+          return updated;
+        });
+      }
+    });
 
     return () => eventSource.close();
   }, [showing.id]);
@@ -183,7 +183,9 @@ export default function SeatSelector({
                   return (
                     <React.Fragment key={seat.id}>
                       <button
-                        disabled={isBooked || (selectionLimitReached && !isSelected)}
+                        disabled={
+                          isBooked || (selectionLimitReached && !isSelected)
+                        }
                         onClick={() => toggleSeat(seat.id)}
                         className={[
                           "seat",
