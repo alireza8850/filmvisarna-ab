@@ -44,7 +44,7 @@ export default function BookingFormPage() {
   const totalTickets = tickets.adult + tickets.child + tickets.senior;
   // Convert selected seat IDs → seat objects
   const selectedSeatObjects = selectedSeats
-    .map((id) => seats.find((s: Seat) => s.id === id))
+    .map((id) => Array.isArray(seats) ? seats.find((s: Seat) => s.id === id) : undefined)
     .filter((seat) : seat is Seat => seat !== undefined);
 
     const ticketRows = [

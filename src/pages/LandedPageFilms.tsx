@@ -39,7 +39,7 @@ async function GetFilms() {
       const filmsData = await filmsRes.json();
       setFilms(filmsData);
       
-      const hero = filmsData.find((film: Film) => film.is_featured === true);
+      const hero = Array.isArray(filmsData) ? filmsData.find((film: Film) => film.is_featured === true) : null;
       setFeaturedFilms(hero || null);
 
       const showingsRes = await fetch("/api/showings");
@@ -56,7 +56,7 @@ async function GetFilms() {
   }, []);
   const today = new Date().toISOString().split("T")[0];
 
-  let displayFilms = films.filter((film) => {
+  let displayFilms = Array.isArray(films) ? films.filter((film) => {
     const searchWord = searchQuery.toLowerCase().replace(/\s+/g, "");
     const title = film.title.toLowerCase().replace(/\s+/g, "");
     const genre = (film.genre || "").toLowerCase().replace(/\s+/g, "");
@@ -84,7 +84,7 @@ async function GetFilms() {
     }
 
     return matchesSearch && matchesFilter;
-  });
+  }) : [];
 
   const isFiltering = searchQuery.trim() !== "" || selectedFilter !== "Alla";
 
