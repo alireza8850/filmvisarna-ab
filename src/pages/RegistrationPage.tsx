@@ -96,9 +96,7 @@ export default function RegistrationPage (){
                     placeholder="Skriv in ditt förnamn"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    onBlur={() =>
-                      setUserInput((p) => ({ ...p, firstName: true }))
-                    }
+                    onBlur={() => { if(firstName) setUserInput((p) => ({ ...p, firstName: true })) }}
                     className={userInput.firstName && !validFirstName ? "fel" : ""}
                   />
                 </div>
@@ -118,9 +116,7 @@ export default function RegistrationPage (){
                     placeholder="Skriv in ditt efternamn"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    onBlur={() =>
-                      setUserInput((p) => ({ ...p, lastName: true }))
-                    }
+                    onBlur={() => { if(lastName) setUserInput((p) => ({ ...p, lastName: true })) }}
                     className={userInput.lastName && !validLastName ? "fel" : ""}
                   />
                 </div>
@@ -141,7 +137,7 @@ export default function RegistrationPage (){
                                         placeholder="0712345678"
                                         value={phoneNumber}
                                         onChange={e => setPhoneNumber(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, phoneNumber: true }))}
+                                        onBlur={() => { if(phoneNumber) setUserInput(p => ({ ...p, phoneNumber: true })) }}
                                     />
                                     
                                 </div>
@@ -159,7 +155,7 @@ export default function RegistrationPage (){
                                         placeholder="Skriv in din E-post adress"
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, email: true }))}
+                                        onBlur={() => { if(email) setUserInput(p => ({ ...p, email: true })) }}
                                         className={userInput.email && !validEmail ? 'fel' : ''}
                                     />
                                 </div>
@@ -179,7 +175,7 @@ export default function RegistrationPage (){
                                         placeholder="********"
                                         value={pass}
                                         onChange={e => setPass(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, pass: true }))}
+                                        onBlur={() => { if(pass) setUserInput(p => ({ ...p, pass: true })) }}
                                         className={userInput.pass && !validPass ? 'fel' : ''}
                                     />
                                 </div>
@@ -199,7 +195,7 @@ export default function RegistrationPage (){
                                         placeholder="********"
                                         value={repeatPass}
                                         onChange={e => setRepeatPass(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, repeatPass: true }))}
+                                        onBlur={() => { if(repeatPass) setUserInput(p => ({ ...p, repeatPass: true })) }}
                                         className={userInput.repeatPass && !validRepeatPass ? 'fel' : ''}
                                     />
                                 </div>
