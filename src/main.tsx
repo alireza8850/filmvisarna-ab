@@ -9,6 +9,13 @@ import "../sass/style.css";
 import { BookingProvider } from "./utils/BookingContext";
 import { UserProvider } from "./utils/UserContext";
 
+
+// import cookies
+import { CookieProvider } from "./CookiesHandler/CookieContext"; 
+import CookieBanner from "./CookiesHandler/CookieBanner";
+import CookieSettingsModal from "./CookiesHandler/CookieSettingsModal";
+
+
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
@@ -29,5 +36,17 @@ const router = createBrowserRouter([
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>
     <RouterProvider router={router} />
+  </StrictMode>,
+);
+
+
+// Create the React root element for cookies
+createRoot(document.querySelector("#root")!).render(
+  <StrictMode>
+    <CookieProvider>
+      <RouterProvider router={router} />
+      <CookieBanner />
+      <CookieSettingsModal />
+    </CookieProvider>
   </StrictMode>,
 );
