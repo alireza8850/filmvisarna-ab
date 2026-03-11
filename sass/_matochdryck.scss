@@ -1,0 +1,228 @@
+.food-page {
+    background-color: #060036;
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    padding-bottom: 80px;
+}
+
+.food-hero {
+    position: relative;
+    height: 320px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.food-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: url('/images/background.webp') center 30% / cover no-repeat;
+    filter: brightness(0.45);
+}
+
+.food-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(6,0,54,0) 0%, rgba(6,0,54,0.92) 100%);
+}
+
+.food-hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 0 3rem 2.5rem;
+}
+.food-hero-eyebrow {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #b80000;
+    font-weight: 600;
+    margin-bottom: 8px;
+        }
+.food-hero-title {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    line-height: 1;
+        }
+.food-hero-sub {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.68);
+    margin: 0;
+    line-height: 1.6;
+    max-width: 500px;
+        }
+
+.blurred {
+    filter: blur(6px) brightness(0.35);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.3s ease;
+}
+
+.food-section {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.food-section:last-child {
+    border-bottom: none;
+}
+.food-section-title {
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+.food-section-desc {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.75;
+    margin-bottom: 22px;
+}
+
+.food-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(255,255,255,0.35);
+    transition: text-decoration-color 0.2s;
+}
+.food-link:hover {
+    text-decoration-color: #fff;
+}
+
+.food-image-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+}
+.food-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+.food-image-wrap:hover .food-image {
+    transform: scale(1.04);
+}
+
+.food-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: foodFadeIn 0.2s ease;
+}
+@keyframes foodFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.food-modal {
+    background: linear-gradient(160deg, #0e0b3d 0%, #180035 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    max-width: 560px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.85);
+    animation: foodSlideUp 0.3s ease;
+    max-height: 85vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(184,0,0,0.4) transparent;
+}
+@keyframes foodSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.food-modal::-webkit-scrollbar { width: 4px; }
+.food-modal::-webkit-scrollbar-thumb {
+    background: rgba(184,0,0,0.4);
+    border-radius: 2px;
+}
+
+.food-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.food-modal-close:hover { background: rgba(184,0,0,0.35); }
+
+.food-modal-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding-right: 44px; /* plats för stängknappen */
+}
+.food-modal-sub {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.65;
+    margin: 0;
+}
+.food-modal-divider {
+    border-color: rgba(255,255,255,0.1);
+    margin: 20px 0;
+}
+
+       
+.food-modal-item {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.food-modal-item:last-of-type { border-bottom: none; }
+
+.food-modal-item-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+.food-modal-item-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.42);
+    margin-top: 3px;
+}
+.food-modal-item-price {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.food-modal-footer {
+    padding: 13px 18px;
+    background: rgba(42,76,255,0.1);
+    border: 1px solid rgba(42,76,255,0.2);
+    border-radius: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+}
