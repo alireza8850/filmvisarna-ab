@@ -5,7 +5,7 @@ import { useUser } from "../utils/UserContext";
 const MER_LANKAR = [
     {text:"Nu på bio", href:"/"},
     {text:"Kommande filmer", href:"/upcoming"},
-    {text:"Mat & Dryck", href:"#"},
+    {text:"Mat & Dryck", href:"/mat-och-dryck"},
     {text:"Kontakta oss", href:"#"},
 ];
 
@@ -63,7 +63,7 @@ useEffect(
                             <ul className="nav-links list-unstyled d-flex gap-3 mb-0">
                                 <li><a onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>NU PÅ BIO</a></li>
                                 <li><a onClick={() => navigate("/upcoming")} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
-                                <li><a href="#">MAT &amp; DRYCK</a></li>
+                                <li><a href="/mat-och-dryck">MAT &amp; DRYCK</a></li>
                             </ul>
                           
                             <div className="d-flex gap-2 align-items-center">
