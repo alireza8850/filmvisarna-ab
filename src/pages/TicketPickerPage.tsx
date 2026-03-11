@@ -42,11 +42,11 @@ export default function TicketPickerPage() {
   }, [vuxen, barn, pensionar, setTickets]);
   //Extract prices from DB;
   const vuxenPrice =
-    ticketPrices.find((p) => p.ticket_type_id === 1)?.price ?? 0;
+    ticketPrices?.find((p) => p.ticket_type_id === 1)?.price ?? 0;
   const barnPrice =
-    ticketPrices.find((p) => p.ticket_type_id === 2)?.price ?? 0;
+    ticketPrices?.find((p) => p.ticket_type_id === 2)?.price ?? 0;
   const pensionarPrice =
-    ticketPrices.find((p) => p.ticket_type_id === 3)?.price ?? 0;
+    ticketPrices?.find((p) => p.ticket_type_id === 3)?.price ?? 0;
 
   const totalPrice =
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;

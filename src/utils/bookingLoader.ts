@@ -16,18 +16,34 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   }
 
   // 1) Fetch showing
-  const showing: Showing = await (
-    await fetch(`/api/showings/${showingId}`)
-  ).json();
+  let showing: Showing | null = null;
+  try {
+    const res = await fetch(`/api/showings/${showingId}`);
+    if (res.ok) {
+      showing = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch showing", e);
+  }
 
   if (!showing) {
     throw new Response("Showing not found", { status: 404 });
   }
 
   // 2) Fetch film
-  const film: Film = await (
-    await fetch(`/api/films/${showing.film_id}`)
-  ).json();
+  let film: Film | null = null;
+  try {
+    const res = await fetch(`/api/films/${showing.film_id}`);
+    if (res.ok) {
+      film = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch film", e);
+  }
+
+  if (!film) {
+    throw new Response("Film not found", { status: 404 });
+  }
 
   // 3) Fetch ticket types
   const ticketTypes: TicketType[] = await (
@@ -35,22 +51,64 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   ).json();
 
   // 4) Fetch ticket prices
-  const ticketPrices: TicketPrice[] = await (
-    await fetch(`/api/ticket_prices`)
-  ).json();
-  //5) Featch hall
-  const halls: Hall[] = await (await fetch(`/api/halls`)).json();
-  //6) featch seat
-  const seats: Seat[] = await (await fetch(`/api/seats`)).json();
-  //7) featch booking
-  const booking: Booking[] = await (await fetch(`/api/bookings`)).json();
-  //8)Ticket
+  let ticketPrices: TicketPrice[] = [];
+  try {
+    const res = await fetch(`/api/ticket_prices`);
+    if (res.ok) {
+      ticketPrices = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch ticket prices", e);
+  }
 
-  const tickets: Ticket[] = await (await fetch(`/api/tickets`)).json();
+  //5) Featch hall
+  let halls: Hall[] = [];
+  try {
+    const res = await fetch(`/api/halls`);
+    if (res.ok) {
+      halls = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch halls", e);
+  }
+
+  //6) featch seat
+  let seats: Seat[] = [];
+  try {
+    const res = await fetch(`/api/seats`);
+    if (res.ok) {
+      seats = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch seats", e);
+  }
+
+  //7) featch booking
+  let booking: Booking[] = [];
+  try {
+    const res = await fetch(`/api/bookings`);
+    if (res.ok) {
+      booking = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch bookings", e);
+  }
+
+  //8)Ticket
+  let tickets: Ticket[] = [];
+  try {
+    const res = await fetch(`/api/tickets`);
+    if (res.ok) {
+      tickets = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch tickets", e);
+  }
+
   return {
     showing,
     film,
-    ticketTypes,
+    ticketTypes: [], // Placeholder if needed
     ticketPrices,
     halls,
     seats,

@@ -110,8 +110,12 @@ public static class LoginRoutes
     App.MapGet("/api/login", (HttpContext context) =>
     {
       var user = GetUser(context);
-      return RestResult.Parse(context, user != null ?
-              user : new { error = "No user is logged in." });
+      if (user == null)
+      {
+        context.Response.StatusCode = 401;
+        return RestResult.Parse(context, new { error = "No user is logged in." });
+      }
+      return RestResult.Parse(context, user);
     });
 
     App.MapDelete("/api/login", (HttpContext context) =>
