@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMovieDetails, getImageUrl, type TMDBMovieDetails } from "../utils/tmdbService";
+import { useStateContext } from "../utils/useStateObject";
 import { Row, Col, Spinner, Alert, Accordion, Modal, Button } from "react-bootstrap";
-import Image from "../parts/Image";
 
 UpcomingMovieDetailsPage.route = {
   path: "/upcoming/:id",
@@ -11,13 +11,14 @@ UpcomingMovieDetailsPage.route = {
 export default function UpcomingMovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [{ bwImages }] = useStateContext();
   const [movie, setMovie] = useState<TMDBMovieDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [releasing, setReleasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(() => {
-    return new Date().toLocaleDateString('sv-SE');
+    return new Date().toISOString().split('T')[0];
   });
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function UpcomingMovieDetailsPage() {
     setReleasing(true);
     try {
       // Hämta åldersgräns och annat
-      const seRelease = movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE');
+      const seRelease = Array.isArray(movie.release_dates?.results) ? movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE') : null;
       const ageLimitStr = seRelease?.release_dates[0]?.certification || "0";
       const ageLimit = parseInt(ageLimitStr) || 0;
 
@@ -56,8 +57,8 @@ export default function UpcomingMovieDetailsPage() {
         description: movie.overview,
         language: movie.spoken_languages[0]?.english_name || "Svenska",
         poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "default.jpg",
-        trailer_url: movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key 
-          ? `https://www.youtube.com/watch?v=${movie.videos.results.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key}` 
+        trailer_url: movie.videos?.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key 
+          ? `https://www.youtube.com/watch?v=${movie.videos?.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer')?.key}` 
           : "",
         actors: movie.credits?.cast.slice(0, 5).map(c => c.name) || []
       };
@@ -107,41 +108,46 @@ export default function UpcomingMovieDetailsPage() {
     );
   }
 
-  const trailer = movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer');
+  const trailer = Array.isArray(movie.videos?.results) ? movie.videos?.results.find(v => v.site === 'YouTube' && v.type === 'Trailer') : null;
   const trailerKey = trailer?.key;
 
   // Hämta åldersgräns för Sverige (SE) om tillgängligt
-  const seRelease = movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE');
+  const seRelease = Array.isArray(movie.release_dates?.results) ? movie.release_dates?.results.find(r => r.iso_3166_1 === 'SE') : null;
   const ageLimit = seRelease?.release_dates[0]?.certification || "Ej angivet";
   const actors = movie.credits?.cast.slice(0, 5).map(c => c.name).join(', ') || "Inga skådespelare tillgängliga";
 
   return (
-    <article className="film-details">
-      <Row>
-        <Col>
-          <h2 className="film-details__title">{movie.title}</h2>
-          <span className="film-details__poster-and-trailer">
+    <article className="film-details container">
+      <Row className="justify-content-center align-items-start">
+        <Col xs={12} md={5} lg={4}>
+          <div className="film-details__poster-and-trailer position-relative">
             <div className="film-details__poster-w">
-              <Image
+              <img
                 src={getImageUrl(movie.poster_path)}
+                className={"film-details__poster" + (bwImages ? " bw" : "")}
                 alt={"Poster image of the film " + movie.title + "."}
               />
             </div>
             {trailerKey && (
               <button
-                className="film-details__trailer-btn"
+                className="film-details__trailer-btn mb-3"
                 onClick={() => setShowTrailerModal(true)}
               >
                 Se Trailer
               </button>
             )}
-          </span>
+          </div>
+        </Col>
 
-          {movie.overview?.split("\n").map((x, i) => (
-            <p className="film-details__description" key={i}>
-              {x}
-            </p>
-          ))}
+        <Col xs={12} md={7} lg={8}>
+          <h2 className="film-details__title">{movie.title}</h2>
+          <div className="film-details__description-container">
+            {movie.overview?.split("\n").map((x, i) => (
+              <p className="film-details__description" key={i}>
+                {x}
+              </p>
+            ))}
+          </div>
         </Col>
       </Row>
 
@@ -184,6 +190,13 @@ export default function UpcomingMovieDetailsPage() {
           id="date-filter"
           className="film-details__date-filter-input"
           value={selectedDate}
+          onClick={(e) => {
+            try {
+              (e.target as HTMLInputElement).showPicker();
+            } catch (err) {
+              console.error("Picker not supported", err);
+            }
+          }}
           onChange={(e) => {
             setSelectedDate(e.target.value);
           }}
