@@ -20,6 +20,7 @@ import UpcomingMovieDetailsPage from "./pages/UpcomingMovieDetailsPage.tsx";
 import ContactOssPage from "./pages/contactOssPage.tsx";
 import SeatSelector from "./pages/SeatSelector.tsx";
 import Bookingstatus from "./pages/Bookingstatus.tsx";
+import MatOchDryckPage from "./pages/MatOchDryckPage.tsx";
 interface Route {
   element: JSX.Element;
   path: string;
@@ -48,6 +49,7 @@ export default [
   UpcomingMovieDetailsPage,
   SeatSelector,
   Bookingstatus,
+  MatOchDryckPage,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)
