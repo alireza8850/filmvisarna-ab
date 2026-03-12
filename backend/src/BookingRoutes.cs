@@ -244,11 +244,6 @@ public static class BookingRoutes
 
         return RestResult.Parse(context, new { error = "Ett oväntat fel inträffade vid bokningen." });
       }
-
-      // 6) Send confirmation email
-      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
-      // Build ticket lines for email body
-
       var ticketLines = new List<string>();
       foreach (var ticket in tickets)
       {
