@@ -160,7 +160,7 @@ export default function Footer() {
           <Link to="/om-oss">Om oss </Link>
           <Link to="/kontakta-oss">Kontakta oss</Link>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
+          <a href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
         </div>
       </div>
     </footer>
