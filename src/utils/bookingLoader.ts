@@ -108,7 +108,7 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   return {
     showing,
     film,
-    ticketTypes: [], // Placeholder if needed
+    ticketTypes, // Placeholder if needed
     ticketPrices,
     halls,
     seats,

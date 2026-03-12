@@ -192,6 +192,7 @@ export default function TicketPickerPage() {
               halls={halls}
               seats={seats}
               tickets={tickets}
+              totalTickets={totalCount}
             />
           </div>
         )}

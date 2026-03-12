@@ -101,7 +101,7 @@ export default function BookingFormPage() {
         credentials: "include",
         body: JSON.stringify({
           showing_id: showing.id,
-
+          user_id: user ? user.id : null,
          // a logged in customer
           email: user ? user.email : email,
 
@@ -123,7 +123,7 @@ export default function BookingFormPage() {
       else if (response.status === 409) {
         clearBooking(); // release seats and reset the counter
 
-        navigate(`/booking/:showingId/tickets`, {
+        navigate(`/ticketpicker`, {
           replace: true,
           state: {
             message:
@@ -273,7 +273,7 @@ export default function BookingFormPage() {
 
       <Row className="mb-3">
         <Col>
-          {/* ✔ إخفاء حقل البريد عند تسجيل الدخول */}
+          {/* Hide the email field */}
           {!user && (
             <Row className="mb-2">
               <Col>

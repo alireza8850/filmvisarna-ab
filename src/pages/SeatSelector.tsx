@@ -18,6 +18,7 @@ type SeatSelectorProps = {
   halls: Hall[];
   seats: Seat[];
   tickets: Ticket[];
+  totalTickets: number;
 };
 
 export default function SeatSelector({
