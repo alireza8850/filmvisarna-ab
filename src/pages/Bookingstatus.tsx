@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type Booking from "../interfaces/Booking";
 
 Bookingstatus.route = {
@@ -14,13 +15,13 @@ export default function Bookingstatus() {
   const [error, setError] = useState<string | null>(null);
   const [cancelMessage, setCancelMessage] = useState<{ text: string; ok: boolean } | null>(null);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
-
+  const [userEmail, setUserEmail] = useState<string>("");
+  const navigate = useNavigate();
   async function fetchBookings() {
     try {
       const res = await fetch("/api/bookings/my", { credentials: "include" });
       if (res.status === 401) {
-        setError("Du måste vara inloggad för att se dina bokningar.");
-        setBookings([]);
+        navigate("/");
         return;
       }
       if (!res.ok) {
@@ -66,8 +67,20 @@ export default function Bookingstatus() {
       setLoading(false);
     }
   }
-
+  //cancel button
+  async function fetchUserEmail() {
+    try {
+      const res = await fetch("/api/users/me", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setUserEmail(data.email ?? "");
+      }
+    } catch {
+      // ignore
+    }
+  }
   useEffect(() => {
+    fetchUserEmail();
     fetchBookings();
   }, []);
   function canCancel(startTime: string): boolean {
@@ -88,7 +101,7 @@ export default function Bookingstatus() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ booking_number: booking.booking_number, email: "" }),
+        body: JSON.stringify({ booking_number: booking.booking_number, email: booking.booking_email }),
       });
       const data = await res.json().catch(() => ({} as any));
       if (!res.ok || data?.error) {
@@ -114,7 +127,7 @@ export default function Bookingstatus() {
     if (status === "cancelled") return "Avbokad";
     if (status === "reserved")  return "Reserverad";
     if (status === "expired")   return "Utgången";
-    return "Visad";
+    return "Bekräftad";
   }
 
   function statusClass(status: string): string {
