@@ -203,9 +203,12 @@ public static class BookingRoutes
       {
         return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
-
-      long bookingId = insertResult.lastInsertId;
-
+     //booking id declare
+      var bookingId = insertResult.lastInsertId != null ? (long)insertResult.lastInsertId : 0;
+      if (bookingId == 0)
+      {
+        return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
+      }
       // 5) Insert tickets + SSE
 
       try
