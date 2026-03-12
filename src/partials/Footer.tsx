@@ -159,7 +159,7 @@ export default function Footer() {
         }}>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Om oss</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Kontakta oss</a>
-          <Link to="/ai-chat" style={{ color: 'inherit', textDecoration: 'none' }}>🤖 AI Chatbot</Link> 
+          
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
         </div>
       </div>

@@ -1,149 +1,215 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  Card,
-  Form,
-  Button,
-  Spinner,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { useState, useRef, useEffect } from "react";
 
-interface Message {
-  role: "user" | "assistant" | "system";
-  content: string;
-}
-
-interface ChatResponse {
-  choices: Array<{
-    message: {
-      content: string;
-      role: string;
-    };
-  }>;
-}
-
-export default function AiChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+export default function FloatingAiChat() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: "assistant", content: "Hej! Välkommen till Filmvisarna! 🎬 Hur kan jag hjälpa dig idag?" }
+  ]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        Math.min(textareaRef.current.scrollHeight, 200) + "px";
-    }
-  }, [input]);
+  async function sendMessage() {
+    if (!input.trim() || loading) return;
 
-  const sendMessage = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
-
-    // Add user message to the UI
-    const userMessage: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage = { role: "user", content: input.trim() };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
-    setIsLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ messages: updatedMessages }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Request failed");
-      }
-
-      const data: ChatResponse = await response.json();
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.choices[0].message.content,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        role: "assistant",
-        content: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
+      const data = await response.json();
+      const reply =
+        data.choices?.[0]?.message?.content ||
+        "Något gick fel, försök igen.";
+      setMessages([...updatedMessages, { role: "assistant", content: reply }]);
+    } catch {
+      setMessages([
+        ...updatedMessages,
+        { role: "assistant", content: "Kunde inte ansluta till servern. Försök igen senare." },
+      ]);
     }
-  };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    setLoading(false);
+  }
+
+  function handleKeyDown(e) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
-  };
+  }
 
   return (
-    <Card className="shadow-sm ai-chat">
-      <Card.Header className="bg-primary text-white">
-        <h5 className="mb-0">AI Chat</h5>
-      </Card.Header>
+    <>
+      {isOpen && (
+        <div style={{
+          position: 'fixed',
+          bottom: '90px',
+          right: '24px',
+          width: '360px',
+          maxWidth: 'calc(100vw - 48px)',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}>
 
-      <Card.Body className="ai-chat-body">
-        <Container fluid>
-          {messages.map((message, index) => (
-            <Row key={index} className="mb-3">
-              <Col xs={12}>
-                <div
-                  className={`p-3 rounded ai-chat-message ${
-                    message.role === "user"
-                      ? "bg-primary text-white user"
-                      : "bg-light text-dark assistant"
-                  }`}
-                >
-                  {message.content}
-                </div>
-              </Col>
-            </Row>
-          ))}
-          <div ref={messagesEndRef} />
-        </Container>
-      </Card.Body>
-
-      <Card.Footer className="bg-white ai-chat-footer">
-        {isLoading && (
-          <div className="text-muted mb-2 small ai-chat-status">
-            <Spinner animation="border" size="sm" className="me-2" />
-            Thinking...
+          {/* Header */}
+          <div style={{
+            backgroundColor: '#1a1a2e',
+            color: 'white',
+            padding: '14px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexShrink: 0
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '20px' }}>🤖</span>
+              <span style={{ fontWeight: '600', fontSize: '15px' }}>Filmvisarna AI</span>
+            </div>
+            <button onClick={() => setIsOpen(false)} style={{
+              background: 'none', border: 'none', color: 'white',
+              fontSize: '22px', cursor: 'pointer', lineHeight: 1, padding: 0
+            }}>×</button>
           </div>
-        )}
-        <div className="ai-chat-input-area">
-          <Form.Control
-            as="textarea"
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
-            rows={1}
-          />
-          <Button
-            variant="primary"
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-          >
-            Send
-          </Button>
+
+          {/* Messages */}
+          <div style={{
+            height: '380px',
+            overflowY: 'auto',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            backgroundColor: '#f5f5f5'
+          }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{
+                maxWidth: '82%',
+                padding: '10px 14px',
+                borderRadius: msg.role === 'user'
+                  ? '16px 16px 4px 16px'
+                  : '16px 16px 16px 4px',
+                backgroundColor: msg.role === 'user' ? '#1a1a2e' : 'white',
+                color: msg.role === 'user' ? 'white' : '#222',
+                alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                fontSize: '14px',
+                lineHeight: '1.5',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word'
+              }}>
+                {msg.content}
+              </div>
+            ))}
+
+            {loading && (
+              <div style={{
+                alignSelf: 'flex-start',
+                backgroundColor: 'white',
+                padding: '10px 14px',
+                borderRadius: '16px 16px 16px 4px',
+                fontSize: '14px',
+                color: '#888',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+              }}>
+                ✍️ Skriver...
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input */}
+          <div style={{
+            padding: '12px',
+            borderTop: '1px solid #eee',
+            display: 'flex',
+            gap: '8px',
+            backgroundColor: 'white',
+            flexShrink: 0
+          }}>
+            <textarea
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Skriv ett meddelande... (Enter för att skicka)"
+              rows={1}
+              style={{
+                flex: 1,
+                padding: '10px 12px',
+                borderRadius: '10px',
+                border: '1px solid #ddd',
+                resize: 'none',
+                fontSize: '14px',
+                outline: 'none',
+                fontFamily: 'inherit',
+                lineHeight: '1.4'
+              }}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={loading || !input.trim()}
+              style={{
+                backgroundColor: '#1a1a2e',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '0 16px',
+                cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
+                fontSize: '18px',
+                opacity: loading || !input.trim() ? 0.4 : 1,
+                transition: 'opacity 0.2s'
+              }}
+            >
+              ➤
+            </button>
+          </div>
         </div>
-      </Card.Footer>
-    </Card>
+      )}
+
+      {/* Floating Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          backgroundColor: '#1a1a2e',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+          zIndex: 10000,
+          fontSize: '24px',
+          transition: 'transform 0.2s'
+        }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+        title="Öppna AI-chatt"
+      >
+        {isOpen ? '✕' : '🤖'}
+      </button>
+    </>
   );
 }

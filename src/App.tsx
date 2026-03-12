@@ -3,7 +3,7 @@ import Header from "./partials/Header";
 import Main from "./partials/Main";
 import Footer from "./partials/Footer";
 import BootstrapBreakpoints from "./parts/BootstrapBreakpoints";
-
+import FloatingAiChat from "./parts/AiChat"; 
 // turn off when not needed for debugging
 const showBootstrapBreakpoints = false;
 
@@ -17,6 +17,7 @@ export default function App() {
       <Header />
       <Main />
       <Footer />
+      <FloatingAiChat /> 
       {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
     </>
   );
