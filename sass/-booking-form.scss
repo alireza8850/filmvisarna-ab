@@ -197,6 +197,9 @@
 
 // error styling
 .booking-error-message {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
   position: relative;
   max-width: 600px;
   margin: 15px auto;
