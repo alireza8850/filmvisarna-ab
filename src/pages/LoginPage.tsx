@@ -75,7 +75,7 @@ export default function LoginPage(){
                                         placeholder="Skriv in din e-post adress"
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, email: true }))}
+                                        onBlur={() => { if(email) setUserInput(p => ({ ...p, email: true })) }}
                                         className={userInput.email && !validEmail ? 'fel' : ''}
                                     />
                                 </div>
@@ -96,7 +96,7 @@ export default function LoginPage(){
                                         placeholder="********"
                                         value={pass}
                                         onChange={e => setPass(e.target.value)}
-                                        onBlur={() => setUserInput(p => ({ ...p, pass: true }))}
+                                        onBlur={() => { if(pass) setUserInput(p => ({ ...p, pass: true })) }}
                                         className={userInput.pass && !validPass ? 'fel' : ''}
                                     />
                                 </div>

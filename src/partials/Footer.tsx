@@ -157,7 +157,7 @@ export default function Footer() {
           color: 'rgba(255, 255, 255, 0.7)',
           fontSize: '14px'
         }}>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Om oss</a>
+          <Link to="/om-oss">Om oss </Link>
           <Link to="/kontakta-oss">Kontakta oss</Link>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>

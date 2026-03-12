@@ -69,10 +69,10 @@ export default function FilmDetailsPage() {
     : "/images/" + poster_url;
 
   return (
-    <article className="film-details">
+    <article className="film-details container">
 
-      <Row className="justify-content-center">
-        <Col xs={12}>
+      <Row className="justify-content-center align-items-start">
+        <Col xs={12} md={5} lg={4}>
           <div className="film-details__poster-and-trailer position-relative">
             <div className="film-details__poster-w">
               <img
@@ -92,24 +92,17 @@ export default function FilmDetailsPage() {
           </div>
         </Col>
 
-        <Col xs={12}>
+        <Col xs={12} md={7} lg={8}>
           <h2 className="film-details__title">{title}</h2>
-          {description?.split("\n").map((x, i) => (
-            <p className="film-details__description" key={i}>
-              {x}
-            </p>
-          ))}
+          <div className="film-details__description-container">
+            {description?.split("\n").map((x, i) => (
+              <p className="film-details__description" key={i}>
+                {x}
+              </p>
+            ))}
+          </div>
         </Col>
       </Row>
-
-      {/* DESCRIPTION */}
-      <section className="film-details__description-section">
-        {description?.split("\n").map((x, i) => (
-          <p className="film-details__description" key={i}>
-            {x}
-          </p>
-        ))}
-      </section>
 
       <Accordion className="film-details__accordion mt-4" defaultActiveKey="0">
         <Accordion.Item eventKey="0" className="film-details__accordion-item">

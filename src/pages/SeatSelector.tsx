@@ -31,13 +31,13 @@ export default function SeatSelector({
   const totalTickets = tickets.adult + tickets.child + tickets.senior;
 
   // find hall
-  const hall = halls.find((h) => h.id === showing.hall_id);
+  const hall = Array.isArray(halls) ? halls.find((h) => h.id === showing.hall_id) : undefined;
   if (!hall) return <p>Kunde inte hitta salongen</p>;
 
   const totalRows = hall.total_rows;
 
   // filter seats for this hall
-  const hallSeats = seats.filter((s) => s.hall_id === hall.id);
+  const hallSeats = Array.isArray(seats) ? seats.filter((s) => s.hall_id === hall.id) : [];
 
   // convert seat_letter → seatIndex
   const seatsWithIndex = hallSeats.map((s) => ({
@@ -47,7 +47,7 @@ export default function SeatSelector({
 
   // click-sound
   const playClick = () => {
-    const audio = new Audio("/public/sounds/mouse-click.mp3");
+    const audio = new Audio("/sounds/mouse-click.mp3");
     audio.currentTime = 0;
     audio.volume = 0.2;
     audio.play().catch(() => {});
@@ -55,9 +55,11 @@ export default function SeatSelector({
 
   // booked seats
   const bookedSeatIds = new Set(
-    soldTickets
-      .filter((t) => t.showing_id === showing.id)
-      .map((t) => t.seat_id),
+    Array.isArray(soldTickets)
+      ? soldTickets
+          .filter((t) => t.showing_id === showing.id)
+          .map((t) => t.seat_id)
+      : [],
   );
 
   // group seats by row_index

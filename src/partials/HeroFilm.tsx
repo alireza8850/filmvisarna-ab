@@ -7,27 +7,29 @@ export default function HeroFilm({ film }: { film: Film }) {
     : "/images/" + film.poster_url;
 
   return (
-    <Link to={`/films/${film.id}`} className="hero-film-link">
+    <div className="hero-film-wrapper">
       <section className="hero-film">
         {/* --- The hero film will be shown as a big banner with the poster image as background --- */}
 
         <figure className="hero-media">
-          <img
-            className="hero-image"
-            src={imageUrl}
-            alt={film.title}
-          />
+          <Link to={`/films/${film.id}`}>
+            <img
+              className="hero-image"
+              src={imageUrl}
+              alt={film.title}
+            />
+          </Link>
         </figure>
         <header className="hero-overlay">
           <div className="hero-top">
-            <h1 className="hero-title">{film.title}</h1>
+            <Link to={`/films/${film.id}`} className="hero-title-link">
+              <h1 className="hero-title">{film.title}</h1>
+            </Link>
             <br />
             <span className="btn-sections">
-              {/* --- The button will be shown as a red button with white text --- */}
-              <Link className="hero-trailer-btn" to={`/films/${film.id}`}>
+              <span className="hero-trailer-btn">
                 Trailer
-              </Link>
-              {/* --- We will show the genre as a badge, the title as a heading and a button to watch the trailer --- */}
+              </span>
               <span className="hero-genre">{film.genre}</span>
             </span>
           </div>
@@ -35,6 +37,6 @@ export default function HeroFilm({ film }: { film: Film }) {
           {/* --- The title will be shown as a big heading --- */}
         </header>
       </section>
-    </Link>
+    </div>
   );
 } 
