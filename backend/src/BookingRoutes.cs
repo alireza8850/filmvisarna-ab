@@ -71,7 +71,6 @@ public static class BookingRoutes
 
       // Extract fields from request body
       var showingId = body.showing_id;
-      var email = body.email; // Used for receipt, but not saved to DB
       var tickets = (Arr)body.tickets; // Array of { ticket_type_id, seat_id (optional) }
 
       if (showingId == null || tickets == null)
