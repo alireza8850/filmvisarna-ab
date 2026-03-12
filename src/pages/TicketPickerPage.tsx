@@ -52,7 +52,10 @@ export default function TicketPickerPage() {
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
 
   const totalCount = vuxen + barn + pensionar;
-  const { selectedSeats } = useBooking(); 
+  const { selectedSeats, setSelectedSeats } = useBooking(); 
+  useEffect(() => {
+    setSelectedSeats([]); 
+  }, []);
 
   const handleContinue = () => {
     const totalTickets = vuxen + barn + pensionar;
@@ -166,6 +169,7 @@ export default function TicketPickerPage() {
         {totalCount > 0 && (
           <div className="mt-5">
             <SeatSelector
+              key={showing.id + "-" + tickets.length}
               showing={showing}
               halls={halls}
               seats={seats}
