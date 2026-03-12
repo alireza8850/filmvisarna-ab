@@ -50,7 +50,7 @@ public static class BookingRoutes
 
       var sql = @"
           SELECT b.id, b.booking_number,b.user_id,b.showing_id, b.booking_status, b.total_price,
-                b.created_at, b.expires_at, f.title as film_title, s.start_time
+                b.created_at, b.expires_at,b.booking_email,f.title as film_title, s.start_time
           FROM bookings b
           JOIN showings s ON b.showing_id = s.id
           JOIN films f ON s.film_id = f.id
@@ -351,8 +351,9 @@ public static class BookingRoutes
       var user = Session.Get(context, "user");
       if (user != null)
       {
-        // verify owner via user_id
-        if ((long?)booking.user_id != (long)user.id)
+       bool ownsById = (long?)booking.user_id == (long)user.id;
+       bool ownsByEmail = (string)booking.booking_email == (string)user.email;
+        if (!ownsById && !ownsByEmail)
         {
           return RestResult.Parse(context, new { error = "Du har inte behörighet att avboka denna boking." });
         }
