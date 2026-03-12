@@ -129,8 +129,10 @@ export default function BookingFormPage() {
           // release the seats
           setSelectedSeats([]);
 
-          // go back to seatSelector
-          navigate(`/booking/${showing.id}/tickets`);
+          // Delay navigation to allow user to read the message (مثلاً 2 ثانية)
+          setTimeout(() => {
+            navigate(`/booking/${showing.id}/tickets`);
+          }, 2000);
         } else {
           alert("Bokningen misslyckades.");
         }
@@ -191,7 +193,10 @@ export default function BookingFormPage() {
 
               <button
                 className="booking-error-close"
-                onClick={() => setBookingError(null)}
+                onClick={() => {
+                  setBookingError(null);
+                  navigate(`/booking/${showing.id}/tickets`);
+                }}
               >
                 ×
               </button>
@@ -295,6 +300,7 @@ export default function BookingFormPage() {
               {!user && (
                 <input
                   type="email"
+                  className="email-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Din e-postadress"
