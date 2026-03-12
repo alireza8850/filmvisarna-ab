@@ -182,7 +182,7 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         {
           return RestResult.Parse(context, new
           {
-            error = "En eller flera platser är redan bokade."
+            error = "Tyvärr blev en av platserna bokad av en annan användare.Välj en ny plats."
           });
         }
       }

@@ -1,10 +1,11 @@
 
 import { Row, Col } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBooking } from "../utils/BookingContext";
 import type Seat from "../interfaces/Seat";
 import "/sass/-booking-form.scss";
+import { useUser } from "../utils/UserContext";
 
 BookingFormPage.route = {
   path: "/bookingformpage",
@@ -12,6 +13,20 @@ BookingFormPage.route = {
 
 export default function BookingFormPage() {
   const navigate = useNavigate();
+
+  const { user } = useUser();
+  const { setSelectedSeats } = useBooking();
+  
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!bookingError) return;
+
+    const timer = setTimeout(() => {
+      setBookingError(null);
+    }, 6000);
+
+    return () => clearTimeout(timer);
+  }, [bookingError]);
   // Prices + seats passed from TicketPickerPage
   const location = useLocation();
   const { vuxenPrice, barnPrice, pensionarPrice, seats } = location.state as {
@@ -54,12 +69,18 @@ export default function BookingFormPage() {
     ].filter((t) => t.count > 0);
   
   const handleBooking = async () => {
-    if (!email) {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    if (!user && !email) {
       alert("Vänligen fyll i din e-postadress");
       return;
     }
-    // update the chosen seats
+    
+    // update the chosen seats and no more than one click
     setIsSubmitting(true);
+
     try {
       const ticketRequests = [];
       let seatIndex = 0;
@@ -83,12 +104,12 @@ export default function BookingFormPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // Send all the needed information to bd-booking / backend 
+          // Send all the needed information to bd-booking / backend
           showing_id: showing.id,
-          email: email, // Just for now because we need to reset this to check if the user is not looged in
+          email: user ? null : email, // Just for now because we need to reset this to check if the user is not looged in
           // user_id: user? user.id : null ==> next ==> booking_email: user? null: email
           tickets: ticketRequests,
-          total_price: totalPrice
+          total_price: totalPrice,
         }),
       });
 
@@ -97,8 +118,22 @@ export default function BookingFormPage() {
         clearBooking();
         navigate("/confirmation");
       } else {
-        const error = await response.text();
-        alert("Bokningen misslyckades: " + error);
+        const errorData = await response.json();
+
+        if (errorData.error) {
+          setBookingError(
+            errorData.error ||
+              "Tyvärr hann någon annan boka en eller flera av dina platser.",
+          );
+
+          // release the seats
+          setSelectedSeats([]);
+
+          // go back to seatSelector
+          navigate(`/booking/${showing.id}/tickets`);
+        } else {
+          alert("Bokningen misslyckades.");
+        }
       }
     } catch (err) {
       console.error(err);
@@ -147,6 +182,21 @@ export default function BookingFormPage() {
       <Row className="mb-4">
         <Col>
           <h2 className="page-title text-center">Översikt</h2>
+          {bookingError && (
+            <div className="booking-error-message">
+              <div className="booking-error-text">
+                <span className="booking-error-icon">⚠️</span>
+                {bookingError}
+              </div>
+
+              <button
+                className="booking-error-close"
+                onClick={() => setBookingError(null)}
+              >
+                ×
+              </button>
+            </div>
+          )}
         </Col>
       </Row>
       <Row className="mb-3">
@@ -161,11 +211,7 @@ export default function BookingFormPage() {
                   </div>
                 ))}
               </div>
-              <img
-                src={imageUrl}
-                alt={film.title}
-                className="poster"
-              />
+              <img src={imageUrl} alt={film.title} className="poster" />
             </div>
             <hr
               style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
@@ -176,8 +222,7 @@ export default function BookingFormPage() {
             <span className="section-label">Valda platser</span>
             <div className="ticket-list">
               {selectedSeatObjects.map((seat) => {
-
-              // change row_idex to a letter
+                // change row_idex to a letter
                 const rowLetter = String.fromCharCode(
                   "A".charCodeAt(0) + seat.row_index,
                 );
@@ -204,7 +249,6 @@ export default function BookingFormPage() {
 
                 return (
                   <div key={seat.id} className="ticket-card">
-                    
                     <span className="ticket-row-text">Rad: </span>
                     <span className="tickets"></span>
                     <span className="ticket-seat-text">Plats: </span>
@@ -248,14 +292,14 @@ export default function BookingFormPage() {
         <Col>
           <Row className="mb-2">
             <Col>
-              <input
-                type="email"
-                className="email-input"
-                placeholder="skriv in din e-post"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              {!user && (
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Din e-postadress"
+                />
+              )}
             </Col>
           </Row>
           {/* OBS: messages*/}

@@ -194,3 +194,90 @@
 .betalning{
     color: white;
 }
+
+// error styling
+.booking-error-message {
+  position: relative;
+  max-width: 600px;
+  margin: 15px auto;
+  padding: 14px 18px;
+
+  background: #ffe6e6;
+  border: 1px solid #ff4d4f;
+  border-radius: 8px;
+
+  color: #8b0000;
+  font-size: 15px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+  animation: bookingErrorFade 0.25s ease;
+}
+
+.booking-error-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.booking-error-icon {
+  font-size: 18px;
+}
+
+.booking-error-close {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  color: #8b0000;
+  padding: 4px 8px;
+  transition: 0.2s;
+}
+
+.booking-error-close:hover {
+  opacity: 0.7;
+}
+
+@keyframes bookingErrorFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.booking-error-message {
+  position: relative;
+}
+
+.booking-error-message::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  height: 3px;
+  width: 100%;
+
+  background: #ff4d4f;
+
+  animation: errorTimer 6s linear;
+}
+
+@keyframes errorTimer {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
