@@ -83,6 +83,12 @@ export default function SeatSelector({
     new Set(),
   );
 
+  // fix seat counter reset
+  useEffect(() => {
+    setLocalSelected(selectedSeats);
+  }, [selectedSeats]);
+
+  // push localSelected => context
   useEffect(() => {
     setSelectedSeats(localSelected);
   }, [localSelected]);
@@ -91,6 +97,14 @@ export default function SeatSelector({
   useEffect(() => {
     setLiveBookedSeats(new Set());
   }, [showing.id]);
+
+  // update live when soldTickets refresh / fix red seats after return
+  useEffect(() => {
+    const updated = new Set(
+      soldTickets.filter((t) => t.showing_id === showing.id).map((t) => t.seat_id)
+    );
+    setLiveBookedSeats(updated);
+  }, [soldTickets, showing.id]);
 
   // SSE listener
   useEffect(() => {
