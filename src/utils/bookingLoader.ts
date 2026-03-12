@@ -97,7 +97,7 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   //8)Ticket
   let tickets: Ticket[] = [];
   try {
-    const res = await fetch(`/api/tickets`);
+    const res = await fetch(`/api/showings/:id/tickets`);
     if (res.ok) {
       tickets = await res.json();
     }

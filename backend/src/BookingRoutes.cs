@@ -99,17 +99,23 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         return RestResult.Parse(context, new { error = "Obligatoriska fält saknas." });
       }
 
-      // Get user_id if logged in (optional)
-       int? userId = Session.Get(context, "user")?.id;
-      var user = Session.Get(context, "user");
+      // determine user_id and email
+      var sessionUser = Session.Get(context, "user");
 
+      // 1) user_id from frontend OR session
+      int? userId = body.user_id != null ? (int?)body.user_id : sessionUser?.id;
+
+      // 2) email logic
       string emailToSend;
-      if (user != null)
+
+      if (userId != null)
       {
-        emailToSend = (string)user.email;
+        // logged-in user → ignore email from frontend
+        emailToSend = sessionUser?.email ?? (string)body.email;
       }
       else
       {
+        // visitor
         if (body.email == null || body.email == "")
         {
           return RestResult.Parse(context, new { error = "E-postadress är obligatorisk för besökare" });
@@ -117,7 +123,7 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         emailToSend = (string)body.email;
       }
 
-      //  If visitor email matches a user → link booking to that user
+      //  If visitor email matches a user => link booking to that user
       if (userId == null)
       {
         var existingUser = SQLQueryOne(
@@ -161,33 +167,7 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         }
       }
 
-      // 2- check if all chosen seats are still available (safe version)
-      // Check double-booking BEFORE creating booking
-
-      foreach (var seatId in seatIds)
-      {
-        var existing = SQLQueryOne(
-            @"
-            SELECT seat_id 
-            FROM tickets 
-            WHERE showing_id = @showingId
-              AND seat_id = @seatId
-            LIMIT 1
-        ",
-            new { showingId, seatId },
-            context
-        );
-
-        if (existing != null && existing.seat_id != null)
-        {
-          return RestResult.Parse(context, new
-          {
-            error = "En eller flera platser är redan bokade."
-          });
-        }
-      }
-
-      // 3) Calculate total price by summing up individual ticket prices
+      // 2) Calculate total price by summing up individual ticket prices
       decimal totalPrice = 0;
       foreach (dynamic ticket in tickets)
       {
@@ -208,6 +188,35 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         }
       }
 
+      // 3- check if all chosen seats are still available (safe version)
+      // Check double-booking BEFORE creating booking
+
+      foreach (var seatId in seatIds)
+      {
+        var existing = SQLQueryOne(
+            @"
+            SELECT seat_id 
+            FROM tickets 
+            WHERE showing_id = @showingId
+              AND seat_id = @seatId
+            LIMIT 1
+        ",
+            new { showingId, seatId },
+            context
+        );
+
+        if (existing != null && existing.seat_id != null)
+        {
+          context.Response.StatusCode = 409;
+          return RestResult.Parse(context, new
+          {
+            error = "En eller flera platser är redan bokade."
+          });
+        }
+      }
+
+
+
       // Generate unique booking number
       var bookingNumber = GenerateBookingNumber();
       string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
@@ -217,7 +226,7 @@ App.MapGet("/api/tickets", (HttpContext context) =>
           VALUES (@bookingNumber, @userId, @showingId, 'confirmed', @totalPrice, @bookingEmail)
       ";
       var insertResult = SQLQueryOne(insertBookingSql,
-      new { bookingNumber, userId = user?.id, showingId, totalPrice, bookingEmail = emailToSend },
+      new { bookingNumber, userId = userId, showingId, totalPrice, bookingEmail = emailToSend },
        context);
 
       if (insertResult == null || insertResult.error != null)
@@ -258,13 +267,19 @@ App.MapGet("/api/tickets", (HttpContext context) =>
       {
         Console.WriteLine("Ticket insert error: " + ex.Message);
 
-        if (ex.Message.Contains("UNIQUE"))
-        {
-          return RestResult.Parse(context, new { error = "Platsen blev precis bokad av en annan användare." });
-        }
+        // rollback tickets
+        SQLQuery("DELETE FROM tickets WHERE booking_id = @bookingId", new { bookingId }, context);
 
-        return RestResult.Parse(context, new { error = "Ett oväntat fel inträffade vid bokningen." });
+        // rollback booking
+        SQLQuery("DELETE FROM bookings WHERE id = @bookingId", new { bookingId }, context);
+
+        // release seats
+        _ = SeatEventsRoutes.BroadcastSeatsReleased((int)showingId, seatIds.ToArray());
+
+        context.Response.StatusCode = 409;
+        return RestResult.Parse(context, new { error = "Platsen blev precis bokad av en annan användare." });
       }
+
       var ticketLines = new List<string>();
       foreach (var ticket in tickets)
       {
