@@ -75,7 +75,9 @@ export default function TicketPickerPage() {
   return (
     <article className="ticket-picker container mt-4">
       {/* Title */}
-      <h2 className="ticket-picker__title">{film.title} - ({showing.start_time})</h2>
+    <h2 className="ticket-picker__title">
+  {film.title} - ({new Date(showing.start_time).toLocaleDateString("sv-SE")}  {new Date(showing.start_time).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })})
+</h2>
 
       {/* Ticket Box */}
       <section className="ticketBox">
