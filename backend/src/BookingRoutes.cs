@@ -38,6 +38,27 @@ public static class BookingRoutes
       return RestResult.Parse(context, showings);
     });
 
+    // GET /api/tickets?booking_id=X
+App.MapGet("/api/tickets", (HttpContext context) =>
+{
+  var bookingIdStr = context.Request.Query["booking_id"].ToString();
+  if (string.IsNullOrWhiteSpace(bookingIdStr))
+  {
+    return RestResult.Parse(context, new { error = "booking_id is required." });
+  }
+
+  var sql = @"
+      SELECT t.id, t.seat_id, t.ticket_type_id,
+             s.row_index, s.seat_letter
+      FROM tickets t
+      LEFT JOIN seats s ON t.seat_id = s.id
+      WHERE t.booking_id = @bookingId
+  ";
+
+  var tickets = SQLQuery(sql, new { bookingId = bookingIdStr }, context);
+  return RestResult.Parse(context, tickets);
+});
+
     // GET /api/bookings/my
     App.MapGet("/api/bookings/my", (HttpContext context) =>
     {
