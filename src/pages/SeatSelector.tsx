@@ -31,13 +31,17 @@ export default function SeatSelector({
   const totalTickets = tickets.adult + tickets.child + tickets.senior;
 
   // find hall
-  const hall = Array.isArray(halls) ? halls.find((h) => h.id === showing.hall_id) : undefined;
+  const hall = Array.isArray(halls)
+    ? halls.find((h) => h.id === showing.hall_id)
+    : undefined;
   if (!hall) return <p>Kunde inte hitta salongen</p>;
 
   const totalRows = hall.total_rows;
 
   // filter seats for this hall
-  const hallSeats = Array.isArray(seats) ? seats.filter((s) => s.hall_id === hall.id) : [];
+  const hallSeats = Array.isArray(seats)
+    ? seats.filter((s) => s.hall_id === hall.id)
+    : [];
 
   // convert seat_letter → seatIndex
   const seatsWithIndex = hallSeats.map((s) => ({
@@ -82,10 +86,23 @@ export default function SeatSelector({
   const [liveBookedSeats, setLiveBookedSeats] = useState<Set<number>>(
     new Set(),
   );
-
+  
   useEffect(() => {
     setSelectedSeats(localSelected);
   }, [localSelected]);
+
+  // reset seats when showing changes // after double booking
+  useEffect(() => {
+    setLocalSelected([]);
+    setSelectedSeats([]);
+  }, [showing.id]);
+
+  // enforce seat count limit when ticket count changes
+  useEffect(() => {
+    if (localSelected.length > totalTickets) {
+      setLocalSelected((prev) => prev.slice(0, totalTickets));
+    }
+  }, [totalTickets]);
 
   // update the seats if the show is changed
   useEffect(() => {

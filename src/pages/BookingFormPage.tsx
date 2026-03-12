@@ -63,7 +63,7 @@ export default function BookingFormPage() {
   const handleBooking = async () => {
     setErrorMessage(null);
 
-   // if no user is logged in
+    // a visitor
     if (!user && !email) {
       setErrorMessage("Vänligen fyll i din e-postadress.");
       return;
@@ -102,7 +102,7 @@ export default function BookingFormPage() {
         body: JSON.stringify({
           showing_id: showing.id,
 
-         // if a user is looged in
+         // a logged in customer
           email: user ? user.email : email,
 
           tickets: ticketRequests,
@@ -115,15 +115,15 @@ export default function BookingFormPage() {
 
         setTimeout(() => {
           clearBooking();
-          navigate("/confirmation", { replace: true });
+          navigate("/confirmation", { replace: false });
         }, 800);
       }
 
       // double booking
       else if (response.status === 409) {
-        clearBooking();
+        clearBooking(); // release seats and reset the counter
 
-        navigate("/ticketpicker", {
+        navigate(`/booking/:showingId/tickets`, {
           replace: true,
           state: {
             message:
@@ -131,6 +131,7 @@ export default function BookingFormPage() {
             showingId: showing.id,
           },
         });
+
         return;
       } else {
         const error = await response.text();
@@ -272,7 +273,7 @@ export default function BookingFormPage() {
 
       <Row className="mb-3">
         <Col>
-          {/* Hide the email if the user is logged in*/}
+          {/* ✔ إخفاء حقل البريد عند تسجيل الدخول */}
           {!user && (
             <Row className="mb-2">
               <Col>

@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bookingLoader from "../utils/bookingLoader";
 import type Film from "../interfaces/Film";
@@ -19,6 +19,20 @@ TicketPickerPage.route = {
 
 export default function TicketPickerPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // receive the double booking message
+  const message = location.state?.message || null;
+  const [localMessage, setLocalMessage] = useState<string | null>(message);
+  useEffect(() => {
+    const msg = location.state?.message || null;
+    if (msg) {
+      setLocalMessage(msg);
+      const timer = setTimeout(() => setLocalMessage(null), 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
+
   const { film, showing, halls, seats, tickets, ticketPrices } =
     useLoaderData() as {
       film: Film;
@@ -29,7 +43,7 @@ export default function TicketPickerPage() {
       ticketTypes: TicketType[];
       ticketPrices: TicketPrice[];
     };
-  
+
   const { setTickets } = useBooking();
 
   const [vuxen, setVuxen] = useState(0);
@@ -52,7 +66,7 @@ export default function TicketPickerPage() {
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
 
   const totalCount = vuxen + barn + pensionar;
-  const { selectedSeats } = useBooking(); 
+  const { selectedSeats } = useBooking();
 
   const handleContinue = () => {
     const totalTickets = vuxen + barn + pensionar;
@@ -74,8 +88,16 @@ export default function TicketPickerPage() {
 
   return (
     <article className="ticket-picker container mt-4">
+      {/* the double booking message*/}
+      {localMessage && (
+        <div className="booking-toast__content">
+          {localMessage}
+        </div>
+      )}
       {/* Title */}
-      <h2 className="ticket-picker__title">{film.title} - ({showing.start_time})</h2>
+      <h2 className="ticket-picker__title">
+        {film.title} - ({showing.start_time})
+      </h2>
 
       {/* Ticket Box */}
       <section className="ticketBox">
