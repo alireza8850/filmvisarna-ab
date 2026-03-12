@@ -38,6 +38,27 @@ public static class BookingRoutes
       return RestResult.Parse(context, showings);
     });
 
+    // GET /api/tickets?booking_id=X
+App.MapGet("/api/tickets", (HttpContext context) =>
+{
+  var bookingIdStr = context.Request.Query["booking_id"].ToString();
+  if (string.IsNullOrWhiteSpace(bookingIdStr))
+  {
+    return RestResult.Parse(context, new { error = "booking_id is required." });
+  }
+
+  var sql = @"
+      SELECT t.id, t.seat_id, t.ticket_type_id,
+             s.row_index, s.seat_letter
+      FROM tickets t
+      LEFT JOIN seats s ON t.seat_id = s.id
+      WHERE t.booking_id = @bookingId
+  ";
+
+  var tickets = SQLQuery(sql, new { bookingId = bookingIdStr }, context);
+  return RestResult.Parse(context, tickets);
+});
+
     // GET /api/bookings/my
     App.MapGet("/api/bookings/my", (HttpContext context) =>
     {
@@ -49,16 +70,17 @@ public static class BookingRoutes
       }
 
       var sql = @"
-          SELECT b.id, b.booking_number, b.booking_status, b.total_price,
-                 f.title as film_title, s.start_time
+          SELECT b.id, b.booking_number,b.user_id,b.showing_id, b.booking_status, b.total_price,
+                b.created_at, b.expires_at,b.booking_email,f.title as film_title, s.start_time
           FROM bookings b
           JOIN showings s ON b.showing_id = s.id
           JOIN films f ON s.film_id = f.id
           WHERE b.user_id = @userId
+          OR b.booking_email = @userEmail
           ORDER BY b.created_at DESC
       ";
 
-      var bookings = SQLQuery(sql, new { userId = user.id }, context);
+      var bookings = SQLQuery(sql, new { userId = user.id, userEmail = user.email}, context);
       return RestResult.Parse(context, bookings);
     });
 
@@ -70,7 +92,6 @@ public static class BookingRoutes
 
       // Extract fields from request body
       var showingId = body.showing_id;
-      var email = body.email; // Used for receipt, but not saved to DB
       var tickets = (Arr)body.tickets; // Array of { ticket_type_id, seat_id (optional) }
 
       if (showingId == null || tickets == null)
@@ -79,16 +100,36 @@ public static class BookingRoutes
       }
 
       // Get user_id if logged in (optional)
+       int? userId = Session.Get(context, "user")?.id;
       var user = Session.Get(context, "user");
-      // Get email if the user is logged in
-      string emailToSend = user != null ? (string)user.email : email;
 
-      if (string.IsNullOrWhiteSpace(emailToSend))
+      string emailToSend;
+      if (user != null)
       {
-        return RestResult.Parse(context, new { error = "E-postadress är obligatorisk." });
+        emailToSend = (string)user.email;
+      }
+      else
+      {
+        if (body.email == null || body.email == "")
+        {
+          return RestResult.Parse(context, new { error = "E-postadress är obligatorisk för besökare" });
+        }
+        emailToSend = (string)body.email;
       }
 
-
+      //  If visitor email matches a user → link booking to that user
+      if (userId == null)
+      {
+        var existingUser = SQLQueryOne(
+          "SELECT id FROM users WHERE email = @email",
+          new { email = emailToSend },
+          context
+        );
+        if (existingUser != null && existingUser.id != null)
+        {
+          userId = (int)existingUser.id;
+        }
+      }
       // Fetch showing details
       var showingSql = @"
           SELECT s.id, s.film_id, s.hall_id, s.start_time,
@@ -120,12 +161,10 @@ public static class BookingRoutes
         }
       }
 
-      var seatIdsArray = seatIds.ToArray();
-
       // 2- check if all chosen seats are still available (safe version)
       // Check double-booking BEFORE creating booking
 
-      foreach (var seatId in seatIdsArray)
+      foreach (var seatId in seatIds)
       {
         var existing = SQLQueryOne(
             @"
@@ -171,7 +210,7 @@ public static class BookingRoutes
 
       // Generate unique booking number
       var bookingNumber = GenerateBookingNumber();
-
+      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
       // 4) Insert booking
       var insertBookingSql = @"
           INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email)
@@ -185,9 +224,12 @@ public static class BookingRoutes
       {
         return RestResult.Parse(context, new { error = "Ett fel inträffade vid bokningen. Försök igen." });
       }
-
-      long bookingId = insertResult.lastInsertId;
-
+     //booking id declare
+      var bookingId = insertResult.lastInsertId != null ? (long)insertResult.lastInsertId : 0;
+      if (bookingId == 0)
+      {
+        return RestResult.Parse(context, new { error = "Failed to retrieve booking ID." });
+      }
       // 5) Insert tickets + SSE
 
       try
@@ -223,11 +265,6 @@ public static class BookingRoutes
 
         return RestResult.Parse(context, new { error = "Ett oväntat fel inträffade vid bokningen." });
       }
-
-      // 6) Send confirmation email
-      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
-      // Build ticket lines for email body
-
       var ticketLines = new List<string>();
       foreach (var ticket in tickets)
       {
@@ -335,8 +372,9 @@ public static class BookingRoutes
       var user = Session.Get(context, "user");
       if (user != null)
       {
-        // verify owner via user_id
-        if ((long?)booking.user_id != (long)user.id)
+       bool ownsById = (long?)booking.user_id == (long)user.id;
+       bool ownsByEmail = (string)booking.booking_email == (string)user.email;
+        if (!ownsById && !ownsByEmail)
         {
           return RestResult.Parse(context, new { error = "Du har inte behörighet att avboka denna boking." });
         }
