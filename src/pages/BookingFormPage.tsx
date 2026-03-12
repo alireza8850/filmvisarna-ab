@@ -190,28 +190,6 @@ export default function BookingFormPage() {
       <Row className="mb-4">
         <Col>
           <h2 className="page-title text-center">Översikt</h2>
-          {bookingError && (
-            <div className="booking-error-message">
-              <div className="booking-error-text">
-                <span className="booking-error-icon">⚠️</span>
-                {bookingError}
-              </div>
-              <div className="booking-error-actions">
-              </div>
-
-              <button
-                className="booking-error-close"
-                onClick={() => {
-                  setBookingError(null);
-                  navigate(
-                    `/booking/${showing.id}/tickets?refresh=${Date.now()}`,
-                  );
-                }}
-              >
-                ×
-              </button>
-            </div>
-          )}
         </Col>
       </Row>
       <Row className="mb-3">
@@ -340,6 +318,25 @@ export default function BookingFormPage() {
           </Row>
         </Col>
       </Row>
+      {bookingError && (
+        <div className="booking-error-overlay">
+          <div className="booking-error-box">
+            <p>{bookingError}</p>
+
+            <button
+              className="booking-error-close"
+              onClick={() => {
+                setBookingError(null);
+                navigate(
+                  `/booking/${showing.id}/tickets?refresh=${Date.now()}`,
+                );
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
