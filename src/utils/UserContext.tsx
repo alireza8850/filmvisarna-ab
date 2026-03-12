@@ -16,11 +16,11 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);      // skapar en kontext som antingen är UserContextType eller undefined 
-
+let hasFetched = false;
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const hasFetched = useRef(false);
+  //const hasFetched = useRef(false);
 
   const login = (userData: User) => {        // uppdaterar user_state med inloggningsdata 
     setUser(userData);
@@ -60,8 +60,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {         //säkerställer att vi kollar inloggningsstatus när vi startar sidan
-  if (hasFetched.current) return; // kollar om det är true ,avbryter, om loginstatus redan hämtat
-  hasFetched.current = true; //sätt till true så att inte köra igen
+  if (hasFetched) return; // kollar om det är true ,avbryter, om loginstatus redan hämtat
+  hasFetched = true; //sätt till true så att inte köra igen
     checkLoginStatus();
   }, []);
 
