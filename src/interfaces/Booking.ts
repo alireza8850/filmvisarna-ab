@@ -10,4 +10,5 @@ export default interface Booking {
   hall_name: string;
   film_title: string;
   start_time: string;
+   booking_email: string;
 }
