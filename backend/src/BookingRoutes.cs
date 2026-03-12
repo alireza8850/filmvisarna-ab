@@ -96,7 +96,7 @@ public static class BookingRoutes
         emailToSend = (string)body.email;
       }
 
-      // ✅ If visitor email matches a user → link booking to that user
+      //  If visitor email matches a user → link booking to that user
       if (userId == null)
       {
         var existingUser = SQLQueryOne(
@@ -140,12 +140,10 @@ public static class BookingRoutes
         }
       }
 
-      var seatIdsArray = seatIds.ToArray();
-
       // 2- check if all chosen seats are still available (safe version)
       // Check double-booking BEFORE creating booking
 
-      foreach (var seatId in seatIdsArray)
+      foreach (var seatId in seatIds)
       {
         var existing = SQLQueryOne(
             @"
@@ -191,7 +189,7 @@ public static class BookingRoutes
 
       // Generate unique booking number
       var bookingNumber = GenerateBookingNumber();
-
+      string cancellationUrl = $"http://localhost:5173/cancel?booking={bookingNumber}&email={emailToSend}";
       // 4) Insert booking
       var insertBookingSql = @"
           INSERT INTO bookings (booking_number, user_id, showing_id, booking_status, total_price, booking_email)
