@@ -79,16 +79,36 @@ public static class BookingRoutes
       }
 
       // Get user_id if logged in (optional)
+       int? userId = Session.Get(context, "user")?.id;
       var user = Session.Get(context, "user");
-      // Get email if the user is logged in
-      string emailToSend = user != null ? (string)user.email : email;
 
-      if (string.IsNullOrWhiteSpace(emailToSend))
+      string emailToSend;
+      if (user != null)
       {
-        return RestResult.Parse(context, new { error = "E-postadress är obligatorisk." });
+        emailToSend = (string)user.email;
+      }
+      else
+      {
+        if (body.email == null || body.email == "")
+        {
+          return RestResult.Parse(context, new { error = "E-postadress är obligatorisk för besökare" });
+        }
+        emailToSend = (string)body.email;
       }
 
-
+      // ✅ If visitor email matches a user → link booking to that user
+      if (userId == null)
+      {
+        var existingUser = SQLQueryOne(
+          "SELECT id FROM users WHERE email = @email",
+          new { email = emailToSend },
+          context
+        );
+        if (existingUser != null && existingUser.id != null)
+        {
+          userId = (int)existingUser.id;
+        }
+      }
       // Fetch showing details
       var showingSql = @"
           SELECT s.id, s.film_id, s.hall_id, s.start_time,
