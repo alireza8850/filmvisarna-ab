@@ -194,3 +194,72 @@
 .betalning{
     color: white;
 }
+
+
+// /Booking UX هmprovements //
+
+// Error message
+.booking-error {
+  background: rgba(255, 70, 70, 0.15);
+  border: 1px solid rgba(255, 70, 70, 0.5);
+  color: #ffb3b3;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+// Success message 
+.booking-success {
+  background: rgba(80, 255, 160, 0.12);
+  border: 1px solid rgba(80, 255, 160, 0.45);
+  color: #7dffb0;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+// Logged in user info 
+.logged-user {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: white;
+}
+
+// Email input improvement 
+.email-input {
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.email-input:focus {
+  border: 1px solid #2a4cff;
+  box-shadow: 0 0 0 2px rgba(42, 76, 255, 0.25);
+}
+
+// Button loading state
+.slutfor-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+// Smooth appearance for messages 
+.booking-error,
+.booking-success {
+  animation: fadeInMessage 0.25s ease;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
