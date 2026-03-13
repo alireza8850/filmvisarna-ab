@@ -33,3 +33,10 @@ dist-ssr
 backend/db-config.json
 backend/obj/
 backend/bin/
+
+# Test artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.last-run.json
