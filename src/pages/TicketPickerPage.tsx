@@ -32,6 +32,7 @@ export default function TicketPickerPage() {
     };
   
   const { setTickets } = useBooking();
+  const { user } = useUser();
 
   const [vuxen, setVuxen] = useState(0);
   const [barn, setBarn] = useState(0);
