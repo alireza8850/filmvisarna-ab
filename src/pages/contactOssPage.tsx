@@ -2,15 +2,7 @@ import { useState, useEffect } from "react";
 import type { FC } from "react";
 import { Row, Col } from "react-bootstrap";
 import "/sass/_contactOss.scss";
-
-// Types 
-interface FormState {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+import type FormState from "../interfaces/contact"; 
 
 const INITIAL_FORM: FormState = {
   name: "",
@@ -20,7 +12,7 @@ const INITIAL_FORM: FormState = {
   message: "",
 };
 
-//Icons
+// Icons 
 const IconEmail: FC = () => (
   <svg width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -47,18 +39,20 @@ const IconCheck: FC = () => (
   </svg>
 );
 
-// Route
+// Route 
 ContactOssPage.route = {
   path: "/kontakta-oss",
   menuLabel: "Kontakta oss",
   index: 10,
 };
 
-//  Page Component 
+//Page Component
 export default function ContactOssPage() {
-  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [form, setForm]           = useState<FormState>(INITIAL_FORM);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visible, setVisible]     = useState<boolean>(false);
+  const [sending, setSending]     = useState<boolean>(false);
+  const [errorMsg, setErrorMsg]   = useState<string>("");
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 60);
@@ -72,13 +66,38 @@ export default function ContactOssPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
-    setSubmitted(true);
+    setErrorMsg("");
+    setSending(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.error ?? "Något gick fel. Försök igen.");
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setErrorMsg("Kunde inte nå servern. Kontrollera din anslutning.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleReset = (): void => {
     setSubmitted(false);
+    setErrorMsg("");
     setForm(INITIAL_FORM);
   };
 
@@ -92,7 +111,7 @@ export default function ContactOssPage() {
 
       <div className="contactoss-inner">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <Row className={fade("d1")}>
           <Col>
             <div className="contactoss-header">
@@ -110,12 +129,13 @@ export default function ContactOssPage() {
           </Col>
         </Row>
 
-        {/* ── Form + Info ── */}
+        {/* Form + Info */}
         <Row>
 
           {/* Left: Form */}
           <Col md={7} className={fade("d2")}>
             {submitted ? (
+
               <div className="contactoss-success">
                 <div className="contactoss-success__circle">
                   <IconCheck />
@@ -129,13 +149,15 @@ export default function ContactOssPage() {
                   Skicka ett nytt meddelande
                 </button>
               </div>
+
             ) : (
+
               <form className="contactoss-form" onSubmit={handleSubmit} noValidate>
 
                 <Row>
                   <Col sm={6}>
                     <div className="contactoss-form__field">
-                      <label htmlFor="name" className="contactoss-form__label">Namn</label>
+                      <label htmlFor="name" className="contactoss-form__label">Namn *</label>
                       <input
                         id="name"
                         name="name"
@@ -167,7 +189,7 @@ export default function ContactOssPage() {
                 </Row>
 
                 <div className="contactoss-form__field">
-                  <label htmlFor="email" className="contactoss-form__label">E-postadress</label>
+                  <label htmlFor="email" className="contactoss-form__label">E-postadress *</label>
                   <input
                     id="email"
                     name="email"
@@ -195,7 +217,7 @@ export default function ContactOssPage() {
                 </div>
 
                 <div className="contactoss-form__field">
-                  <label htmlFor="message" className="contactoss-form__label">Meddelande</label>
+                  <label htmlFor="message" className="contactoss-form__label">Meddelande *</label>
                   <textarea
                     id="message"
                     name="message"
@@ -208,8 +230,24 @@ export default function ContactOssPage() {
                   />
                 </div>
 
-                <button type="submit" className="contactoss-form__submit">
-                  <span>Skicka meddelande</span>
+                {errorMsg && (
+                  <p style={{
+                    color: "#f87171",
+                    fontSize: "12px",
+                    letterSpacing: "0.04em",
+                    marginBottom: "16px",
+                  }}>
+                    ✗ {errorMsg}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="contactoss-form__submit"
+                  disabled={sending}
+                  style={{ opacity: sending ? 0.55 : 1, cursor: sending ? "not-allowed" : "pointer" }}
+                >
+                  <span>{sending ? "Skickar…" : "Skicka meddelande"}</span>
                 </button>
 
               </form>
@@ -226,11 +264,9 @@ export default function ContactOssPage() {
                   <span className="info-block__tag">E-post</span>
                 </div>
                 <a href="mailto:info@filmvisarna.se" className="info-block__link">
-                  info@filmvisarna.se
+                  fatima738086@gmail.com
                 </a>
-                <a href="mailto:support@filmvisarna.se" className="info-block__link">
-                  support@filmvisarna.se
-                </a>
+                
               </div>
 
               <div className="info-block">
@@ -252,8 +288,8 @@ export default function ContactOssPage() {
                   <span className="info-block__tag">Adress</span>
                 </div>
                 <address className="info-block__address">
-                   Propellergatan 1<br/>
-                   211 15 Malmö<br/>
+                  Propellergatan 1<br />
+                  211 15 Malmö
                 </address>
               </div>
 
