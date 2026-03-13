@@ -30,6 +30,17 @@ export default function AiChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // welcoming message
+  useEffect(() => {
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          "Hej och välkommen till Filmvisarna! Jag är din digitala biografassistent och hjälper dig gärna med allt som rör våra filmer, visningar, salonger och bokningar. Vad vill du utforska idag?",
+      },
+    ]);
+  }, []);
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
