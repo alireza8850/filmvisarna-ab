@@ -16,6 +16,7 @@ public static class Server
     FilmRoutes.Start();
     BookingRoutes.Start();
     SeatEventsRoutes.Start();
+    ContactRoutes.Start();
     RestApi.Start();
     Session.Start();
     // Start the server on port 3001

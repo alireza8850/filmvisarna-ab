@@ -111,6 +111,16 @@ public static class FilmvisarnaTables
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255)
             );
+            -- contact_messages
+               CREATE TABLE IF NOT EXISTS contact_messages (
+                id         INT AUTO_INCREMENT PRIMARY KEY,
+                name       VARCHAR(255)  NOT NULL,
+                email      VARCHAR(255)  NOT NULL,
+                phone      VARCHAR(50),
+                subject    VARCHAR(255),
+                message    TEXT          NOT NULL,
+                created_at DATETIME      DEFAULT CURRENT_TIMESTAMP
+                );
 
             -- film_actors
             CREATE TABLE IF NOT EXISTS film_actors (
@@ -304,6 +314,17 @@ public static class FilmvisarnaTables
           command.ExecuteNonQuery();
         }
       }
+      //message
+      command.CommandText = "SELECT COUNT(*) FROM contact_messages";
+      if (Convert.ToInt32(command.ExecuteScalar()) == 0)
+     {
+       command.CommandText = @"INSERT INTO contact_messages 
+        (name, email, phone, subject, message) VALUES
+        ('Anna Svensson', 'anna@exempel.se', '+46701234567', 'Fråga om biljetter', 'Hej! Kan man boka biljetter för en grupp om 10 personer?'),
+        ('Erik Johansson', 'erik@gmail.com', NULL, 'Tekniskt problem', 'Jag kunde inte slutföra min bokning, betalningen gick inte igenom.'),
+        ('Maria Lindqvist', 'maria@hotmail.com', '+46739876543', 'Önskemål om film', 'Skulle ni kunna visa fler barnfilmer på helgerna?')";
+        command.ExecuteNonQuery();
+     }
 
       // Mark Avatar 3 as featured
       command.CommandText = "UPDATE films SET is_featured = TRUE WHERE id = 1";
