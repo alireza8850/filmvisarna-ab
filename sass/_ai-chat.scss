@@ -1,6 +1,4 @@
-/* -----------------------------------------
-   AI CHAT WINDOW (INSIDE FLOATING PANEL)
------------------------------------------ */
+// AI CHAT WINDOW (INSIDE FLOATING PANEL)
 .ai-title{
   background-color: #2a4cff ;
   color: #ffff;
@@ -86,9 +84,9 @@
   }
 }
 
-/* -----------------------------------------
-   FLOATING BUTTON (NEON GLOW)
------------------------------------------ */
+
+// FLOATING BUTTON (NEON GLOW)
+
 .floating-ai-button {
   position: fixed;
   bottom: 24px;
@@ -123,9 +121,7 @@
   }
 }
 
-/* -----------------------------------------
-   FLOATING CHAT WINDOW (NEON + DRAGGABLE)
------------------------------------------ */
+// FLOATING CHAT WINDOW (NEON + DRAGGABLE)
 .floating-ai-window {
   position: fixed;
   bottom: 100px;
@@ -151,9 +147,7 @@
     0 0 36px rgba(42, 76, 255, 0.2);
 }
 
-/* -----------------------------------------
-   DRAG HANDLE (CINEMA LIGHT BAR)
------------------------------------------ */
+// DRAG HANDLE (CINEMA LIGHT BAR)
 .floating-ai-drag-handle {
   width: 100%;
   height: 22px;
@@ -168,9 +162,8 @@
   }
 }
 
-/* -----------------------------------------
-   CLOSE BUTTON
------------------------------------------ */
+// CLOSE BUTTON
+
 .floating-ai-close {
   position: absolute;
   top: 6px;
@@ -189,9 +182,7 @@
   }
 }
 
-/* -----------------------------------------
-   ANIMATIONS
------------------------------------------ */
+// ANIMATIONS
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -215,5 +206,30 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+.floating-ai-expand {
+  position: absolute;
+  top: 6px;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--sec-color);
+  color: var(--sec-color);
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: var(--sec-color);
+    color: #050816;
+    transform: scale(1.05);
   }
 }

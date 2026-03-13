@@ -2,6 +2,8 @@ import AiChat from "../parts/AiChat";
 import { useState, useRef , useEffect} from "react";
 import { FaCommentDots } from "react-icons/fa6";
 import { LuBot } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+
 AiChatPage.route = {
   path: "/ai-chat",
   menuLabel: "AI Chat",
@@ -11,6 +13,7 @@ AiChatPage.route = {
 
 export default function AiChatPage() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const dragData = useRef({
@@ -64,6 +67,12 @@ export default function AiChatPage() {
     }
   }, [open]);
 
+  const openFullPage = () => {
+    navigate("/ai-chat");
+  };
+
+  
+
   return (
     <>
       {/* Floating Button */}
@@ -83,6 +92,15 @@ export default function AiChatPage() {
           onMouseDown={startDrag}
         >
           <div className="floating-ai-drag-handle"></div>
+
+          {/* Open full window */}
+          <button
+            className="floating-ai-expand"
+            onClick={openFullPage}
+            aria-label="Open full AI assistant"
+          >
+            ⬜
+          </button>
 
           <button
             className="floating-ai-close"
