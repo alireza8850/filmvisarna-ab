@@ -91,7 +91,22 @@ export default function TicketPickerPage() {
     <h2 className="ticket-picker__title">
   {film.title} - ({new Date(showing.start_time).toLocaleDateString("sv-SE")}  {new Date(showing.start_time).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })})
 </h2>
-
+{!user && (
+        <div className="ticket-picker__auth-buttons">
+          <button
+            className="ticket-picker__member-btn"
+            onClick={() => navigate("/register")}
+          >
+            Är du medlem?
+          </button>
+          <button
+            className="ticket-picker__login-btn"
+            onClick={() => navigate("/login")}
+          >
+            Logga in
+          </button>
+        </div>
+      )}
       {/* Ticket Box */}
       <section className="ticketBox">
         <h3 className="ticketBox_title">Biljetter</h3>
