@@ -3,6 +3,7 @@ import Header from "./partials/Header";
 import Main from "./partials/Main";
 import Footer from "./partials/Footer";
 import BootstrapBreakpoints from "./parts/BootstrapBreakpoints";
+import AiChatPage from "./pages/AiChatPage";
 
 // turn off when not needed for debugging
 const showBootstrapBreakpoints = false;
@@ -17,6 +18,8 @@ export default function App() {
       <Header />
       <Main />
       <Footer />
+      {/* ai-chat floating icon*/}
+      <AiChatPage />
       {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
     </>
   );
