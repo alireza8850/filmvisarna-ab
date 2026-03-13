@@ -1,13 +1,14 @@
-// AI CHAT WINDOW (INSIDE FLOATING PANEL)
-.ai-title{
-  background-color: #2a4cff ;
+/* AI CHAT WINDOW (INSIDE FLOATING PANEL) */
+.ai-title {
+  background-color: #2a4cff;
   color: #ffff;
 }
+
 .ai-chat {
   display: flex;
   flex-direction: column;
-  height: 70vh;
-  max-height: 800px;
+  height: 100%;
+  max-height: none;
   background-color: var(--dark-bg);
   color: var(--primary-text);
 
@@ -30,7 +31,7 @@
       margin-left: auto;
       background-color: var(--primary-color);
       color: white;
-      box-shadow: 0 0 8px rgba(42, 76, 255, 0.4);
+      box-shadow: 0 0 8px rgba(96, 120, 239, 0.4);
     }
 
     &.assistant {
@@ -84,9 +85,7 @@
   }
 }
 
-
-// FLOATING BUTTON (NEON GLOW)
-
+/* FLOATING BUTTON (NEON GLOW) */
 .floating-ai-button {
   position: fixed;
   bottom: 24px;
@@ -105,7 +104,6 @@
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.3s ease;
   animation: pulse 2.2s infinite ease-in-out;
 
-  /* Neon glow */
   box-shadow:
     0 0 10px rgba(42, 76, 255, 0.6),
     0 0 20px rgba(42, 76, 255, 0.5),
@@ -121,7 +119,7 @@
   }
 }
 
-// FLOATING CHAT WINDOW (NEON + DRAGGABLE)
+/* FLOATING CHAT WINDOW */
 .floating-ai-window {
   position: fixed;
   bottom: 100px;
@@ -136,18 +134,15 @@
   overflow: hidden;
   z-index: 9999;
   animation: chatOpen 0.25s ease-out;
-
-  /* Smooth dragging */
   transition: top 0.12s ease-out, left 0.12s ease-out;
 
-  /* Neon glow */
   box-shadow:
     0 0 12px rgba(42, 76, 255, 0.4),
     0 0 24px rgba(42, 76, 255, 0.3),
     0 0 36px rgba(42, 76, 255, 0.2);
 }
 
-// DRAG HANDLE (CINEMA LIGHT BAR)
+/* DRAG HANDLE */
 .floating-ai-drag-handle {
   width: 100%;
   height: 22px;
@@ -162,8 +157,7 @@
   }
 }
 
-// CLOSE BUTTON
-
+/* CLOSE BUTTON */
 .floating-ai-close {
   position: absolute;
   top: 6px;
@@ -171,7 +165,7 @@
   background: transparent;
   border: none;
   font-size: 26px;
-  color: var(--sec-color);
+  color: #ffff;
   cursor: pointer;
   z-index: 10;
   transition: color 0.2s ease, transform 0.2s ease;
@@ -182,7 +176,64 @@
   }
 }
 
-// ANIMATIONS
+/* EXPAND BUTTON */
+.floating-ai-expand {
+  position: absolute;
+  top: 6px;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid;
+  color: #ffff;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: #ede6e6;
+    color: #050816;
+    transform: scale(1.05);
+  }
+}
+
+/* FULL PAGE CHAT */
+.ai-fullpage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--dark-bg);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.ai-fullpage-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #ffff;
+  cursor: pointer;
+  font-size: 26px;
+  z-index: 100000;
+
+  &:hover {
+    color: white;
+    transform: scale(1.1);
+  }
+}
+
+/* ANIMATIONS */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -209,27 +260,14 @@
   }
 }
 
-.floating-ai-expand {
-  position: absolute;
-  top: 6px;
-  right: 40px;
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  background: transparent;
-  border: 1px solid var(--sec-color);
-  color: var(--sec-color);
-  font-size: 12px;
-  cursor: pointer;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
 
-  &:hover {
-    background: var(--sec-color);
-    color: #050816;
-    transform: scale(1.05);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
