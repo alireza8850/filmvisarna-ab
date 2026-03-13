@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "/images/logo/logo.png";
 export default function Footer() {
   return (
     <footer style={{
@@ -20,14 +21,17 @@ export default function Footer() {
       }}>
         {/* Left Side */}
         <div>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            marginBottom: '24px',
-            color: 'white'
-          }}>
-            Filmvisarna AB
-          </h2>
+          <img
+            src={logo}
+            alt="Filmvisarna AB"
+            style={{
+              height: '60px',
+              width: 'auto',
+              objectFit: 'contain',
+              marginBottom: '24px',
+              display: 'block'
+            }}
+          />
           
           {/* Social Icons - Smaller Size */}
           <div style={{ display: 'flex', gap: '16px' }}>
