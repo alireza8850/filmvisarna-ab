@@ -10,6 +10,7 @@ import type TicketType from "../interfaces/TicketType";
 import type TicketPrice from "../interfaces/TicketPrice";
 import { useBooking } from "../utils/BookingContext";
 import SeatSelector from "./SeatSelector";
+import { useUser } from "../utils/UserContext";
 
 TicketPickerPage.route = {
   path: "/booking/:showingId/tickets",
