@@ -52,15 +52,27 @@ export default function TicketPickerPage() {
     vuxen * vuxenPrice + barn * barnPrice + pensionar * pensionarPrice;
 
   const totalCount = vuxen + barn + pensionar;
-  const { selectedSeats } = useBooking(); 
+  const { selectedSeats, setSelectedSeats } = useBooking(); 
+  useEffect(() => {
+    setSelectedSeats([]); 
+  }, []);
 
+  const [seatError, setSeatError] = useState("");
+  useEffect(() => {
+    if (seatError) {
+      const timer = setTimeout(() => setSeatError(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [seatError]);
+  
   const handleContinue = () => {
     const totalTickets = vuxen + barn + pensionar;
     // control that the chosen seats match the chosen tickets
     if (selectedSeats.length !== totalTickets) {
-      alert("Du måste välja lika många platser som antal biljetter.");
+      setSeatError("Du måste välja lika många platser som antal biljetter.");
       return;
     }
+    setSeatError("");
     navigate("/bookingformPage", {
       // Send the real prices to the BookingForm page in order to send them after the confirmation to db
       state: {
@@ -168,6 +180,7 @@ export default function TicketPickerPage() {
         {totalCount > 0 && (
           <div className="mt-5">
             <SeatSelector
+              key={showing.id + "-" + tickets.length}
               showing={showing}
               halls={halls}
               seats={seats}
@@ -186,6 +199,13 @@ export default function TicketPickerPage() {
           </button>
         </div>
       </section>
+      {seatError && (
+        <div className="seat-error-overlay" onClick={() => setSeatError("")}>
+          <div className="seat-error-box" onClick={(e) => e.stopPropagation()}>
+            <p>{seatError}</p>
+          </div>
+        </div>
+      )}
     </article>
   );
 }

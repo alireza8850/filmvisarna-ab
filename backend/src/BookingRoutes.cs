@@ -39,15 +39,15 @@ public static class BookingRoutes
     });
 
     // GET /api/tickets?booking_id=X
-App.MapGet("/api/tickets", (HttpContext context) =>
-{
-  var bookingIdStr = context.Request.Query["booking_id"].ToString();
-  if (string.IsNullOrWhiteSpace(bookingIdStr))
-  {
-    return RestResult.Parse(context, new { error = "booking_id is required." });
-  }
+    App.MapGet("/api/tickets", (HttpContext context) =>
+    {
+      var bookingIdStr = context.Request.Query["booking_id"].ToString();
+      if (string.IsNullOrWhiteSpace(bookingIdStr))
+      {
+        return RestResult.Parse(context, new { error = "booking_id is required." });
+      }
 
-  var sql = @"
+      var sql = @"
       SELECT t.id, t.seat_id, t.ticket_type_id,
              s.row_index, s.seat_letter
       FROM tickets t
@@ -55,9 +55,24 @@ App.MapGet("/api/tickets", (HttpContext context) =>
       WHERE t.booking_id = @bookingId
   ";
 
-  var tickets = SQLQuery(sql, new { bookingId = bookingIdStr }, context);
-  return RestResult.Parse(context, tickets);
-});
+      var tickets = SQLQuery(sql, new { bookingId = bookingIdStr }, context);
+      return RestResult.Parse(context, tickets);
+    });
+
+    // GET /api/showings/:id/tickets 
+    App.MapGet("/api/showings/{id}/tickets", (HttpContext context, int id) =>
+    {
+      var sql = @"
+        SELECT t.id, t.seat_id, t.ticket_type_id, t.showing_id, s.row_index, s.seat_letter
+        FROM tickets t
+        LEFT JOIN seats s ON t.seat_id = s.id
+        WHERE t.showing_id = @id
+    ";
+
+      var tickets = SQLQuery(sql, new { id }, context);
+      return RestResult.Parse(context, tickets);
+    });
+
 
     // GET /api/bookings/my
     App.MapGet("/api/bookings/my", (HttpContext context) =>
@@ -182,7 +197,7 @@ App.MapGet("/api/tickets", (HttpContext context) =>
         {
           return RestResult.Parse(context, new
           {
-            error = "En eller flera platser är redan bokade."
+            error = "Tyvärr blev en av platserna bokad av en annan användare.Välj en ny plats."
           });
         }
       }
