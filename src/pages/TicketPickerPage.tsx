@@ -88,11 +88,7 @@ export default function TicketPickerPage() {
 
   return (
     <article className="ticket-picker container mt-4">
-      {/* Title */}
-    <h2 className="ticket-picker__title">
-  {film.title} - ({new Date(showing.start_time).toLocaleDateString("sv-SE")}  {new Date(showing.start_time).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })})
-</h2>
-{!user && (
+    {!user && (
         <div className="ticket-picker__auth-buttons">
           <button
             className="ticket-picker__member-btn"
@@ -108,6 +104,10 @@ export default function TicketPickerPage() {
           </button>
         </div>
       )}
+      {/* Title */}
+    <h2 className="ticket-picker__title">
+  {film.title} - ({new Date(showing.start_time).toLocaleDateString("sv-SE")}  {new Date(showing.start_time).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })})
+</h2>
       {/* Ticket Box */}
       <section className="ticketBox">
         <h3 className="ticketBox_title">Biljetter</h3>
