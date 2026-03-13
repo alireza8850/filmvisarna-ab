@@ -5,18 +5,20 @@ NotFoundPage.route = {
 };
 
 export default function NotFoundPage() {
+  const location = useLocation();
+
   return (
     <>
-      <h2>Not Found: 404</h2>
+      <h2>Sidan hittades inte: 404</h2>
       <p>
-        We are sorry, but there doesn't seem to be any page on this site that
-        matches the url:
+        Vi är ledsna, men det verkar inte finnas någon sida på denna webbplats
+        som matchar webbadressen:
       </p>
       <p>
-        <strong>{useLocation().pathname.slice(1)}</strong>
+        <strong>{location.pathname.slice(1)}</strong>
       </p>
       <p>
-        Please <Link to="/">visit the start page</Link> instead.
+        Vänligen <Link to="/" style={{ color: "white" }}>gå till startsidan</Link> istället.
       </p>
     </>
   );
