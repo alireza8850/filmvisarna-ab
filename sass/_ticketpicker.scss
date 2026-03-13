@@ -229,17 +229,7 @@
     opacity: 1;
   }
 }
-
-@keyframes popIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  .ticket-picker__auth-buttons {
+.ticket-picker__auth-buttons {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.5rem;
@@ -263,6 +253,4 @@
   padding: 0.5rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
-}
-  }
 }
