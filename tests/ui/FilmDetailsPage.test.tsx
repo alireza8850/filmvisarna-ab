@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter, useLoaderData } from "react-router-dom";
 import FilmDetailsPage from "../../src/pages/FilmDetailsPage";
 import { describe, it, expect, vi, beforeEach } from "vitest";
