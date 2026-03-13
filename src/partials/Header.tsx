@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../utils/UserContext";
+import logo from "/images/logo/logo.png";
 
 const MER_LANKAR = [
     {text:"Nu på bio", href:"/"},
@@ -57,7 +58,12 @@ useEffect(
                 <div className="container-fluid px-3 px-md-4">          {/* full bredd container med padding x 3 och padding 4 för skärm medium och större*/}
                     <div className="d-flex justify-content-between align-items-center">
  
-                        <h1 className="logo" onClick={() => navigate("/")}>Filmvisarna AB</h1>                 
+                        <img
+                            src={logo}
+                            alt="Filmvisarna AB"
+                            className="logo"
+                            onClick={() => navigate("/")}
+                            />               
                         <nav className="desktop-nav d-none d-lg-flex align-items-center ms-auto gap-3">    {/* dold som standard och visas på lg(desktop)*/}
 
                             <ul className="nav-links list-unstyled d-flex gap-3 mb-0">

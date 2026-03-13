@@ -20,15 +20,16 @@ body {
 }
 
 .logo {
-    font-size: 32px;
-    letter-spacing: 1px;
+    height: 50px;       
+    width: auto;
     margin: 0;
-    color: var(--primary-text);
-    white-space: nowrap;
+    cursor: pointer;
+    object-fit: contain;
 }
 
 .logo:hover{
     cursor: pointer;
+    opacity: 0.85;
 }
 
 

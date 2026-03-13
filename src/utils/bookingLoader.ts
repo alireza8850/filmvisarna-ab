@@ -94,10 +94,10 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
     console.error("Failed to fetch bookings", e);
   }
 
-  //8)Ticket
+  //8) fetch sold tickets for this showing
   let tickets: Ticket[] = [];
   try {
-    const res = await fetch(`/api/tickets`);
+    const res = await fetch(`/api/showings/${showingId}/tickets`);
     if (res.ok) {
       tickets = await res.json();
     }

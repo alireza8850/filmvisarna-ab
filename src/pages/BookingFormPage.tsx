@@ -1,10 +1,11 @@
 
 import { Row, Col } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBooking } from "../utils/BookingContext";
 import type Seat from "../interfaces/Seat";
 import "/sass/-booking-form.scss";
+import { useUser } from "../utils/UserContext";
 
 BookingFormPage.route = {
   path: "/bookingformpage",
@@ -12,6 +13,12 @@ BookingFormPage.route = {
 
 export default function BookingFormPage() {
   const navigate = useNavigate();
+
+  const { user } = useUser();
+  const { setSelectedSeats } = useBooking();
+  
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  
   // Prices + seats passed from TicketPickerPage
   const location = useLocation();
   const { vuxenPrice, barnPrice, pensionarPrice, seats } = location.state as {
@@ -22,6 +29,20 @@ export default function BookingFormPage() {
   };
   // Booking context
   const { film, showing, tickets, selectedSeats, clearBooking } = useBooking(); // Adding the selected seats to send them to backend/db // Fatima
+
+  useEffect(() => {
+    if (!bookingError) return;
+
+    const timer = setTimeout(() => {
+      setBookingError(null);
+      if (showing?.id) {
+        navigate(`/booking/${showing.id}/tickets?refresh=${Date.now()}`);
+      }
+    }, 6000);
+
+    return () => clearTimeout(timer);
+  }, [bookingError, navigate, showing?.id]);
+
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,21 +79,25 @@ export default function BookingFormPage() {
       alert("Vänligen fyll i din e-postadress");
       return;
     }
-    // update the chosen seats
+
     setIsSubmitting(true);
+
     try {
       const ticketRequests = [];
       let seatIndex = 0;
+
       for (let i = 0; i < tickets.adult; i++)
         ticketRequests.push({
           ticket_type_id: 1,
           seat_id: selectedSeats[seatIndex++],
         });
+
       for (let i = 0; i < tickets.child; i++)
         ticketRequests.push({
           ticket_type_id: 2,
           seat_id: selectedSeats[seatIndex++],
         });
+
       for (let i = 0; i < tickets.senior; i++)
         ticketRequests.push({
           ticket_type_id: 3,
@@ -83,23 +108,41 @@ export default function BookingFormPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // Send all the needed information to bd-booking / backend 
           showing_id: showing.id,
-          email: email, // Just for now because we need to reset this to check if the user is not looged in
-          // user_id: user? user.id : null ==> next ==> booking_email: user? null: email
+          email,
           tickets: ticketRequests,
-          total_price: totalPrice
+          total_price: totalPrice,
         }),
       });
 
-      if (response.ok) {
+      // --- DOUBLE BOOKING ---
+      if (response.status === 409) {
         const data = await response.json();
+
+        const newlyBooked = data.bookedSeats ?? [];
+
+        setSelectedSeats(
+          selectedSeats.filter((id) => !newlyBooked.includes(id)),
+        );
+
+        setBookingError(
+          "Några av platserna du valde blev bokade av någon annan. Välj nya platser.",
+        );
+
+        return;
+      }
+
+      // --- SUCCESS ---
+      if (response.ok) {
         clearBooking();
         navigate("/confirmation");
-      } else {
-        const error = await response.text();
-        alert("Bokningen misslyckades: " + error);
+        return;
       }
+
+      // --- OTHER ERRORS ---
+      const error = await response.text();
+      setBookingError("Bokningen mislyckades: " + error);
+      return;
     } catch (err) {
       console.error(err);
       alert("Ett fel uppstod vid bokningen.");
@@ -161,11 +204,7 @@ export default function BookingFormPage() {
                   </div>
                 ))}
               </div>
-              <img
-                src={imageUrl}
-                alt={film.title}
-                className="poster"
-              />
+              <img src={imageUrl} alt={film.title} className="poster" />
             </div>
             <hr
               style={{ borderColor: "var(--border-color)", margin: "12px 0" }}
@@ -176,8 +215,7 @@ export default function BookingFormPage() {
             <span className="section-label">Valda platser</span>
             <div className="ticket-list">
               {selectedSeatObjects.map((seat) => {
-
-              // change row_idex to a letter
+                // change row_idex to a letter
                 const rowLetter = String.fromCharCode(
                   "A".charCodeAt(0) + seat.row_index,
                 );
@@ -204,7 +242,6 @@ export default function BookingFormPage() {
 
                 return (
                   <div key={seat.id} className="ticket-card">
-                    
                     <span className="ticket-row-text">Rad: </span>
                     <span className="tickets"></span>
                     <span className="ticket-seat-text">Plats: </span>
@@ -248,14 +285,15 @@ export default function BookingFormPage() {
         <Col>
           <Row className="mb-2">
             <Col>
-              <input
-                type="email"
-                className="email-input"
-                placeholder="skriv in din e-post"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              {!user && (
+                <input
+                  type="email"
+                  className="email-input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Din e-postadress"
+                />
+              )}
             </Col>
           </Row>
           {/* OBS: messages*/}
@@ -280,6 +318,25 @@ export default function BookingFormPage() {
           </Row>
         </Col>
       </Row>
+      {bookingError && (
+        <div className="booking-error-overlay">
+          <div className="booking-error-box">
+            <p>{bookingError}</p>
+
+            <button
+              className="booking-error-close"
+              onClick={() => {
+                setBookingError(null);
+                navigate(
+                  `/booking/${showing.id}/tickets?refresh=${Date.now()}`,
+                );
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

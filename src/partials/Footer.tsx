@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "/images/logo/logo.png";
 export default function Footer() {
   return (
     <footer style={{
@@ -20,14 +21,17 @@ export default function Footer() {
       }}>
         {/* Left Side */}
         <div>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            marginBottom: '24px',
-            color: 'white'
-          }}>
-            Filmvisarna AB
-          </h2>
+          <img
+            src={logo}
+            alt="Filmvisarna AB"
+            style={{
+              height: '60px',
+              width: 'auto',
+              objectFit: 'contain',
+              marginBottom: '24px',
+              display: 'block'
+            }}
+          />
           
           {/* Social Icons - Smaller Size */}
           <div style={{ display: 'flex', gap: '16px' }}>
@@ -157,9 +161,10 @@ export default function Footer() {
           color: 'rgba(255, 255, 255, 0.7)',
           fontSize: '14px'
         }}>
-          <Link to="/om-oss">Om oss </Link>
-          <Link to="/kontakta-oss">Kontakta oss</Link>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
+          <Link to="/om-oss" style={{ color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none' }}>Om oss</Link>
+          <Link to="/kontakta-oss" style={{ color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none' }}>Kontakta oss</Link>
+          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Propellergatan 1
+                                                                            211 15 Malmö</a>
           <a href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
         </div>
       </div>
