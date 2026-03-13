@@ -157,9 +157,10 @@ export default function Footer() {
           color: 'rgba(255, 255, 255, 0.7)',
           fontSize: '14px'
         }}>
-          <Link to="/om-oss">Om oss </Link>
-          <Link to="/kontakta-oss">Kontakta oss</Link>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Adress</a>
+          <Link to="/om-oss" style={{ color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none' }}>Om oss</Link>
+          <Link to="/kontakta-oss" style={{ color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none' }}>Kontakta oss</Link>
+          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Propellergatan 1
+                                                                            211 15 Malmö</a>
           <a href="/policy" style={{ color: 'inherit', textDecoration: 'none' }}>Policy</a>
         </div>
       </div>
