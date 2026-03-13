@@ -229,15 +229,28 @@
     opacity: 1;
   }
 }
+.ticket-picker__auth-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
 
-@keyframes popIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
+.ticket-picker__member-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.ticket-picker__login-btn {
+  background: #b80000;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
 }

@@ -10,6 +10,7 @@ import type TicketType from "../interfaces/TicketType";
 import type TicketPrice from "../interfaces/TicketPrice";
 import { useBooking } from "../utils/BookingContext";
 import SeatSelector from "./SeatSelector";
+import { useUser } from "../utils/UserContext";
 
 TicketPickerPage.route = {
   path: "/booking/:showingId/tickets",
@@ -31,6 +32,7 @@ export default function TicketPickerPage() {
     };
   
   const { setTickets } = useBooking();
+  const { user } = useUser();
 
   const [vuxen, setVuxen] = useState(0);
   const [barn, setBarn] = useState(0);
@@ -86,11 +88,26 @@ export default function TicketPickerPage() {
 
   return (
     <article className="ticket-picker container mt-4">
+    {!user && (
+        <div className="ticket-picker__auth-buttons">
+          <button
+            className="ticket-picker__member-btn"
+            onClick={() => navigate("/register")}
+          >
+            Är du medlem?
+          </button>
+          <button
+            className="ticket-picker__login-btn"
+            onClick={() => navigate("/login")}
+          >
+            Logga in
+          </button>
+        </div>
+      )}
       {/* Title */}
     <h2 className="ticket-picker__title">
   {film.title} - ({new Date(showing.start_time).toLocaleDateString("sv-SE")}  {new Date(showing.start_time).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })})
 </h2>
-
       {/* Ticket Box */}
       <section className="ticketBox">
         <h3 className="ticketBox_title">Biljetter</h3>
