@@ -4,7 +4,7 @@ import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import { useStateContext } from "../utils/useStateObject";
 import NotFoundPage from "./NotFoundPage";
-import Image from "../parts/Image";
+// import Image from "../parts/Image";
 import filmsLoader from "../utils/FilmsLoader";
 import { useBooking } from "../utils/BookingContext";
 

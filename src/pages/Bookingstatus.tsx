@@ -15,7 +15,7 @@ export default function Bookingstatus() {
   const [error, setError] = useState<string | null>(null);
   const [cancelMessage, setCancelMessage] = useState<{ text: string; ok: boolean } | null>(null);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
-  const [userEmail, setUserEmail] = useState<string>("");
+  // const [userEmail, setUserEmail] = useState<string>("");
   const navigate = useNavigate();
   async function fetchBookings() {
     try {
@@ -72,8 +72,8 @@ export default function Bookingstatus() {
     try {
       const res = await fetch("/api/users/me", { credentials: "include" });
       if (res.ok) {
-        const data = await res.json();
-        setUserEmail(data.email ?? "");
+        // const data = await res.json();
+        // setUserEmail(data.email ?? "");
       }
     } catch {
       // ignore

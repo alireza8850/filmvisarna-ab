@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
 import type Showing from "../interfaces/Showing";
 import type Film from "../interfaces/Film";
-import type TicketType from "../interfaces/TicketType";
+// import type TicketType from "../interfaces/TicketType";
 import type TicketPrice from "../interfaces/TicketPrice";
 import type Hall from "../interfaces/Hall";
 import type Seat from "../interfaces/Seat";
@@ -46,9 +46,11 @@ export default async function bookingLoader({ params }: LoaderFunctionArgs) {
   }
 
   // 3) Fetch ticket types
+  /*
   const ticketTypes: TicketType[] = await (
     await fetch(`/api/ticket_types`)
   ).json();
+  */
 
   // 4) Fetch ticket prices
   let ticketPrices: TicketPrice[] = [];

@@ -178,9 +178,11 @@ export default function SeatSelector({
           const rowSeats = seatsByRow[rowIndex] ?? [];
 
           //
+          /*
           const seatsBefore = Object.values(seatsByRow)
             .slice(0, rowIndex)
             .reduce((sum, row) => sum + row.length, 0);
+          */
 
           return (
             <div key={rowIndex} className="seat-row">
