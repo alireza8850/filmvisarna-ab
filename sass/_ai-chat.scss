@@ -1,34 +1,55 @@
+/* AI CHAT WINDOW (INSIDE FLOATING PANEL) */
+.ai-title {
+  background-color: #2a4cff;
+  color: #ffff;
+}
+
 .ai-chat {
   display: flex;
   flex-direction: column;
-  height: 70vh;
-  max-height: 800px;
+  height: 100%;
+  max-height: none;
+  background-color: var(--dark-bg);
+  color: var(--primary-text);
 
   .ai-chat-body {
     flex: 1;
     overflow-y: auto;
+    padding: 12px;
   }
 
   .ai-chat-message {
     max-width: 80%;
     white-space: pre-wrap;
     word-wrap: break-word;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
 
     &.user {
       margin-left: auto;
-      margin-right: 0;
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 0 8px rgba(96, 120, 239, 0.4);
     }
 
     &.assistant {
-      margin-left: 0;
       margin-right: auto;
+      background-color: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--primary-text);
     }
   }
 
   .ai-chat-footer {
+    padding: 10px;
+    border-top: 1px solid var(--border-color);
+
     .ai-chat-status {
       font-size: 0.85rem;
       min-height: 1.2em;
+      color: var(--sec-text);
     }
 
     .ai-chat-input-area {
@@ -40,14 +61,213 @@
         resize: none;
         min-height: 44px;
         max-height: 200px;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border-color);
+        color: var(--primary-text);
+        padding: 8px;
+        border-radius: 6px;
       }
 
       button {
-        position: static !important;
-        width: auto !important;
-        min-width: 80px;
-        align-self: flex-start;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #1f36c7;
+        }
       }
     }
+  }
+}
+
+/* FLOATING BUTTON (NEON GLOW) */
+.floating-ai-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.3s ease;
+  animation: pulse 2.2s infinite ease-in-out;
+
+  box-shadow:
+    0 0 10px rgba(42, 76, 255, 0.6),
+    0 0 20px rgba(42, 76, 255, 0.5),
+    0 0 30px rgba(42, 76, 255, 0.4);
+
+  &:hover {
+    background: #1f36c7;
+    transform: scale(1.08);
+    box-shadow:
+      0 0 12px rgba(42, 76, 255, 0.8),
+      0 0 24px rgba(42, 76, 255, 0.7),
+      0 0 36px rgba(42, 76, 255, 0.6);
+  }
+}
+
+/* FLOATING CHAT WINDOW */
+.floating-ai-window {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 380px;
+  height: 520px;
+  background: var(--dark-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  animation: chatOpen 0.25s ease-out;
+  transition: top 0.12s ease-out, left 0.12s ease-out;
+
+  box-shadow:
+    0 0 12px rgba(42, 76, 255, 0.4),
+    0 0 24px rgba(42, 76, 255, 0.3),
+    0 0 36px rgba(42, 76, 255, 0.2);
+}
+
+/* DRAG HANDLE */
+.floating-ai-drag-handle {
+  width: 100%;
+  height: 22px;
+  background: linear-gradient(to right,
+      rgba(42, 76, 255, 0.15),
+      rgba(42, 76, 255, 0.05));
+  border-bottom: 1px solid var(--border-color);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+/* CLOSE BUTTON */
+.floating-ai-close {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  color: #ffff;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    color: white;
+    transform: scale(1.15);
+  }
+}
+
+/* EXPAND BUTTON */
+.floating-ai-expand {
+  position: absolute;
+  top: 6px;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid;
+  color: #ffff;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: #ede6e6;
+    color: #050816;
+    transform: scale(1.05);
+  }
+}
+
+/* FULL PAGE CHAT */
+.ai-fullpage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--dark-bg);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.ai-fullpage-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #ffff;
+  cursor: pointer;
+  font-size: 26px;
+  z-index: 100000;
+
+  &:hover {
+    color: white;
+    transform: scale(1.1);
+  }
+}
+
+/* ANIMATIONS */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes chatOpen {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
