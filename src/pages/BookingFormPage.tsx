@@ -75,7 +75,7 @@ export default function BookingFormPage() {
     ].filter((t) => t.count > 0);
   
   const handleBooking = async () => {
-    if (!email) {
+    if (!user && !email) {
       alert("Vänligen fyll i din e-postadress");
       return;
     }
