@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import logo from "/images/logo/logo.png";
+import { useNavigate } from "react-router-dom";
 export default function Footer() {
+  const navigate = useNavigate();
   return (
     <footer style={{
       backgroundColor: '#000000',
@@ -24,12 +26,14 @@ export default function Footer() {
           <img
             src={logo}
             alt="Filmvisarna AB"
+            onClick={() => navigate("/")}
             style={{
               height: '60px',
               width: 'auto',
               objectFit: 'contain',
               marginBottom: '24px',
-              display: 'block'
+              display: 'block',
+              cursor: 'pointer',
             }}
           />
           
