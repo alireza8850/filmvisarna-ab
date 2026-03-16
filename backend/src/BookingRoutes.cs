@@ -357,6 +357,19 @@ public static class BookingRoutes
 // GET /api/bookings/{bookingNumber} - Admin/Staff looking up by bookingnumber
 App.MapGet("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
 {
+  var user = Session.Get(context, "user");
+
+  if (user == null)
+  {
+    context.Response.StatusCode = 401;
+    return RestResult.Parse(context, new { error = "Unauthorized" });
+  }
+
+  if (user.role != "admin" && user.role != "staff")
+  {
+    context.Response.StatusCode = 403;
+    return RestResult.Parse(context, new { error = "Forbidden" });
+  }
   if (string.IsNullOrWhiteSpace(bookingNumber))
   {
     return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });
@@ -401,6 +414,22 @@ App.MapGet("/api/bookings/{bookingNumber}", (HttpContext context, string booking
 // DELETE /api/bookings/{bookingNumber} - Admin/Staff cancel booking by booking number
 App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
 {
+  // Check login
+
+  var user = Session.Get(context, "user");
+
+  if (user == null)
+  {
+    context.Response.StatusCode = 401;
+    return RestResult.Parse(context, new { error = "Unauthorized" });
+  }
+ // Check admin/staff role
+  if (user.role != "admin" && user.role != "staff")
+  {
+    context.Response.StatusCode = 403;
+    return RestResult.Parse(context, new { error = "Forbidden" });
+  }
+
   if (string.IsNullOrWhiteSpace(bookingNumber))
   {
     return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });

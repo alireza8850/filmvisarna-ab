@@ -187,9 +187,13 @@ public static class DbQuery
                 -- Release movie
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/release-movie', 'true', 'Allow anyone to release a movie'),
                 -- Contact oss
-                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form');
+                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form'),
                 -- SSE 
-                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates')
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates'),
+                -- GEt booking
+                ('admin,staff', 'GET', 'allow', '/api/bookings/', 'false', 'Allow admin and staff to lookup bookings'),
+                -- DELET bookings
+                ('admin,staff', 'DELETE', 'allow', '/api/bookings/', 'false', 'Allow admin and staff to cancel bookings')
                 ;
             ";
       command.CommandText = aclData;
