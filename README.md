@@ -1,3 +1,251 @@
+# Filmvisarna AB – Bokningssystem för biograf
+
+Filmvisarna AB är ett fullständigt bokningssystem för en biograf där användare kan:
+
+- Se filmer och visningar  
+- Välja biljetter och platser  
+- Genomföra bokning  
+- Logga in / logga ut  
+- Administrera filmer, salonger och visningar (admin)  
+
+Systemet består av:
+
+- Frontend: React + TypeScript  
+- Backend: .NET Minimal API  
+- Databas: MySQL  
+- Autentisering: Cookies + sessions  
+
+---
+
+## Teknikstack
+
+| Lager     | Teknik                                      |
+|-----------|---------------------------------------------|
+| Frontend  | Vite + React + TypeScript + Bootstrap + Sass |
+| Backend   | .NET 10 Minimal API + DynData               |
+| Databas   | MySQL                                       |
+
+---
+
+## Arkitektur
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Frontend                             │
+│               Vite + React + TypeScript                     │
+│                  Bootstrap + Sass                           │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ HTTP (REST API)
+┌──────────────────────▼──────────────────────────────────────┐
+│                        Backend                              │
+│                   .NET 10 Minimal API                       │
+│                                                             │
+│  ┌─────────────────────┐    ┌────────────────────────────┐  │
+│  │       App.cs        │    │      db-config.json        │  │
+│  │  ─────────────────  │    │  ────────────────────────  │  │
+│  │  debugOn            │    │  host                      │  │
+│  │  detailedAclDebug   │    │  port                      │  │
+│  │  aclOn              │    │  username                  │  │
+│  │  isSpa              │    │  password                  │  │
+│  │  port               │    │  database                  │  │
+│  │  serverName         │    │  createTablesIfNotExist    │  │
+│  │  frontendPath       │    │  seedDataIfEmpty           │  │
+│  │  sessionLifeTimeHours│   └────────────────────────────┘  │
+│  └─────────────────────┘                                    │
+│                                                             │
+│  DynData: Dynamisk C# (Obj, Arr, JSON, Log)                 │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ MySqlConnector
+┌───────────────────────▼─────────────────────────────────────┐
+│                        Databas                              │
+│                                                             │
+│  ┌──────────┐ ┌─────┐ ┌───────┐ ┌───────┐ ┌───────┐ ┌─────┐│
+│  │ sessions │ │ acl │ │ users │ │ films │ │ halls │ │seats││
+│  └──────────┘ └─────┘ └───────┘ └───────┘ └───────┘ └─────┘│
+│                                                             │
+│  ┌─────────┐ ┌─────────────┐ ┌─────────────┐ ┌──────────┐  │
+│  │showings │ │ticket_types │ │ticket_prices│ │ bookings │  │
+│  └─────────┘ └─────────────┘ └─────────────┘ └──────────┘  │
+│                                                             │
+│  ┌─────────┐ ┌──────────────────┐ ┌───────────┐ ┌────────┐ │
+│  │ tickets │ │ contact_messages │ │film_actors│ │ actors │ │
+│  └─────────┘ └──────────────────┘ └───────────┘ └────────┘ │
+│                                                             │
+│  ┌──────────────────────┐                                   │
+│  │ booking_overview view│                                   │
+│  └──────────────────────┘                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Installation
+
+1. Klona projektet:
+```bash
+git clone https://github.com/alireza8850/filmvisarna-ab.git
+```
+
+2. Kopiera databas-konfigurationen och fyll i värden:
+```bash
+cp backend/db-config.template.json backend/db-config.json
+```
+
+3. Redigera `backend/db-config.json` med rätt uppgifter:
+```json
+{
+  "host": "",
+  "port": 3306,
+  "username": "",
+  "password": "",
+  "database": "",
+  "createTablesIfNotExist": true,
+  "seedDataIfEmpty": true,
+  "aiAccessToken": "",
+  "smtpServer": "",
+  "smtpPort": 587,
+  "emailUsername": "",
+  "emailPassword": ""
+}
+```
+
+4. Installera och starta:
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## Konfiguration
+
+### App-inställningar (`backend/src/App.cs`)
+- `aclOn` - Slå på/av ACL-systemet
+- `debugOn` - Aktivera debug-loggning
+- `sessionLifeTimeHours` - Sessionens livslängd
+
+### Databas-inställningar (`backend/db-config.json`)
+- `createTablesIfNotExist` - Skapa tabeller automatiskt vid uppstart
+- `seedDataIfEmpty` - Fyll tabeller med exempeldata om de är tomma
+
+---
+
+## REST API
+
+### Fem standardroutes per tabell
+
+Ersätt `tabellnamn` med ett tabellnamn och `id` med ett specifikt id:
+
+| Metod  | Route                  | Beskrivning                        |
+|--------|------------------------|------------------------------------|
+| POST   | /api/tabellnamn        | Skapa en ny rad                    |
+| GET    | /api/tabellnamn        | Hämta alla rader                   |
+| GET    | /api/tabellnamn/id     | Hämta en specifik rad              |
+| PUT    | /api/tabellnamn/id     | Uppdatera en befintlig rad         |
+| DELETE | /api/tabellnamn/id     | Ta bort en specifik rad            |
+
+### Query-parametrar för GET
+
+- `where` - Filtrera poster
+- `orderby` - Sortera poster (sätt `-` före fältnamn för fallande)
+- `limit` - Begränsa antal poster
+- `offset` - Hoppa över poster i början
+
+**Exempel:**
+```
+/api/users?where=firstName=Arbaz_AND_lastName!=Shah&limit=2&offset=1
+```
+
+### Operatorer för `where`
+`!=`, `>=`, `<=`, `=`, `>`, `<`, `AND`, `OR`, `LIKE`
+
+---
+
+## Viktigt att veta
+
+- Systemet använder sessionscookies för inloggning.
+- Bokningssystemet hanterar double booking genom backend-validering.
+- Endast inloggade användare kan administrera filmer och visningar.
+- Projektet är byggt för utbildningssyfte men följer verkliga arkitekturprinciper.
+
+---
+
+## Teknisk skuld
+
+### Backend
+- Vissa endpoints saknar fullständig felhantering (t.ex. 409 vs 500)
+- Ingen global exception middleware
+- Ingen rate limiting eller skydd mot brute force login
+- Vissa SQL-frågor kan optimeras
+
+### Frontend
+- Vissa komponenter är för stora och borde delas upp (BookingFormPage, TicketPickerPage)
+- CSS/SCSS är delvis oorganiserad
+- Ingen global error boundary i React
+- Ingen loading-state på vissa sidor
+
+### Testning
+- API Integration Tester
+- Frontend Componenterna Tester
+- End-to-End Tester (hela flödet)
+
+---
+
+## Lösningsarkitektur
+
+Systemet följer en klassisk client–server-arkitektur:
+
+- **Frontend** (React) ansvarar för UI, routing och state management
+- **Backend** (.NET Minimal API) ansvarar för affärslogik, autentisering och datalagring
+- **Databas** (MySQL) lagrar filmer, visningar, salonger, platser och bokningar
+
+### Autentisering & behörighet
+- Inloggning skapar en session-cookie
+- Backend kontrollerar sessionen vid varje request
+- Admin/Staff har utökade rättigheter
+
+### Bokningsflöde
+1. Användaren väljer en film
+2. Användaren väljer en visning
+3. Användaren väljer biljetter
+4. Användaren väljer platser
+5. Backend validerar att platserna är lediga
+6. Vid konflikt returneras 409 Conflict
+7. Vid lyckad bokning sparas biljetter + platser
+8. Om användaren inte är inloggad skriver användaren sitt e-postaddress
+9. Ett bekräftelsemail skickas med bokningsnummer, platser, biljetter, filmtitel, visning och avbokningslänk
+
+### State Management
+- `BookingContext` hanterar valda biljetter och platser
+- `UserContext` hanterar inloggad användare
+
+---
+
+## Planerat men ej genomfört
+
+- Statistikpanel för admin
+- Bättre hantering av seat-locking (tidsbegränsad reservation)
+- Realistisk förbättring av SeatSelector
+- Lösenordsåterställning via e-post
+- CI/CD pipeline
+
+---
+
+## Team & GitHub-användare
+
+| Namn | GitHub | LinkedIn |
+|------|--------|----------|
+| Fatima Al-Murtadha | [FatimaAlMurtadha](https://github.com/FatimaAlMurtadha) | [LinkedIn](https://www.linkedin.com/in/fatima-al-murtadha-8a19b9294/) |
+| Oskar Gyllenör | [OskarUNLEASHED](https://github.com/OskarUNLEASHED) | [LinkedIn](https://www.linkedin.com/in/oskar-gyllenör-40778a291) |
+| Ali Reza Merzai | [alireza8850](https://github.com/alireza8850) | [LinkedIn](https://www.linkedin.com/in/ali-reza-merzai-235960190/) |
+| Arbaz Shah | [arbazshah52](https://github.com/arbazshah52) | [LinkedIn](http://linkedin.com/in/syed-arbaz-hussain-shah-788921100) |
+| Neha Asati | [Nehaasati](https://github.com/Nehaasati) | [LinkedIn](https://www.linkedin.com/in/neha-asati-28aab959/) |
+
+
+
+
+
+
 
 ### Filmvisarna AB – Bokningssystem för biograf
 
