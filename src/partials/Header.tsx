@@ -7,7 +7,7 @@ const MER_LANKAR = [
     {text:"Nu på bio", href:"/"},
     {text:"Kommande filmer", href:"/upcoming"},
     {text:"Mat & Dryck", href:"/mat-och-dryck"},
-    {text:"Kontakta oss", href:"#"},
+    {text:"Kontakta oss", href:"/kontakta-oss"},
 ];
 
 
@@ -70,6 +70,7 @@ useEffect(
                                 <li><a onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>NU PÅ BIO</a></li>
                                 <li><a onClick={() => navigate("/upcoming")} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
                                 <li><a href="/mat-och-dryck">MAT &amp; DRYCK</a></li>
+                                <li><a onClick={() => { navigate("/kontakta-oss"); closeMenu(); }} style={{ cursor: 'pointer' }}>KONTAKTA OSS</a></li>
                             </ul>
                           
                             <div className="d-flex gap-2 align-items-center">
@@ -102,7 +103,9 @@ useEffect(
                                                     key={lank.text}
                                                     href={lank.href}
                                                     className="mer-lank"
-                                                    onClick={() => setDropdownOpen(false)}
+                                                    style={{ cursor: 'pointer' }}
+                                                    onClick={() => { navigate(lank.href); setDropdownOpen(false); }}
+                                                    
                                                 >
                                                     {lank.text}
                                                 </a>
