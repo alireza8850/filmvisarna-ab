@@ -104,13 +104,7 @@ export default function AdminLockupPage() {
     setBookingNumber("");
   };
 
-  // Convert seat_letter → seat number (A=1, B=2...)
-  const seatNumber = (letter: string) =>
-    letter ? letter.charCodeAt(0) - 64 : null;
 
-  // Convert row_index → row letter (0=A, 1=B...)
-  const rowLetter = (index: number) =>
-    String.fromCharCode("A".charCodeAt(0) + index);
 
   return (
     <div className="lookup-page container mt-5">
@@ -161,29 +155,6 @@ export default function AdminLockupPage() {
           <p>
             <strong>Status:</strong> {result.booking_status}
           </p>
-
-          <hr />
-
-          <h5 className="mt-3">Platser</h5>
-
-          {result.tickets && result.tickets.length > 0 ? (
-            <ul className="seat-list">
-              {result.tickets.map((t: any) => (
-                <li key={t.id} className="seat-item">
-                  {t.row_index !== null && t.seat_letter ? (
-                    <>
-                      {rowLetter(t.row_index)}
-                      {seatNumber(t.seat_letter)}
-                    </>
-                  ) : (
-                    <span className="text-muted">Ingen plats</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted">Inga platser hittades.</p>
-          )}
 
           <hr />
 

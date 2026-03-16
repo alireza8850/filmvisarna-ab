@@ -455,7 +455,9 @@ App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string book
   // Get all seats for SSE broadcast
   var seats = SQLQuery(
       "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
-      new { bookingId = booking.id }
+      new { bookingId = booking.id },
+
+      context
   );
 
   var releasedSeatIds = new List<long>();
@@ -467,13 +469,17 @@ App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string book
   // Release seats
   SQLQuery(
       "DELETE FROM tickets WHERE booking_id = @bookingId",
-      new { bookingId = booking.id }
+      new { bookingId = booking.id },
+
+      context
   );
 
   // Update booking status
   SQLQuery(
     "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
-    new { bookingId = booking.id }
+    new { bookingId = booking.id },
+
+    context
   );
 
   // Send SSE-event to all clients
