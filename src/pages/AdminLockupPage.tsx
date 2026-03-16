@@ -8,7 +8,7 @@ AdminLockupPage.route = {
 export default function AdminLockupPage() {
   const { user } = useUser();
 
-  //load the users
+  // Load user
   if (user === null) {
     return (
       <div
@@ -26,7 +26,7 @@ export default function AdminLockupPage() {
     );
   }
 
-  //if the logged in is an admin or a staff
+  // Only admin/staff allowed
   if (user.role !== "admin" && user.role !== "staff") {
     return (
       <div className="container mt-5 text-center">
@@ -51,18 +51,33 @@ export default function AdminLockupPage() {
       return;
     }
 
-    const res = await fetch(`/api/bookings/${bookingNumber}`, {
-      credentials: "include",
-    });
+    try {
+      // Fetch booking
+      const res = await fetch(`/api/bookings/${bookingNumber}`, {
+        credentials: "include",
+      });
 
-    const data = await res.json();
+      const booking = await res.json();
 
-    if (!res.ok || data.error) {
-      setError(data.error || "Fel vid hämtning av bokning.");
-      return;
+      if (!res.ok || booking.error) {
+        setError(booking.error || "Fel vid hämtning av bokning.");
+        return;
+      }
+
+      // Fetch tickets
+      const ticketsRes = await fetch(`/api/tickets?booking_id=${booking.id}`, {
+        credentials: "include",
+      });
+
+      const tickets = await ticketsRes.json();
+
+      // Merge
+      booking.tickets = tickets;
+
+      setResult(booking);
+    } catch (err) {
+      setError("Ett oväntat fel inträffade.");
     }
-
-    setResult(data);
   };
 
   const handleCancel = async () => {
@@ -88,6 +103,14 @@ export default function AdminLockupPage() {
     setResult(null);
     setBookingNumber("");
   };
+
+  // Convert seat_letter → seat number (A=1, B=2...)
+  const seatNumber = (letter: string) =>
+    letter ? letter.charCodeAt(0) - 64 : null;
+
+  // Convert row_index → row letter (0=A, 1=B...)
+  const rowLetter = (index: number) =>
+    String.fromCharCode("A".charCodeAt(0) + index);
 
   return (
     <div className="lookup-page container mt-5">
@@ -147,8 +170,14 @@ export default function AdminLockupPage() {
             <ul className="seat-list">
               {result.tickets.map((t: any) => (
                 <li key={t.id} className="seat-item">
-                  Rad {String.fromCharCode(65 + t.row_index)} – Plats{" "}
-                  {t.seat_letter}
+                  {t.row_index !== null && t.seat_letter ? (
+                    <>
+                      {rowLetter(t.row_index)}
+                      {seatNumber(t.seat_letter)}
+                    </>
+                  ) : (
+                    <span className="text-muted">Ingen plats</span>
+                  )}
                 </li>
               ))}
             </ul>
