@@ -56,6 +56,7 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets');
             ";
         fixAclCmd.ExecuteNonQuery();
+        
       }
     }
     catch (Exception ex)
@@ -80,6 +81,18 @@ public static class DbQuery
             ('user,staff,admin', 'GET', 'allow', '/api/bookings/my', 'true', 'Allow logged-in users to see their bookings')";
       fixCmd.ExecuteNonQuery();
     }
+    // Fix: Allow contact form
+    var contactAclCheck = db.CreateCommand();
+    contactAclCheck.CommandText = "SELECT COUNT(*) FROM acl WHERE route = '/api/contact' AND method = 'POST'";
+    if (Convert.ToInt32(contactAclCheck.ExecuteScalar()) == 0)
+    {
+      var fixCmd = db.CreateCommand();
+      fixCmd.CommandText = @"INSERT INTO acl (userRoles, method, allow, route, `match`, comment) VALUES
+          ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form')";
+      fixCmd.ExecuteNonQuery();
+    }
+
+    
     db.Close();
   }
 
@@ -173,6 +186,8 @@ public static class DbQuery
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/tickets', 'true', 'Allow all user roles to create tickets'),
                 -- Release movie
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/release-movie', 'true', 'Allow anyone to release a movie'),
+                -- Contact oss
+                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form');
                 -- SSE 
                 ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates')
                 ;
