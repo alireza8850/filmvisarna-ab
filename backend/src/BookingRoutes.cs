@@ -350,14 +350,118 @@ public static class BookingRoutes
         film_title = showing.film_title,
         hall_name = showing.hall_name,
         start_time = showing.start_time,
-        total_price = totalPrice
-      });
-    });
+    total_price = totalPrice
+  });
+});
 
-    // POST /api/bookings/cancel
-    // POST /api/bookings/cancel
-    App.MapPost("/api/bookings/cancel", (HttpContext context, JsonElement bodyJson) =>
-    {
+// GET /api/bookings/{bookingNumber} - Admin/Staff looking up by bookingnumber
+App.MapGet("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
+{
+  if (string.IsNullOrWhiteSpace(bookingNumber))
+  {
+    return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });
+  }
+
+  var sql = @"
+      SELECT b.id, b.booking_number, b.user_id, b.showing_id, b.booking_status, b.total_price,
+             b.created_at, b.expires_at, b.booking_email,
+             f.title as film_title, s.start_time, h.hall_name,
+             u.email as user_email, u.firstName, u.lastName
+      FROM bookings b
+      JOIN showings s ON b.showing_id = s.id
+      JOIN films f ON s.film_id = f.id
+      JOIN halls h ON s.hall_id = h.id
+      LEFT JOIN users u ON b.user_id = u.id
+      WHERE b.booking_number = @bookingNumber
+  ";
+
+  var booking = SQLQueryOne(sql, new { bookingNumber }, context);
+
+  if (booking == null || booking.error != null)
+  {
+    return RestResult.Parse(context, new { error = "Ingen bokning hittades med det angivna bokningsnumret." });
+  }
+
+  // Get tickets for this booking
+  var ticketsSql = @"
+      SELECT t.id, t.seat_id, t.ticket_type_id,
+             s.row_index, s.seat_letter,
+             tt.type_name
+      FROM tickets t
+      LEFT JOIN seats s ON t.seat_id = s.id
+      LEFT JOIN ticket_types tt ON t.ticket_type_id = tt.id
+      WHERE t.booking_id = @bookingId
+  ";
+  var tickets = SQLQuery(ticketsSql, new { bookingId = booking.id }, context);
+  booking.tickets = tickets;
+
+  return RestResult.Parse(context, booking);
+});
+
+// DELETE /api/bookings/{bookingNumber} - Admin/Staff cancel booking by booking number
+App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
+{
+  if (string.IsNullOrWhiteSpace(bookingNumber))
+  {
+    return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });
+  }
+
+  // Fetch booking by booking number
+  var booking = SQLQueryOne(
+    "SELECT * FROM bookings WHERE booking_number = @bookingNumber",
+    new { bookingNumber }
+  );
+
+  if (booking == null)
+  {
+    return RestResult.Parse(context, new { error = "Ingen bokning hittades med det angivna bokningsnumret." });
+  }
+
+  // Check if the booking is already cancelled
+  if ((string)booking.booking_status == "cancelled")
+  {
+    return RestResult.Parse(context, new { error = "Bokningen är redan avbokad." });
+  }
+
+  // Get all seats for SSE broadcast
+  var seats = SQLQuery(
+      "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
+      new { bookingId = booking.id }
+  );
+
+  var releasedSeatIds = new List<long>();
+  foreach (var s in seats)
+  {
+    releasedSeatIds.Add((long)s.seat_id);
+  }
+
+  // Release seats
+  SQLQuery(
+      "DELETE FROM tickets WHERE booking_id = @bookingId",
+      new { bookingId = booking.id }
+  );
+
+  // Update booking status
+  SQLQuery(
+    "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
+    new { bookingId = booking.id }
+  );
+
+  // Send SSE-event to all clients
+  if (releasedSeatIds.Count > 0)
+  {
+    _ = SeatEventsRoutes.BroadcastSeatsReleased(
+        (int)booking.showing_id,
+        releasedSeatIds.ToArray()
+    );
+  }
+
+  return RestResult.Parse(context, new { message = "Bokningen har avbokats av systemägare." });
+});
+
+// POST /api/bookings/cancel
+App.MapPost("/api/bookings/cancel", (HttpContext context, JsonElement bodyJson) =>
+{
       var body = JSON.Parse(bodyJson.ToString());
       string bookingNumber = (string)body.booking_number;
       string email = (string)body.email;
