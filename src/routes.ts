@@ -5,8 +5,6 @@ import AboutPage from "./pages/AboutPage.tsx";
 import AiChatPage from "./pages/AiChatPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import OurVisionPage from "./pages/OurVisionPage.tsx";
-import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
-import ProductsPage from "./pages/ProductsPage.tsx";
 import FilmDetailsPage from "./pages/FilmDetailsPage.tsx";
 import LandedPageFilms from "./pages/LandedPageFilms.tsx";
 import TicketPickerPage from "./pages/TicketPickerPage.tsx";
@@ -38,8 +36,6 @@ export default [
   AiChatPage,
   NotFoundPage,
   OurVisionPage,
-  ProductDetailsPage,
-  ProductsPage,
   LandedPageFilms,
   FilmDetailsPage,
   TicketPickerPage,
