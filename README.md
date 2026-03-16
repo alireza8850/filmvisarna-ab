@@ -21,7 +21,7 @@ Frontend: Vite + React + TypeScript + Bootstrap + Sass Backend: .NET 10 Minimal 
 
 ### Arkitektur
 ┌─────────────────────────────────────────────────────────────┐
-│                        Frontend                             │
+│                     Frontend                                │
 │              Vite + React + TypeScript                      │
 │                 Bootstrap + Sass                            │
 └─────────────────────┬───────────────────────────────────────┘
@@ -44,18 +44,21 @@ Frontend: Vite + React + TypeScript + Bootstrap + Sass Backend: .NET 10 Minimal 
 │  └─────────────────────┘                                    │
 │                                                             │
 │  DynData: Dynamisk C# (Obj, Arr, JSON, Log)                 │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ MySqlConnector
-┌─────────────────────▼───────────────────────────────────────┐
-│                        MySQL                                │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐        │
-│  │ sessions │ │   acl    │ │  users   │ │ products │        │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘        │
-└─────────────────────────────────────────────────────────────┘
-
-
-
-
+└──────────────────────────────┬──────────────────────────────┘
+                               │ MySqlConnector
+┌──────────────────────────────▼────────────────────────────────────────────┐
+│                                                                           │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐  ┌───────┐ ┌───────┐ │
+│  │ sessions │ │   acl    │ │  users   │ │ films    │  │ halls │ │ seats │ │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘  └───────┘ └───────┘ │
+│  ┌─────────┐ ┌─────────────   ┌─────────────┐   ┌────────┐  ┌───────┐     │
+│  │showings │ │ ticket_types│  │ticket_prices│   │bookings│  │tickets│     │
+│  └─────────┘ └─────────────┘  └─────────────┘   └────────┘  └───────┘     │
+│  ┌───────┐ ┌─────────────────┐ ┌───────────┐ ┌──────────────────────┐     │
+│  │actors │ │contact_messages │ │film_actors│ │ booking_overview view│     │ 
+│  └───────┘ └─────────────────┘ └───────────┘ └──────────────────────┘     │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘
 
 ### Installation
 
@@ -68,6 +71,21 @@ git clone https://github.com/alireza8850/filmvisarna-ab.git
  cp backend/db-config.template.json backend/db-config.json
 
 3. Redigera backend/db-config.json med rätt uppgifter (host, port, username, password, database)
+
+{
+  "host": "",
+  "port": ,
+  "username": "",
+  "password": "",
+  "database": "",
+  "createTablesIfNotExist": true,
+  "seedDataIfEmpty": true,
+  "aiAccessToken": "",
+  "smtpServer": "",
+  "smtpPort": ,
+  "emailUsername": "",
+  "emailPassword": ""
+}
 
 4. Installera och starta:
  npm install
@@ -103,16 +121,12 @@ Självklart har vi det grundläggande för alla REST-API:er täckt. För vilken 
 
 ## Ett exempel:
 
-. /api/users?where=firstName=Thomas_AND_lastName!=Irons&orderby=email&limit=2&offset=1
+. /api/users?where=firstName=Arbaz_AND_lastName!=Greenleaf=email&limit=2&offset=1
 . Obs: Omge inte strängar med citattecken, som du kan se i exemplet ovan gör vi inte det.
 
 ## För närvarande stödda operatorer för where
 . !=, >=, <=, =, >, <, AND, OR, LIKE (att skriva de tre sista med understreck är valfritt men förbättrar läsbarheten)
 . Parenteser stöds för närvarande inte.
-
-## Söka i JSON-fält med CONTAINS
-
-
 
 
 ### Viktigt att veta
@@ -125,7 +139,7 @@ Självklart har vi det grundläggande för alla REST-API:er täckt. För vilken 
 
 ### 2) Dokumentation – Teknisk skuld (Technical Debt)
 
-Detta är en lista över verkliga tekniska skulder i ert projekt:
+Detta är en lista över verkliga tekniska skulder i vårt projekt:
 
 ## Backend
 - Vissa endpoints saknar fullständig felhantering (t.ex. 409 vs 500).  
@@ -140,15 +154,15 @@ Detta är en lista över verkliga tekniska skulder i ert projekt:
 - Ingen loading-state på vissa sidor som hämtar data.  
 
 ## Testning
-- Inga enhetstester för backend.  
-- Inga integrationstester för bokningsflödet.  
-- Ingen mockning av API i frontend.  
+- API Integration Tester.  
+- Frontend Componenterna Tester.  
+- End-to-End Tester (hela flödet).  
 
 ---
 
 ## 3) Lösningsarkitektur (Solution Architecture)
 
-Här är en professionell sammanfattning av er arkitektur:
+Här är en professionell sammanfattning av vår arkitektur:
 
 # Översikt
 Systemet följer en klassisk client–server-arkitektur:
@@ -161,29 +175,22 @@ Systemet följer en klassisk client–server-arkitektur:
 - Frontend kommunicerar med backend via REST API.  
 - Autentisering sker via sessionscookies (credentials: include).  
 
-# Databasmodell
-Centrala tabeller:
-
-- films  
-- showings  
-- halls  
-- seats  
-- bookings  
-- tickets  
-- users  
-
 
 ### Autentisering & behörighet
 - Inloggning skapar en session-cookie.  
 - Backend kontrollerar sessionen vid varje request.  
-- Admin har utökade rättigheter.  
+- Admin/ Staff har utökade rättigheter.  
 
 ### Bokningsflöde
-1. Användaren väljer biljetter  
-2. Användaren väljer platser  
-3. Backend validerar att platserna är lediga  
-4. Vid konflikt returneras 409 Conflict  
-5. Vid lyckad bokning sparas biljetter + platser  
+1. Användaren väljer en film.
+2. Användaren väljer en visning.
+3. Användaren väljer biljetter. 
+4. Användaren väljer platser.
+5. Backend validerar att platserna är lediga.  
+6. Vid konflikt returneras 409 Conflict.  
+7. Vid lyckad bokning sparas biljetter + platser.
+8. Om användaren inte är inloggad skriver användaren sitt e-post address.
+9. Ett bekräftälse mail skickas till användarens e-post med bookingNumber, platser, biljeter, film title, visning och en länk till avbokning sidan.
 
 ### State Management
 - BookingContext hanterar valda biljetter och platser  
@@ -193,29 +200,17 @@ Centrala tabeller:
 
 ## 4) Planerat men ej genomfört arbete
 
-Detta är realistiska punkter som ni kan skriva:
+Detta är realistiska punkter som vi kan förbättra:
 
 ### Funktioner som var planerade men inte hanns med
-- E-postbekräftelse vid bokning  
-- Möjlighet att avboka biljetter via länk  
-- Statistikpanel för admin  
-- Bättre hantering av seat-locking (tidsbegränsad reservation)  
-- Responsiv förbättring av SeatSelector  
-- Lösenordsåterställning via e-post  
-- CI/CD pipeline  
-- Enhetstester och integrationstester  
+
+- Statistikpanel för admin.
+- Bättre hantering av seat-locking (tidsbegränsad reservation).
+- Realistisk förbättring av SeatSelector.
+- Lösenordsåterställning via e-post.
+- CI/CD pipeline.
 
 ---
-
-### Nästa steg
-
-Jag kan nu hjälpa dig skapa:
-
-- En PDF med all dokumentation  
-- En arkitekturdiagram (system overview)  
-- En databasdiagram  
-- En teknisk skuld-tabell i snygg format  
-- En sammanfattning för presentationen inför arkitekturgranskningen
 
 ## Team & GitHub-användare
 Projektet har utvecklats av:
@@ -224,6 +219,4 @@ Projektet har utvecklats av:
 - Oskar Gyllenör: https://github.com/OskarUNLEASHED / www.linkedin.com/in/oskar-gyllenör-40778a291 
 - Ali Reza Merzai: https://github.com/alireza8850 / https://www.linkedin.com/in/ali-reza-merzai-235960190/  
 - Arbaz Shah: https://github.com/arbazshah52 / http://linkedin.com/in/syed-arbaz-hussain-shah-788921100 
-- Neha Asati: https://github.com/Nehaasati / 
-
-### Minimal API + React Fullstack
+- Neha Asati: https://github.com/Nehaasati / https://www.linkedin.com/in/neha-asati-28aab959/
