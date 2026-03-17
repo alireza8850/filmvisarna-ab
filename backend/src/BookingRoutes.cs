@@ -357,6 +357,19 @@ public static class BookingRoutes
 // GET /api/bookings/{bookingNumber} - Admin/Staff looking up by bookingnumber
 App.MapGet("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
 {
+  var user = Session.Get(context, "user");
+
+  if (user == null)
+  {
+    context.Response.StatusCode = 401;
+    return RestResult.Parse(context, new { error = "Unauthorized" });
+  }
+
+  if (user.role != "admin" && user.role != "staff")
+  {
+    context.Response.StatusCode = 403;
+    return RestResult.Parse(context, new { error = "Forbidden" });
+  }
   if (string.IsNullOrWhiteSpace(bookingNumber))
   {
     return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });
@@ -401,6 +414,22 @@ App.MapGet("/api/bookings/{bookingNumber}", (HttpContext context, string booking
 // DELETE /api/bookings/{bookingNumber} - Admin/Staff cancel booking by booking number
 App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string bookingNumber) =>
 {
+  // Check login
+
+  var user = Session.Get(context, "user");
+
+  if (user == null)
+  {
+    context.Response.StatusCode = 401;
+    return RestResult.Parse(context, new { error = "Unauthorized" });
+  }
+ // Check admin/staff role
+  if (user.role != "admin" && user.role != "staff")
+  {
+    context.Response.StatusCode = 403;
+    return RestResult.Parse(context, new { error = "Forbidden" });
+  }
+
   if (string.IsNullOrWhiteSpace(bookingNumber))
   {
     return RestResult.Parse(context, new { error = "Bokningsnummer är obligatoriskt." });
@@ -426,7 +455,9 @@ App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string book
   // Get all seats for SSE broadcast
   var seats = SQLQuery(
       "SELECT seat_id FROM tickets WHERE booking_id = @bookingId AND seat_id IS NOT NULL",
-      new { bookingId = booking.id }
+      new { bookingId = booking.id },
+
+      context
   );
 
   var releasedSeatIds = new List<long>();
@@ -438,13 +469,17 @@ App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string book
   // Release seats
   SQLQuery(
       "DELETE FROM tickets WHERE booking_id = @bookingId",
-      new { bookingId = booking.id }
+      new { bookingId = booking.id },
+
+      context
   );
 
   // Update booking status
   SQLQuery(
     "UPDATE bookings SET booking_status = 'cancelled' WHERE id = @bookingId",
-    new { bookingId = booking.id }
+    new { bookingId = booking.id },
+
+    context
   );
 
   // Send SSE-event to all clients

@@ -40,8 +40,14 @@ export default function LoginPage(){
       if (data.error) {
         setServerError(data.error);
       } else {
-        login(data); // sätt användaren i context
-        navigate("/");
+          login(data); // sätt användaren i context
+          
+          // if the logged in is an admin or a user
+          if (data.role === "admin" || data.role === "staff") {
+            navigate("/onlyadmin");
+          } else {
+            navigate("/");
+          }
       }
     } catch {
       setServerError("Något gick fel. Försök igen.");

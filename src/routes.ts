@@ -22,6 +22,8 @@ import HallDesPage from "./pages/HalldescPage.tsx";
 import PolicyPage from "./pages/policyPage.tsx";
 
 import MatOchDryckPage from "./pages/MatOchDryckPage.tsx";
+
+import AdminLockupPage from "./pages/AdminLockupPage.tsx";
 interface Route {
   element: JSX.Element;
   path: string;
@@ -50,7 +52,8 @@ export default [
   ContactOssPage,
   HallDesPage,
   MatOchDryckPage,
-  PolicyPage,
+  PolicyPage, 
+    AdminLockupPage,
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route }) as Route)

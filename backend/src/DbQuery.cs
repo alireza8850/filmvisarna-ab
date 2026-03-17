@@ -187,9 +187,13 @@ public static class DbQuery
                 -- Release movie
                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/release-movie', 'true', 'Allow anyone to release a movie'),
                 -- Contact oss
-                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form');
+                 ('visitor,user,staff,admin', 'POST', 'allow', '/api/contact', 'true', 'Allow anyone to send contact form'),
                 -- SSE 
-                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates')
+                ('visitor,user,staff,admin', 'GET', 'allow', '/api/seats-sse/', 'false', 'Allow SSE seat updates'),
+                -- GEt booking
+                ('admin,staff', 'GET', 'allow', '/api/bookings/', 'false', 'Allow admin and staff to lookup bookings'),
+                -- DELET bookings
+                ('admin,staff', 'DELETE', 'allow', '/api/bookings/', 'false', 'Allow admin and staff to cancel bookings')
                 ;
             ";
       command.CommandText = aclData;
@@ -202,11 +206,13 @@ public static class DbQuery
     {
       var usersData = @"
                 INSERT INTO users (created, email, firstName, lastName, phoneNumber, role, password) VALUES
-                ('2025-12-14', 'fatima@al-murtadha', 'Fatima', 'Al-Murtadha', '(476) 5774921', 'admin', '123'),
+                ('2025-03-16', 'fatima738086@gmail.com', 'fatima', 'fatima', '(467) 7600975', 'admin', '$2a$13$EwhdcnRfcjrELOsWc9NQCu90/FQl0ZMtqAKRKARVQSSAzr84U4O.2'),
                 ('2025-12-14', 'neha@unesco.org', 'Neha', 'Tadgell', '(476) 5774922', 'customer', '123'),
                 ('2025-04-21', 'arbaz@upenn.edu', 'Arbaz', 'Greenleaf', '(386) 3321896', 'staff', '123'),
                 ('2025-09-11', 'oskar@alexa.com', 'Oskar', 'Lummasana', '(651) 5012342', 'staff', '123'),
-                ('2025-09-25', 'ali@google.com', 'Ali', 'Dalla', '(920) 6104534', 'customer', '123');
+                ('2025-09-25', 'ali@google.com', 'Ali', 'Dalla', '(920) 6104534', 'customer', '123'),
+                ('2026-03-16', 'sukaina77150@gmail.com',	'fatima',	'hussein',	'(467) 7678954', 'staff', '$2a$13$5NGvMSFQPrnwLhLQcHjyNey/hUJJmhJ4lI/iysK2GDeza32ktPI9W')
+                ;
             ";
       command.CommandText = usersData;
       command.ExecuteNonQuery();
