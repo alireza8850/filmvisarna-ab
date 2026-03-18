@@ -183,7 +183,7 @@ useEffect(
                     <ul>
                         <li><a onClick={() => { navigate("/"); closeMenu(); }} style={{ cursor: 'pointer' }}>PÅ BION</a></li>
                         <li><a onClick={() => { navigate("/upcoming"); closeMenu(); }} style={{ cursor: 'pointer' }}>KOMMANDE FILMER</a></li>
-                        <li><a href="#">MAT &amp; DRYCK</a></li>
+                        <li><a onClick={() => { navigate("/mat-och-dryck"); closeMenu(); }} style={{ cursor: 'pointer' }}>MAT &amp; DRYCK</a></li>
                     </ul>
                 </nav>
 
