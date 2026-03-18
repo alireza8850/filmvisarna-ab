@@ -27,12 +27,14 @@ export default function UpcomingMoviesPage() {
 
         let allFilteredMovies: TMDBMovie[] = [];
         let currentPage = 1;
-        const targetCount = 9;
+        const targetCount = 20;
 
-        // Keep fetching more pages until we have at least 9 or reach a limit
-        while (allFilteredMovies.length < targetCount && currentPage <= 5) {
+        // Keep fetching more pages until we have at least 20 or reach a limit
+        while (allFilteredMovies.length < targetCount && currentPage <= 10) {
           const upcomingData = await getUpcomingMovies(currentPage);
           
+          if (upcomingData.length === 0) break; // No more movies available
+
           const filteredFromPage = upcomingData.filter(m => !existingTitles.has(m.title.toLowerCase().trim()));
           
           // Avoid duplicate movies if TMDB returns same movie across pages (rare but possible)
@@ -41,7 +43,6 @@ export default function UpcomingMoviesPage() {
           
           allFilteredMovies = [...allFilteredMovies, ...newUniqueMovies];
           
-          if (upcomingData.length === 0) break; // No more movies available
           currentPage++;
         }
         
