@@ -493,7 +493,46 @@ App.MapDelete("/api/bookings/{bookingNumber}", (HttpContext context, string book
 
   return RestResult.Parse(context, new { message = "Bokningen har avbokats av systemägare." });
 });
+// PATCH /api/bookings/reserve - set status to reserved
+App.MapPost("/api/bookings/reserve", (HttpContext context, JsonElement bodyJson) =>
+{
+  var body = JSON.Parse(bodyJson.ToString());
+  string bookingNumber = (string)body.booking_number;
 
+  var user = Session.Get(context, "user");
+  if (user == null)
+  {
+    context.Response.StatusCode = 401;
+    return RestResult.Parse(context, new { error = "Unauthorized" });
+  }
+
+  var booking = SQLQueryOne(
+    "SELECT * FROM bookings WHERE booking_number = @bookingNumber",
+    new { bookingNumber }
+  );
+
+  if (booking == null)
+    return RestResult.Parse(context, new { error = "Bokning hittades inte." });
+
+  // Verify ownership
+  bool ownsById = (long?)booking.user_id == (long)user.id;
+  bool ownsByEmail = (string)booking.booking_email == (string)user.email;
+  if (!ownsById && !ownsByEmail)
+    return RestResult.Parse(context, new { error = "Inte behörig." });
+
+  // Set to reserved + release old seats
+  SQLQuery(
+    "DELETE FROM tickets WHERE booking_id = @bookingId",
+    new { bookingId = booking.id }
+  );
+
+  SQLQuery(
+    "UPDATE bookings SET booking_status = 'reserved' WHERE id = @bookingId",
+    new { bookingId = booking.id }
+  );
+
+  return RestResult.Parse(context, new { message = "Bokning reserverad. Välj nya platser." });
+});
 // POST /api/bookings/cancel
 App.MapPost("/api/bookings/cancel", (HttpContext context, JsonElement bodyJson) =>
 {

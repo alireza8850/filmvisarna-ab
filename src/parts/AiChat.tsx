@@ -5,22 +5,24 @@ interface Message {
   content: string;
 }
 
-interface ChatResponse {
-  choices: Array<{
-    message: {
-      content: string;
-      role: string;
-    };
-  }>;
-}
+const QUICK_QUESTIONS = [
+  { label: "🎬 Filmdetaljer", prompt: "Vilka filmer visas just nu?" },
+  { label: "💰 Priser", prompt: "Vad kostar biljetterna?" },
+  { label: "📍 Plats & öppettider", prompt: "Var ligger biografen och när är den öppen?" },
+  { label: "🎟️ Hur bokar jag?", prompt: "Hur bokar jag en biljett?" },
+  { label: "🍿 Snacks & kiosk", prompt: "Vad finns i kiosken?" },
+  { label: "❌ Avboka bokning", prompt: "Hur avbokar jag min bokning?" },
+];
 
 export default function AiChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   // Welcome message
   useEffect(() => {
@@ -28,31 +30,59 @@ export default function AiChat() {
       {
         role: "assistant",
         content:
-          "Hej och välkommen till Filmvisarna! Jag är din digitala biografassistent och hjälper dig gärna med allt som rör våra filmer, visningar, salonger och bokningar. Vad vill du utforska idag?",
+          "Hej och välkommen till Filmvisarna! 🎬 Jag är din digitala biografassistent och hjälper dig gärna med allt som rör våra filmer, visningar, salonger och bokningar. Vad vill du veta?",
       },
     ]);
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Auto-resize textarea
+  // Voice input setup
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        Math.min(textareaRef.current.scrollHeight, 200) + "px";
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "sv-SE";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+      };
+
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
+
+      recognitionRef.current = recognition;
     }
-  }, [input]);
+  }, []);
 
-  const sendMessage = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
+  const toggleVoice = () => {
+    if (!recognitionRef.current) return;
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
 
-    const userMessage: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMessage]);
+  const sendMessage = async (text?: string) => {
+    const messageText = (text ?? input).trim();
+    if (!messageText || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: messageText };
+    const updatedMessages = [...messages, userMessage];
+
+    setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
 
@@ -60,29 +90,42 @@ export default function AiChat() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        credentials: "include",
+        body: JSON.stringify({ messages: updatedMessages }),
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Request failed");
+        throw new Error(`HTTP error: ${response.status}`);
       }
 
-      const data: ChatResponse = await response.json();
+      const data = await response.json();
+      console.log("AI response:", JSON.stringify(data));
+
+      // Try all known response formats
+      const content =
+        data?.choices?.[0]?.message?.content ||
+        data?.message ||
+        data?.content ||
+        data?.reply ||
+        data?.text ||
+        "Inget svar från assistenten.";
+
       const assistantMessage: Message = {
         role: "assistant",
-        content: data.choices[0].message.content,
+        content,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      const errorMessage: Message = {
-        role: "assistant",
-        content: `Error: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `Något gick fel: ${
+            error instanceof Error ? error.message : "Okänt fel"
+          }`,
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -98,35 +141,78 @@ export default function AiChat() {
   return (
     <div className="ai-chat">
       {/* Header */}
-      <div className="ai-chat-header">
-        <h5>AI Chat</h5>
+      <div className="ai-title">
+        <span>🎬 Filmvisarna Assistent</span>
+      </div>
+
+      {/* Quick question buttons */}
+      <div className="ai-quick-questions">
+        {QUICK_QUESTIONS.map(({ label, prompt }) => (
+          <button
+            key={label}
+            className="ai-quick-btn"
+            onClick={() => sendMessage(prompt)}
+            disabled={isLoading}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Messages */}
       <div className="ai-chat-body">
         {messages.map((message, index) => (
           <div key={index} className={`ai-chat-message ${message.role}`}>
-            {message.content}
+            {message.role === "assistant" && (
+              <span className="ai-avatar">🎬</span>
+            )}
+            <div className="ai-message-bubble">{message.content}</div>
           </div>
         ))}
+
+        {/* Typing indicator */}
+        {isLoading && (
+          <div className="ai-chat-message assistant">
+            <span className="ai-avatar">🎬</span>
+            <div className="ai-message-bubble ai-typing">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
       {/* Footer */}
       <div className="ai-chat-footer">
-        {isLoading && <div className="ai-chat-status">Thinking...</div>}
-
         <div className="ai-chat-input-area">
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
+            placeholder="Skriv din fråga här..."
+            rows={1}
           />
 
-          <button onClick={sendMessage} disabled={!input.trim() || isLoading}>
-            Send
+          {/* Voice button */}
+          <button
+            className={`ai-voice-btn ${isListening ? "listening" : ""}`}
+            onClick={toggleVoice}
+            title={isListening ? "Stoppa röstinmatning" : "Tala"}
+          >
+            {isListening ? "🔴" : "🎤"}
+          </button>
+
+          {/* Send button */}
+          <button
+            className="ai-send-btn"
+            onClick={() => sendMessage()}
+            disabled={!input.trim() || isLoading}
+          >
+            Skicka
           </button>
         </div>
       </div>

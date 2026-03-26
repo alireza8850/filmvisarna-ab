@@ -28,7 +28,7 @@ Then run:
 npm test tests/api
 ```
 
-### Key tests:
+#u# Key tests:
 - `tests/api/auth.test.ts`: Tests registration and login endpoints.
 - `tests/api/films.test.ts`: Tests film retrieval endpoints.
 

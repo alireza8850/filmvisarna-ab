@@ -6,7 +6,7 @@ import { FaExpand, FaWindowClose } from "react-icons/fa";
 AiChatPage.route = {
   path: "/ai-chat",
   menuLabel: "AI Chat",
-  index: 4,
+  index: 99,
 };
 
 export default function AiChatPage() {
@@ -24,12 +24,7 @@ export default function AiChatPage() {
 
   const startDrag = (e: React.MouseEvent) => {
     if (fullPage) return;
-
-    if (
-      !(e.target as HTMLElement).classList.contains("floating-ai-drag-handle")
-    ) {
-      return;
-    }
+    if (!(e.target as HTMLElement).classList.contains("floating-ai-drag-handle")) return;
 
     const rect = windowRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -46,10 +41,8 @@ export default function AiChatPage() {
 
   const onDrag = (e: MouseEvent) => {
     if (!dragData.current.isDragging || !windowRef.current) return;
-
     const deltaX = e.clientX - dragData.current.startX;
     const deltaY = e.clientY - dragData.current.startY;
-
     windowRef.current.style.left = `${dragData.current.initialLeft + deltaX}px`;
     windowRef.current.style.top = `${dragData.current.initialTop + deltaY}px`;
   };
@@ -72,57 +65,41 @@ export default function AiChatPage() {
       {/* Floating Button */}
       <button
         className="floating-ai-button"
-        onClick={() => {
-          setOpen(!open);
-          setFullPage(false);
-        }}
+        onClick={() => { setOpen(!open); setFullPage(false); }}
         aria-label="Open AI Chat"
       >
-        <LuBot size={50} />
+        <LuBot size={28} />
       </button>
 
       {/* FULL PAGE CHAT */}
       {fullPage && (
         <div className="ai-fullpage">
-          <button
-            className="ai-fullpage-close"
-            onClick={() => setFullPage(false)}
-          >
+          <button className="ai-fullpage-close" onClick={() => setFullPage(false)}>
             <FaWindowClose size={26} />
           </button>
-
           <AiChat />
         </div>
       )}
 
       {/* FLOATING CHAT WINDOW */}
       {open && !fullPage && (
-        <div
-          className="floating-ai-window"
-          ref={windowRef}
-          onMouseDown={startDrag}
-        >
+        <div className="floating-ai-window" ref={windowRef} onMouseDown={startDrag}>
           <div className="floating-ai-drag-handle"></div>
 
-          {/* Expand to Full Page */}
           <button
             className="floating-ai-expand"
-            onClick={() => {
-              setFullPage(true);
-              setOpen(false);
-            }}
+            onClick={() => { setFullPage(true); setOpen(false); }}
             aria-label="Expand AI Chat"
           >
-            <FaExpand size={20} />
+            <FaExpand size={12} />
           </button>
 
-          {/* Close Floating */}
           <button
             className="floating-ai-close"
             onClick={() => setOpen(false)}
             aria-label="Close AI Chat"
           >
-            <FaWindowClose size={20} />
+            <FaWindowClose size={18} />
           </button>
 
           <AiChat />
