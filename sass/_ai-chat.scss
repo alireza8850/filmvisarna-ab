@@ -50,4 +50,98 @@
       }
     }
   }
+  /* Add these rules to your existing .ai-chat styles */
+
+.ai-chat {
+
+  .ai-chat-welcome {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  /* Grid of large option buttons shown when chat is empty */
+  .ai-chat-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .ai-chat-option-btn {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.875rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover:not(:disabled) {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  /* Compact pill row shown at the bottom once chat has messages */
+  .ai-chat-quick-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .ai-chat-pill-btn {
+    background: transparent;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover:not(:disabled) {
+      background: #f0f0f0;
+      border-color: #adb5bd;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  /* Voice mic button */
+  .ai-chat-voice-btn {
+    flex-shrink: 0;
+    width: 44px;
+    font-size: 1.1rem;
+    transition: transform 0.1s;
+
+    &--active {
+      animation: pulse-mic 1s ease-in-out infinite;
+    }
+  }
+
+  /* TTS mute button */
+  .ai-chat-tts-btn {
+    flex-shrink: 0;
+    width: 44px;
+    font-size: 1rem;
+  }
+}
+
+@keyframes pulse-mic {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
 }
